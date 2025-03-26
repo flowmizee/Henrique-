@@ -33,7 +33,7 @@
       top: 50%;
       transform: translateY(-50%);
     }
-    /* Logo centralizada – largura reduzida para 80px */
+    /* Logo centralizada – largura reduzida para 70px */
     .header-center {
       position: absolute;
       left: 50%;
@@ -41,7 +41,7 @@
       transform: translate(-50%, -50%);
     }
     .header-center .logo {
-      width: 80px;
+      width: 70px;
     }
     /* Ícones (lupa e carrinho) no canto superior direito */
     .header-right {
@@ -556,8 +556,7 @@
         name: product.Nome,
         oldPrice: product["Preço Antigo"],
         newPrice: product["Preço Novo"],
-        parcelas: product.Parcelas,
-        image: product["URL da Imagem"]
+        image: product["Urla da Imagem"]
       });
       localStorage.setItem("cart", JSON.stringify(cart));
       updateCartCount();
@@ -580,14 +579,13 @@
         const card = document.createElement("div");
         card.classList.add("product-card");
         let productHTML = `
-          <img src="${product["URL da Imagem"]}" alt="${product.Nome}" class="product-image">
+          <img src="${product["Urla da Imagem"]}" alt="${product.Nome}" class="product-image">
           <div class="product-description">
             <h2>${product.Nome}</h2>
             <div class="prices">
               <p class="old-price">${product["Preço Antigo"]}</p>
               <p class="new-price">${product["Preço Novo"]}</p>
             </div>
-            <p>${product.Parcelas}</p>
             <button class="buy-button">Comprar</button>
           </div>`;
         card.innerHTML = productHTML;
