@@ -110,10 +110,10 @@
   </div>
   
   <script>
-    // Recupera o carrinho salvo no localStorage
+    // O carrinho utiliza as informações armazenadas no localStorage, enviadas pela página de produtos.
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     
-    // Renderiza os itens do carrinho e atualiza a quantidade e o total
+    // Renderiza os itens do carrinho, exibindo imagem, nome e preço
     function renderCart() {
       const cartItemsContainer = document.getElementById("cart-items");
       cartItemsContainer.innerHTML = "";
@@ -127,12 +127,10 @@
       
       let total = 0;
       cart.forEach((item, index) => {
-        // Extrai o valor numérico do Preço Novo (assumindo que vem com formatação monetária)
+        // Remove qualquer formatação e converte para número (assumindo que o preço venha formatado)
         let price = item.newPrice.replace(/\D+/g, "");
         price = parseFloat(price) / 100;
-        if (!isNaN(price)) {
-          total += price;
-        }
+        if (!isNaN(price)) total += price;
         
         const itemDiv = document.createElement("div");
         itemDiv.classList.add("cart-item");
@@ -152,11 +150,11 @@
       document.getElementById("cart-count-display").innerText = "Itens no carrinho: " + cart.length;
     }
     
-    // Detecta gesto de deslizar para a esquerda e remove o item
+    // Permite remover itens do carrinho com gesto de deslizar para a esquerda
     function attachSwipeListeners(element) {
       let startX = 0;
       let currentX = 0;
-      const threshold = 100; // distância mínima para acionar o delete
+      const threshold = 100; // distância mínima para acionar a remoção
       
       element.addEventListener('touchstart', function(e) {
         startX = e.touches[0].clientX;
@@ -166,7 +164,7 @@
       element.addEventListener('touchmove', function(e) {
         currentX = e.touches[0].clientX;
         let deltaX = currentX - startX;
-        if (deltaX < 0) { // apenas deslize à esquerda
+        if (deltaX < 0) { // somente deslize à esquerda
           element.style.transform = `translateX(${deltaX}px)`;
         }
       }, false);
@@ -189,14 +187,14 @@
       }, false);
     }
     
-    // Finaliza a compra e envia os dados via WhatsApp
+    // Finaliza a compra enviando os dados para o WhatsApp
     function finalizePurchase() {
       if (cart.length === 0) {
         alert("Seu carrinho está vazio!");
         return;
       }
       
-      let produtosTexto = "🛒 Produtos:\n";
+      let produtosTexto = "🛒 *Produtos:*\n";
       cart.forEach(item => {
         produtosTexto += `• ${item.name} - ${item.newPrice}\n`;
       });
@@ -209,12 +207,12 @@
       });
       produtosTexto += `\nTotal: R$ ${total.toFixed(2)}\n\n`;
       
-      // Como trabalha com infoprodutos digitais, a única forma de pagamento é Pix.
-      let pagamentoTexto = "💳 Forma de Pagamento: Pix\n🔑 Chave Pix: 65981321465";
+      // Como é infoproduto digital, a única forma de pagamento é Pix com a chave abaixo
+      let pagamentoTexto = "💳 *Forma de Pagamento:* Pix\n🔑 *Chave Pix:* 65981321465";
       
       let mensagem = "Olá! 😊\nGostaria de finalizar a compra dos seguintes produtos:\n\n" + produtosTexto + pagamentoTexto;
       
-      // Atualize o número de WhatsApp conforme solicitado
+      // Link do WhatsApp atualizado
       let url = "https://wa.me/5598984646631?text=" + encodeURIComponent(mensagem);
       window.open(url, "_blank");
     }
