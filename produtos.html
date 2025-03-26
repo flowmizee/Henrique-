@@ -85,7 +85,6 @@
       text-decoration: none;
       font-size: 1rem;
     }
-    /* Exibição da quantidade de itens no carrinho */
     #cart-count-display {
       text-align: center;
       margin: 10px 0;
@@ -103,14 +102,14 @@
     <div id="cart-count-display"></div>
     <div id="total" class="total"></div>
     
-    <!-- Botão que finaliza a compra diretamente -->
+    <!-- Botão para finalizar a compra -->
     <button class="checkout-btn" onclick="finalizePurchase()">Finalizar Compra</button>
     <!-- Link para voltar à página de produtos -->
     <a href="index.html" class="back-link">Voltar para Produtos</a>
   </div>
   
   <script>
-    // O carrinho utiliza as informações armazenadas no localStorage, enviadas pela página de produtos.
+    // Recupera os itens do carrinho do localStorage (salvos pela página de produtos)
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     
     // Renderiza os itens do carrinho, exibindo imagem, nome e preço
@@ -127,7 +126,7 @@
       
       let total = 0;
       cart.forEach((item, index) => {
-        // Remove qualquer formatação e converte para número (assumindo que o preço venha formatado)
+        // Extrai o valor numérico do Preço Novo (removendo formatação) e converte para número
         let price = item.newPrice.replace(/\D+/g, "");
         price = parseFloat(price) / 100;
         if (!isNaN(price)) total += price;
@@ -154,7 +153,7 @@
     function attachSwipeListeners(element) {
       let startX = 0;
       let currentX = 0;
-      const threshold = 100; // distância mínima para acionar a remoção
+      const threshold = 100;
       
       element.addEventListener('touchstart', function(e) {
         startX = e.touches[0].clientX;
@@ -164,7 +163,7 @@
       element.addEventListener('touchmove', function(e) {
         currentX = e.touches[0].clientX;
         let deltaX = currentX - startX;
-        if (deltaX < 0) { // somente deslize à esquerda
+        if (deltaX < 0) {
           element.style.transform = `translateX(${deltaX}px)`;
         }
       }, false);
@@ -187,7 +186,7 @@
       }, false);
     }
     
-    // Finaliza a compra enviando os dados para o WhatsApp
+    // Finaliza a compra enviando os dados via WhatsApp
     function finalizePurchase() {
       if (cart.length === 0) {
         alert("Seu carrinho está vazio!");
@@ -207,12 +206,11 @@
       });
       produtosTexto += `\nTotal: R$ ${total.toFixed(2)}\n\n`;
       
-      // Como é infoproduto digital, a única forma de pagamento é Pix com a chave abaixo
+      // Como se trata de infoprodutos digitais, a única forma de pagamento é Pix
       let pagamentoTexto = "💳 *Forma de Pagamento:* Pix\n🔑 *Chave Pix:* 65981321465";
       
       let mensagem = "Olá! 😊\nGostaria de finalizar a compra dos seguintes produtos:\n\n" + produtosTexto + pagamentoTexto;
       
-      // Link do WhatsApp atualizado
       let url = "https://wa.me/5598984646631?text=" + encodeURIComponent(mensagem);
       window.open(url, "_blank");
     }
