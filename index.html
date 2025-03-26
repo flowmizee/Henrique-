@@ -448,8 +448,8 @@
       let result = text;
       const mapping = {
         "packs de figurinhas": "packs de figurinhas",
-        "capcut pro": "capcut pro",
-        "canva pro": "canva pro"
+        "capcut pro": "capcut",
+        "canva pro": "canva"
       };
       for (let key in mapping) {
         const value = mapping[key];
@@ -457,10 +457,11 @@
       }
       return result;
     }
+    // Termos para o filtro de categorias
     const categoryTerms = {
       "Packs de Figurinhas": ["packs de figurinhas"],
-      "Capcut Pro": ["capcut pro"],
-      "Canva Pro": ["canva pro"]
+      "Capcut Pro": ["capcut"],
+      "Canva Pro": ["canva"]
     };
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     let allProducts = [];
@@ -646,5 +647,4 @@
     }
   </script>
 </body>
-  </html>
-  
+</html>
