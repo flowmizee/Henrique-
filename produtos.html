@@ -92,43 +92,6 @@
       font-size: 1.2rem;
       font-weight: bold;
     }
-    /* Container do formulário que desliza de baixo para cima */
-    #form-container {
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      height: 50vh;
-      background: #111;
-      transform: translateY(100%);
-      transition: transform 0.5s ease-out;
-      z-index: 1000;
-      padding: 20px;
-      box-sizing: border-box;
-      overflow-y: auto;
-    }
-    #form-container.show {
-      transform: translateY(0);
-    }
-    /* Formulário de entrega */
-    #delivery-form {
-      width: 100%;
-    }
-    #delivery-form label {
-      display: block;
-      margin-top: 10px;
-    }
-    #delivery-form input, 
-    #delivery-form select {
-      width: 100%;
-      padding: 8px;
-      margin-top: 5px;
-      border-radius: 4px;
-      border: 1px solid #333;
-      background: #000;
-      color: #fff;
-      box-sizing: border-box;
-    }
   </style>
 </head>
 <body>
@@ -140,50 +103,17 @@
     <div id="cart-count-display"></div>
     <div id="total" class="total"></div>
     
-    <!-- Botão que exibe o formulário -->
-    <button class="checkout-btn" onclick="showForm()">Finalizar Compra</button>
-    <!-- Esse link apenas navega de volta para a página de produtos -->
+    <!-- Botão que finaliza a compra diretamente -->
+    <button class="checkout-btn" onclick="finalizePurchase()">Finalizar Compra</button>
+    <!-- Link para voltar à página de produtos -->
     <a href="index.html" class="back-link">Voltar para Produtos</a>
-  </div>
-  
-  <!-- Container do formulário de entrega, inicialmente oculto -->
-  <div id="form-container">
-    <form id="delivery-form">
-      <label for="nome">Nome:</label>
-      <input type="text" id="nome" name="nome" required>
-      
-      <label for="estado">Estado:</label>
-      <input type="text" id="estado" name="estado" required>
-      
-      <label for="cidade">Cidade:</label>
-      <input type="text" id="cidade" name="cidade" required>
-      
-      <label for="endereco">Endereço:</label>
-      <input type="text" id="endereco" name="endereco" required>
-      
-      <label for="complemento">Complemento:</label>
-      <input type="text" id="complemento" name="complemento">
-      
-      <label for="ponto">Ponto de Referência:</label>
-      <input type="text" id="ponto" name="ponto">
-      
-      <label for="pagamento">Forma de Pagamento:</label>
-      <select id="pagamento" name="pagamento" required>
-        <option value="">Selecione</option>
-        <option value="pix">Pix</option>
-        <option value="credito">Cartão de Crédito</option>
-        <option value="debito">Cartão de Débito</option>
-      </select>
-    </form>
-    <!-- Botão para enviar o pedido -->
-    <button class="send-btn" onclick="finalizePurchase()">ENVIAR PEDIDO</button>
   </div>
   
   <script>
     // Recupera o carrinho salvo no localStorage
     let cart = JSON.parse(localStorage.getItem("cart")) || [];
     
-    // Renderiza os itens do carrinho e atualiza a quantidade exibida
+    // Renderiza os itens do carrinho e atualiza a quantidade e o total
     function renderCart() {
       const cartItemsContainer = document.getElementById("cart-items");
       cartItemsContainer.innerHTML = "";
@@ -197,6 +127,7 @@
       
       let total = 0;
       cart.forEach((item, index) => {
+        // Extrai o valor numérico do Preço Novo (assumindo que vem com formatação monetária)
         let price = item.newPrice.replace(/\D+/g, "");
         price = parseFloat(price) / 100;
         if (!isNaN(price)) {
@@ -211,7 +142,6 @@
           <div class="details">
             <h2>${item.name}</h2>
             <p>Preço: R$ ${price.toFixed(2)}</p>
-            <p>${item.parcelas ? item.parcelas : ""}</p>
           </div>
         `;
         cartItemsContainer.appendChild(itemDiv);
@@ -222,7 +152,7 @@
       document.getElementById("cart-count-display").innerText = "Itens no carrinho: " + cart.length;
     }
     
-    // Detecta o gesto de deslizar para a esquerda e remove o item
+    // Detecta gesto de deslizar para a esquerda e remove o item
     function attachSwipeListeners(element) {
       let startX = 0;
       let currentX = 0;
@@ -236,7 +166,7 @@
       element.addEventListener('touchmove', function(e) {
         currentX = e.touches[0].clientX;
         let deltaX = currentX - startX;
-        if (deltaX < 0) { // somente para deslize à esquerda
+        if (deltaX < 0) { // apenas deslize à esquerda
           element.style.transform = `translateX(${deltaX}px)`;
         }
       }, false);
@@ -259,74 +189,16 @@
       }, false);
     }
     
-    // Exibe o formulário deslizando de baixo para cima
-    function showForm() {
-      document.getElementById("form-container").classList.add("show");
-    }
-    
-    // Anexa eventos de swipe para fechar o formulário deslizando para baixo
-    function attachFormSwipe() {
-      const formContainer = document.getElementById("form-container");
-      let startY = 0;
-      let currentY = 0;
-      const threshold = 100; // distância mínima para acionar o fechamento
-      
-      formContainer.addEventListener('touchstart', function(e) {
-        startY = e.touches[0].clientY;
-        formContainer.style.transition = '';
-      }, false);
-      
-      formContainer.addEventListener('touchmove', function(e) {
-        currentY = e.touches[0].clientY;
-        let deltaY = currentY - startY;
-        if (deltaY > 0) { // apenas para deslizar para baixo
-          formContainer.style.transform = `translateY(${deltaY}px)`;
-        }
-      }, false);
-      
-      formContainer.addEventListener('touchend', function(e) {
-        let deltaY = currentY - startY;
-        if (deltaY > threshold) {
-          formContainer.style.transition = 'transform 0.3s ease-out';
-          formContainer.style.transform = 'translateY(100%)';
-          setTimeout(() => {
-            formContainer.classList.remove("show");
-            formContainer.style.transform = ''; // reseta a transformação
-          }, 300);
-        } else {
-          formContainer.style.transition = 'transform 0.3s ease-out';
-          formContainer.style.transform = 'translateY(0)';
-        }
-      }, false);
-    }
-    
-    // Finaliza a compra e envia os dados via WhatsApp com formatação ajustada para evitar erros de exibição
+    // Finaliza a compra e envia os dados via WhatsApp
     function finalizePurchase() {
-      const nome = document.getElementById("nome").value.trim();
-      const estado = document.getElementById("estado").value.trim();
-      const cidade = document.getElementById("cidade").value.trim();
-      const endereco = document.getElementById("endereco").value.trim();
-      const complemento = document.getElementById("complemento").value.trim();
-      const ponto = document.getElementById("ponto").value.trim();
-      const pagamento = document.getElementById("pagamento").value;
-      
-      if (!nome || !estado || !cidade || !endereco || !pagamento) {
-        alert("Por favor, preencha os campos obrigatórios do formulário.");
+      if (cart.length === 0) {
+        alert("Seu carrinho está vazio!");
         return;
       }
       
-      let pagamentoInfo = "";
-      if (pagamento === "pix") {
-        pagamentoInfo = "Forma de pagamento: Pix\nChave Pix: 98981420070";
-      } else if (pagamento === "credito") {
-        pagamentoInfo = "Forma de pagamento: Cartão de Crédito\nLink para Pagamento: https://link.mercadopago.com.br/flowmize";
-      } else if (pagamento === "debito") {
-        pagamentoInfo = "Forma de pagamento: Cartão de Débito\nLink para Pagamento: https://link.mercadopago.com.br/flowmize";
-      }
-      
-      let produtosTexto = "Produtos:\n";
+      let produtosTexto = "🛒 Produtos:\n";
       cart.forEach(item => {
-        produtosTexto += `- ${item.name} - Preço: ${item.newPrice}\n`;
+        produtosTexto += `• ${item.name} - ${item.newPrice}\n`;
       });
       
       let total = 0;
@@ -337,23 +209,17 @@
       });
       produtosTexto += `\nTotal: R$ ${total.toFixed(2)}\n\n`;
       
-      let entregaTexto = "Dados de Entrega:\n";
-      entregaTexto += `Nome: ${nome}\n`;
-      entregaTexto += `Estado: ${estado}\n`;
-      entregaTexto += `Cidade: ${cidade}\n`;
-      entregaTexto += `Endereço: ${endereco}\n`;
-      if (complemento) entregaTexto += `Complemento: ${complemento}\n`;
-      if (ponto) entregaTexto += `Ponto de Referência: ${ponto}\n`;
-      entregaTexto += pagamentoInfo + "\n";
+      // Como trabalha com infoprodutos digitais, a única forma de pagamento é Pix.
+      let pagamentoTexto = "💳 Forma de Pagamento: Pix\n🔑 Chave Pix: 65981321465";
       
-      let mensagem = "Olá, gostaria de finalizar a compra:\n\n" + produtosTexto + entregaTexto;
-      let url = "https://wa.me/98981729088?text=" + encodeURIComponent(mensagem);
+      let mensagem = "Olá! 😊\nGostaria de finalizar a compra dos seguintes produtos:\n\n" + produtosTexto + pagamentoTexto;
       
+      // Atualize o número de WhatsApp conforme solicitado
+      let url = "https://wa.me/5598984646631?text=" + encodeURIComponent(mensagem);
       window.open(url, "_blank");
     }
     
     renderCart();
-    attachFormSwipe();
   </script>
 </body>
 </html>
