@@ -218,7 +218,6 @@
       background-size: 10px 10px;
       padding-right: 30px;
     }
-    #order-by { cursor: default; }
     #product-count {
       display: block;
       text-align: center;
@@ -409,14 +408,11 @@
   </div>
   <!-- Área de Filtros -->
   <div id="filter-container">
-    <input type="text" id="order-by" class="filter-input" value="Ordenar por" readonly>
     <select id="category" class="filter-input" onchange="filterProducts()">
       <option value="all">Todos os Produtos</option>
-      <option value="Anéis">Anéis</option>
-      <option value="Pulseiras">Pulseiras</option>
-      <option value="Correntes">Correntes</option>
-      <option value="Brincos">Brincos</option>
-      <option value="Pingentes">Pingentes</option>
+      <option value="Packs de Figurinhas">Packs de Figurinhas</option>
+      <option value="Capcut Pro">Capcut Pro</option>
+      <option value="Canva Pro">Canva Pro</option>
     </select>
   </div>
   <!-- Quantidade de produtos -->
@@ -456,27 +452,24 @@
     // Converte termos para sua forma singular
     function singularize(text) {
       let result = text;
+      // Mapeamento atualizado para os nomes dos produtos
       const mapping = {
-        "aneis": "anel",
-        "pulseiras": "pulseira",
-        "correntes": "corrente",
-        "brincos": "brinco",
-        "pingentes": "pingente"
+        "packs de figurinhas": "packs de figurinhas",
+        "capcut pro": "capcut pro",
+        "canva pro": "canva pro"
       };
-      for (let plural in mapping) {
-        const singular = mapping[plural];
-        result = result.replace(new RegExp(plural, "gi"), singular);
+      for (let key in mapping) {
+        const value = mapping[key];
+        result = result.replace(new RegExp(key, "gi"), value);
       }
       return result;
     }
     
     // Termos por categoria (em forma singular)
     const categoryTerms = {
-      "Anéis": ["anel"],
-      "Pulseiras": ["pulseira"],
-      "Correntes": ["corrente"],
-      "Brincos": ["brinco"],
-      "Pingentes": ["pingente"]
+      "Packs de Figurinhas": ["packs de figurinhas"],
+      "Capcut Pro": ["capcut pro"],
+      "Canva Pro": ["canva pro"]
     };
     
     // Recupera o carrinho ou inicializa um array vazio
@@ -485,7 +478,7 @@
     let currentProduct = null;
     let currentProductImage = null;
     
-    // Atualiza a contagem no ícone do carrinho: agora usando visibility para não alterar o layout
+    // Atualiza a contagem no ícone do carrinho: usando visibility para não alterar o layout
     function updateCartCount() {
       const countElem = document.getElementById("cart-count");
       if (cart.length > 0) {
@@ -555,7 +548,7 @@
     }
     
     function addToCart(product, button) {
-      if(button) {
+      if (button) {
         button.classList.add("button-animate");
         setTimeout(() => button.classList.remove("button-animate"), 200);
       }
@@ -575,12 +568,9 @@
     }
     
     function handleBuy(product, button, productImg) {
-      if (singularize(normalizeText(product.Nome)).includes("anel")) {
-        showMeasureModal(product, productImg);
-      } else {
-        addToCart(product, button);
-        flyToCart(productImg);
-      }
+      // Caso haja alguma lógica específica para algum produto, pode-se ajustar aqui.
+      addToCart(product, button);
+      flyToCart(productImg);
     }
     
     function renderProducts(products) {
@@ -682,7 +672,7 @@
     }
     
     function continueToCart() {
-      if(currentProduct) {
+      if (currentProduct) {
         addToCart(currentProduct);
         if (currentProductImage) {
           flyToCart(currentProductImage);
