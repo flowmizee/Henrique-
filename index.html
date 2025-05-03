@@ -44,7 +44,6 @@
       color: #fff;
       box-sizing: border-box;
     }
-    /* mantém largura específica dos campos principais */
     #nome, #endereco, #whatsapp, #ponto-referencia {
       width: 100%;
     }
@@ -95,225 +94,146 @@
       width: 100%;
       border-radius: 5px;
     }
-    .dropdown.show .dropdown-content {
-      display: block;
-    }
+    .dropdown.show .dropdown-content { display: block; }
     .dropdown-content .close-btn {
-      position: absolute;
-      top: 2px;
-      right: 2px;
-      background: none;
-      font-size: 24px;
-      color: #fff;
+      position: absolute; top: 2px; right: 2px; background: none;
+      font-size: 24px; color: #fff;
     }
     .dropdown-header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 10px;
+      display: flex; align-items: center; margin-bottom: 10px;
     }
     .dropdown-header input {
-      width: calc(100% - 50px);
-      padding: 8px;
-      border-radius: 5px;
-      background-color: #3A0A50;
-      border: 1px solid #ccc;
-      color: #fff;
+      width: calc(100% - 50px); padding: 8px; border-radius: 5px;
+      background-color: #3A0A50; border: 1px solid #ccc; color: #fff;
       box-sizing: border-box;
     }
-    #product-list {
-      max-height: 200px;
-      overflow-y: auto;
-    }
+    #product-list { max-height: 200px; overflow-y: auto; }
     .product-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      display: flex; justify-content: space-between; align-items: center;
       margin-bottom: 10px;
     }
     .product-item .qty-controls {
-      display: flex;
-      align-items: center;
+      display: flex; align-items: center;
     }
     .product-item .qty-controls .qty-input {
-      width: 40px;
-      text-align: center;
-      margin: 0 10px;
-      background-color: #3A0A50;
-      border: 1px solid #444;
-      color: #fff;
-      border-radius: 5px;
+      width: 40px; text-align: center; margin: 0 10px;
+      background-color: #3A0A50; border: 1px solid #444;
+      color: #fff; border-radius: 5px;
     }
     .continuar-btn {
-      width: 100%;
-      padding: 12px 20px;
-      font-size: 16px;
-      margin-top: 10px;
+      width: 100%; padding: 12px 20px; font-size: 16px; margin-top: 10px;
     }
     .item-row {
-      position: relative;
-      background-color: #3A0A50;
-      border: 1px solid #444;
-      border-radius: 5px;
-      padding: 10px;
-      margin-bottom: 10px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
+      position: relative; background-color: #3A0A50; border: 1px solid #444;
+      border-radius: 5px; padding: 10px; margin-bottom: 10px;
+      display: flex; flex-direction: column; gap: 8px;
     }
     .item-row .remove-btn {
-      position: absolute;
-      top: 2px;
-      right: 2px;
-      background: none;
-      font-size: 24px;
-      color: #fff;
+      position: absolute; top: 2px; right: 2px; background: none;
+      font-size: 24px; color: #fff;
     }
-    .product-title {
-      font-weight: bold;
-      font-size: 1.1em;
-    }
+    .product-title { font-weight: bold; font-size: 1.1em; }
     .toggle-extras {
-      width: calc(100% - 20px);
-      height: 40px;
-      padding: 0 10px;
-      font-size: 16px;
-      text-align: left;
-      box-sizing: border-box;
+      width: calc(100% - 20px); height: 40px; padding: 0 10px;
+      font-size: 16px; text-align: left; box-sizing: border-box;
     }
     .item-row input[readonly] {
-      width: calc(100% - 20px);
-      height: 40px;
-      padding: 0 10px;
-      font-size: 16px;
-      box-sizing: border-box;
+      width: calc(100% - 20px); height: 40px; padding: 0 10px;
+      font-size: 16px; box-sizing: border-box;
     }
     .extras-dropdown {
-      display: none;
-      flex-direction: column;
-      gap: 5px;
-      margin-top: 5px;
-      padding: 10px;
-      background-color: #2C003E;
-      border-radius: 5px;
-      max-height: 120px;
-      overflow-y: auto;
+      display: none; flex-direction: column; gap: 5px; margin-top: 5px;
+      padding: 10px; background-color: #2C003E; border-radius: 5px;
+      max-height: 120px; overflow-y: auto;
     }
-    .extras-dropdown.show {
-      display: flex;
-    }
+    .extras-dropdown.show { display: flex; }
     .extra-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      display: flex; justify-content: space-between; align-items: center;
     }
     .extra-item .qty-controls {
-      display: inline-flex;
-      align-items: center;
-      flex-wrap: nowrap;
+      display: inline-flex; align-items: center; flex-wrap: nowrap;
     }
     .extra-item .qty-controls button {
-      height: 28px;
-      padding: 0 8px;
-      flex-shrink: 0;
+      height: 28px; padding: 0 8px; flex-shrink: 0;
     }
     .qty-input-extra {
-      width: 40px;
-      text-align: center;
-      margin: 0 5px;
-      height: 28px;
+      width: 40px; text-align: center; margin: 0 5px; height: 28px;
       flex-shrink: 0;
     }
-    #opcao-entrega {
-      text-align: center;
-      margin-bottom: 15px;
-    }
+    #opcao-entrega { text-align: center; margin-bottom: 15px; }
     #opcao-entrega button {
-      width: 45%;
-      margin: 0 2%;
-      padding: 10px;
-      font-size: 16px;
-      background-color: #fff;
-      color: #6A1B9A;
-      border: 1px solid #6A1B9A;
+      width: 45%; margin: 0 2%; padding: 10px; font-size: 16px;
+      background-color: #fff; color: #6A1B9A; border: 1px solid #6A1B9A;
       box-sizing: border-box;
     }
     #opcao-entrega button.selected {
-      background-color: #6A1B9A;
-      color: #fff;
+      background-color: #6A1B9A; color: #fff;
     }
-    form button[type="submit"],
-    .dropdown > button {
-      width: 100%;
-      padding: 12px 20px;
-      font-size: 16px;
+    form button[type="submit"], .dropdown > button {
+      width: 100%; padding: 12px 20px; font-size: 16px;
     }
   </style>
   <script>
-    let opcaoEntrega = "entrega",
-        entregaGratisAtivada = false,
-        mensagemExibida = false,
-        produtos = {},
-        fotos = [
+    let opcaoEntrega="entrega", entregaGratisAtivada=false, mensagemExibida=false,
+        produtos={}, fotos=[
           'https://files.catbox.moe/iyrspd.png',
           'https://files.catbox.moe/n1l144.png',
           'https://files.catbox.moe/5jchgk.png'
-        ],
-        fotoIndex = 0;
+        ], fotoIndex=0;
 
-    window.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('DOMContentLoaded',()=>{
       carregarProdutosDaPlanilha();
-      setInterval(() => {
-        fotoIndex = (fotoIndex + 1) % fotos.length;
-        document.getElementById('status-img').src = fotos[fotoIndex];
-      }, 3000);
+      setInterval(()=>{
+        fotoIndex=(fotoIndex+1)%fotos.length;
+        document.getElementById('status-img').src=fotos[fotoIndex];
+      },3000);
 
-      document.getElementById('itens-container').addEventListener('click', e => {
-        if (e.target.matches('.toggle-extras')) {
+      document.getElementById('itens-container').addEventListener('click',e=>{
+        if(e.target.matches('.toggle-extras')){
           e.target.nextElementSibling.classList.toggle('show');
         }
-        if (e.target.matches('.increase-extra, .decrease-extra')) {
-          const div = e.target.closest('.extra-item'),
-                inp = div.querySelector('.qty-input-extra'),
-                v = parseInt(inp.value) || 0;
-          inp.value = e.target.matches('.increase-extra') ? v + 1 : Math.max(0, v - 1);
+        if(e.target.matches('.increase-extra, .decrease-extra')){
+          const div=e.target.closest('.extra-item'),
+                inp=div.querySelector('.qty-input-extra'),
+                v=parseInt(inp.value)||0;
+          inp.value=e.target.matches('.increase-extra')?v+1:Math.max(0,v-1);
           atualizarPrecoTotal(inp);
         }
-        if (e.target.matches('.remove-btn')) {
+        if(e.target.matches('.remove-btn')){
           e.target.closest('.item-row').remove();
           calcularTotal();
         }
       });
     });
 
-    async function carregarProdutosDaPlanilha() {
-      const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQdgBk-3LeNnqODPocNVQy2bGzJbjtozTrAr7-BX51A7jClHGfAPEEZjy9zFop6d6HpB7O8-nTVHz9E/pub?output=csv";
-      const res = await fetch(url);
-      const csv = await res.text();
-      const lines = csv.split("\n").filter(l => l.trim());
+    async function carregarProdutosDaPlanilha(){
+      const url="https://docs.google.com/spreadsheets/d/e/2PACX-1vQdgBk-3LeNnqODPocNVQy2bGzJbjtozTrAr7-BX51A7jClHGfAPEEZjy9zFop6d6HpB7O8-nTVHz9E/pub?output=csv",
+            res=await fetch(url),
+            csv=await res.text(),
+            lines=csv.split("\n").filter(l=>l.trim());
       lines.shift();
-      produtos = {};
-      for (const l of lines) {
-        const c = l.split(",").map(x => x.trim()),
-              nome = c[0],
-              preco = parseFloat(c[1].replace(",", ".")) || 0,
-              desc = c[2],
-              adicion = [];
-        for (let i = 3; i < c.length; i += 2) {
-          if (c[i] && c[i+1]) adicion.push({ nome: c[i], preco: parseFloat(c[i+1].replace(",", ".")) || 0 });
+      produtos={};
+      for(const l of lines){
+        const c=l.split(",").map(x=>x.trim()),
+              nome=c[0],
+              preco=parseFloat(c[1].replace(",", "."))||0,
+              desc=c[2], adicion=[];
+        for(let i=3;i<c.length;i+=2){
+          if(c[i]&&c[i+1]) adicion.push({nome:c[i],preco:parseFloat(c[i+1].replace(",", "."))});
         }
-        produtos[nome] = { preco, descricao: desc, adicionais: adicion };
+        produtos[nome]={preco, descricao:desc, adicionais:adicion};
       }
       buildProductList();
     }
 
-    function buildProductList() {
-      const list = document.getElementById("product-list");
-      list.innerHTML = "";
-      Object.keys(produtos).forEach(p => {
-        const div = document.createElement("div");
-        div.className = "product-item";
-        div.dataset.product = p;
-        div.innerHTML = `
+    function buildProductList(){
+      const list=document.getElementById("product-list");
+      list.innerHTML="";
+      Object.keys(produtos).forEach(p=>{
+        const div=document.createElement("div");
+        div.className="product-item";
+        div.dataset.product=p;
+        div.innerHTML=`
           <span>${p} - R$ ${produtos[p].preco.toFixed(2)}</span>
           <div class="qty-controls">
             <button type="button" class="decrease">-</button>
@@ -322,40 +242,39 @@
           </div>`;
         list.appendChild(div);
       });
-      list.addEventListener('click', e => {
-        if (e.target.matches('.increase, .decrease')) {
-          const itm = e.target.closest('.product-item'),
-                inp = itm.querySelector('.qty-input'),
-                v = parseInt(inp.value) || 0;
-          inp.value = e.target.matches('.increase') ? v + 1 : Math.max(0, v - 1);
+      list.addEventListener('click',e=>{
+        if(e.target.matches('.increase, .decrease')){
+          const itm=e.target.closest('.product-item'),
+                inp=itm.querySelector('.qty-input'),
+                v=parseInt(inp.value)||0;
+          inp.value=e.target.matches('.increase')?v+1:Math.max(0,v-1);
         }
       });
     }
 
-    function toggleDropdown() {
+    function toggleDropdown(){
       document.getElementById('productDropdown').classList.toggle('show');
     }
 
-    // Função para rótulo dos extras
-    function getExtrasLabel(nome) {
-      const lower = nome.toLowerCase();
-      if (lower.includes("bola de sorvete"))   return "Escolher Bolas de Sorvete";
-      if (lower.includes("picolé"))            return "Sabores";
+    function getExtrasLabel(nome){
+      const lower=nome.toLowerCase();
+      if(lower.includes("sorvete")) return "Escolher Bolas";
+      if(lower.includes("picolé"))  return "Sabores";
       return "Adicionais";
     }
 
-    function confirmSelection() {
+    function confirmSelection(){
       toggleDropdown();
-      const cont = document.getElementById('itens-container');
-      cont.innerHTML = "";
-      document.querySelectorAll('.product-item').forEach(it => {
-        const nome = it.dataset.product,
-              qtd  = parseInt(it.querySelector('.qty-input').value) || 0;
-        for (let i = 0; i < qtd; i++) {
-          const row = document.createElement('div');
-          row.className = 'item-row';
-          const label = getExtrasLabel(nome);
-          row.innerHTML = `
+      const cont=document.getElementById('itens-container');
+      cont.innerHTML="";
+      document.querySelectorAll('.product-item').forEach(it=>{
+        const nome=it.dataset.product,
+              qtd=parseInt(it.querySelector('.qty-input').value)||0;
+        for(let i=0;i<qtd;i++){
+          const row=document.createElement('div');
+          row.className='item-row';
+          const label=getExtrasLabel(nome);
+          row.innerHTML=`
             <button type="button" class="remove-btn">×</button>
             <div class="product-title">${nome}</div>
             <button type="button" class="toggle-extras">${label}</button>
@@ -371,16 +290,15 @@
       calcularTotal();
     }
 
-    function buildExtras(container, nome) {
-      const itens = produtos[nome].adicionais;
-      if (!itens.length) return;
-      // só Açaí tem freebies; sorvetes, picolés e outros não mostram nada grátis
-      const free = nome.toLowerCase().includes("açaí")
-        ? (nome.includes("200ml") ? 2 : nome.includes("500ml") ? 5 : 3)
+    function buildExtras(container,nome){
+      const itens=produtos[nome].adicionais;
+      if(!itens.length) return;
+      const free=nome.toLowerCase().includes("açaí")
+        ? (nome.includes("200ml")?2:(nome.includes("500ml")?5:3))
         : 0;
-      let html = "";
-      if (free > 0) html += `<p>(${free} grátis)</p>`;
-      html += itens.map(e => `
+      let html="";
+      if(free>0) html+=`<p>(${free} grátis)</p>`;
+      html+=itens.map(e=>`
         <div class="extra-item" data-price="${e.preco}">
           <span>${e.nome} (R$ ${e.preco.toFixed(2)})</span>
           <div class="qty-controls">
@@ -389,71 +307,65 @@
             <button type="button" class="increase-extra">+</button>
           </div>
         </div>`).join("");
-      container.innerHTML = html;
+      container.innerHTML=html;
     }
 
-    function atualizarPrecoTotal(el) {
-      const row = el.closest('.item-row'),
-            nome = row.querySelector('.product-title').textContent,
-            base = produtos[nome].preco;
-      let cost = 0;
-      let free = nome.toLowerCase().includes("açaí")
-        ? (nome.includes("200ml") ? 2 : nome.includes("500ml") ? 5 : 3)
-        : 0;
-      row.querySelectorAll('.extra-item').forEach(div => {
-        const q = parseInt(div.querySelector('.qty-input-extra').value) || 0,
-              p = parseFloat(div.dataset.price),
-              used = Math.min(q, free);
-        free -= used;
-        cost += p * (q - used);
+    function atualizarPrecoTotal(el){
+      const row=el.closest('.item-row'),
+            nome=row.querySelector('.product-title').textContent,
+            base=produtos[nome].preco;
+      let cost=0,
+          free=nome.toLowerCase().includes("açaí")
+            ? (nome.includes("200ml")?2:(nome.includes("500ml")?5:3))
+            : 0;
+      row.querySelectorAll('.extra-item').forEach(div=>{
+        const q=parseInt(div.querySelector('.qty-input-extra').value)||0,
+              p=parseFloat(div.dataset.price),
+              used=Math.min(q,free);
+        free-=used;
+        cost+=p*(q-used);
       });
-      row.querySelector('input[readonly]').value = (base + cost).toFixed(2);
+      row.querySelector('input[readonly]').value=(base+cost).toFixed(2);
       calcularTotal();
     }
 
-    function calcularTotal() {
-      let sum = 0;
-      document.querySelectorAll('#itens-container input[readonly]').forEach(i => sum += parseFloat(i.value) || 0);
-      if (sum >= 20 && !mensagemExibida) {
+    function calcularTotal(){
+      let sum=0;
+      document.querySelectorAll('#itens-container input[readonly]').forEach(i=>sum+=parseFloat(i.value)||0);
+      if(sum>=20&&!mensagemExibida){
         alert("Parabéns! Você atingiu o valor mínimo para entrega grátis! A taxa de entrega não será cobrada.");
-        entregaGratisAtivada = true;
-        mensagemExibida = true;
+        entregaGratisAtivada=true; mensagemExibida=true;
       }
-      if (sum < 20) {
-        entregaGratisAtivada = false;
-        mensagemExibida = false;
-      }
-      const taxa = (opcaoEntrega === "retirada" || entregaGratisAtivada)
-        ? 0
-        : parseFloat(document.getElementById('taxa').value) || 0;
-      document.getElementById('total').value = (sum + taxa).toFixed(2);
+      if(sum<20){ entregaGratisAtivada=false; mensagemExibida=false; }
+      const taxa=(opcaoEntrega==="retirada"||entregaGratisAtivada)
+        ?0:parseFloat(document.getElementById('taxa').value)||0;
+      document.getElementById('total').value=(sum+taxa).toFixed(2);
     }
 
-    function selecionarOpcao(op) {
-      opcaoEntrega = op;
-      document.getElementById('btn-entrega').classList.toggle('selected', op === "entrega");
-      document.getElementById('btn-retirada').classList.toggle('selected', op === "retirada");
+    function selecionarOpcao(op){
+      opcaoEntrega=op;
+      document.getElementById('btn-entrega').classList.toggle('selected',op==="entrega");
+      document.getElementById('btn-retirada').classList.toggle('selected',op==="retirada");
       calcularTotal();
     }
 
-    function validaTelefone(t) {
-      const d = t.replace(/\D/g, "");
-      return d.length === 11 && d.charAt(2) === "9";
+    function validaTelefone(t){
+      const d=t.replace(/\D/g,"");
+      return d.length===11&&d.charAt(2)==="9";
     }
 
-    function registerOrder(data) {
-      const url = "https://script.google.com/macros/s/AKfycbwI23D0w5QmTTEW1QqP95rkfdBoRbQ_Xeq2lfC4iD8hxcUznueDfpNQWs3PmrIiMbcr/exec";
-      const qs = `?produtos=${encodeURIComponent(data.itens)}` +
-                 `&precoTotal=${encodeURIComponent(data.total)}` +
-                 `&nome=${encodeURIComponent(data.nome)}` +
-                 `&numero=${encodeURIComponent(data.telefone)}` +
-                 `&dataHora=${encodeURIComponent(data.dataHora)}`;
-      return fetch(url + qs);
+    function registerOrder(data){
+      const url="https://script.google.com/macros/s/AKfycbwI23D0w5QmTTEW1QqP95rkfdBoRbQ_Xeq2lfC4iD8hxcUznueDfpNQWs3PmrIiMbcr/exec",
+            qs=`?produtos=${encodeURIComponent(data.itens)}`+
+               `&precoTotal=${encodeURIComponent(data.total)}`+
+               `&nome=${encodeURIComponent(data.nome)}`+
+               `&numero=${encodeURIComponent(data.telefone)}`+
+               `&dataHora=${encodeURIComponent(data.dataHora)}`;
+      return fetch(url+qs);
     }
 
-    async function enviarPedido() {
-      // coletar dados...
-      // só abre WhatsApp após validar e registrar
+    async function enviarPedido(){
+      //...
     }
   </script>
 </head>
