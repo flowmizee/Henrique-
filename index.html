@@ -29,7 +29,11 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       color: #fff;
     }
-    label { font-weight: bold; margin-top: 10px; display: block; }
+    label {
+      font-weight: bold;
+      margin-top: 10px;
+      display: block;
+    }
     input, select, textarea {
       width: calc(100% - 20px);
       padding: 10px;
@@ -38,67 +42,153 @@
       border-radius: 5px;
       background-color: #3A0A50;
       color: #fff;
+      box-sizing: border-box;
+    }
+    #nome, #endereco, #whatsapp, #ponto-referencia {
+      width: 100%;
     }
     button {
-      padding: 8px 15px;
       background-color: #6A1B9A;
       color: #fff;
-      font-size: 14px;
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      box-sizing: border-box;
     }
     button:hover {
       background-color: #4A148C;
       transition: background-color .3s ease;
     }
-    .item-row button {
-      width: 32%;
-      padding: 8px 15px;
-      font-size: 14px;
+
+    .status-container {
+      max-width: 600px;
+      margin: 0 auto 20px;
+      overflow: hidden;
+      border-radius: 8px;
     }
-    .add-item button,
-    form button[type="submit"],
+    .status-container img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .dropdown {
+      position: relative;
+      margin: 0 auto 15px;
+      width: 100%;
+      max-width: 600px;
+    }
     .dropdown > button {
       width: 100%;
       padding: 12px 20px;
       font-size: 16px;
+      font-weight: bold;
     }
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #2C003E;
+      padding: 15px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      z-index: 2;
+      width: 100%;
+      border-radius: 5px;
+    }
+    .dropdown.show .dropdown-content {
+      display: block;
+    }
+    .dropdown-content .close-btn {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: none;
+      font-size: 24px;
+    }
+    .dropdown-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .dropdown-header input {
+      width: calc(100% - 50px);
+      padding: 8px;
+      border-radius: 5px;
+      background-color: #3A0A50;
+      border: 1px solid #ccc;
+      color: #fff;
+      box-sizing: border-box;
+    }
+    #product-list {
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    .product-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .product-item .qty-controls {
+      display: flex;
+      align-items: center;
+    }
+    .product-item .qty-controls .qty-input {
+      width: 40px;
+      text-align: center;
+      margin: 0 10px;
+      background-color: #3A0A50;
+      border: 1px solid #444;
+      color: #fff;
+      border-radius: 5px;
+    }
+    .continuar-btn {
+      width: 100%;
+      padding: 12px 20px;
+      font-size: 16px;
+      margin-top: 10px;
+    }
+
     .item-row {
+      position: relative;
+      background-color: #3A0A50;
+      border: 1px solid #444;
+      border-radius: 5px;
+      padding: 10px;
+      margin-bottom: 10px;
       display: flex;
       flex-direction: column;
       gap: 8px;
-      padding: 10px;
-      border: 1px solid #444;
-      margin-bottom: 10px;
-      background-color: #3A0A50;
-      border-radius: 5px;
-      position: relative;
     }
-    .remove-btn {
+    .item-row .remove-btn {
       position: absolute;
-      top: 5px;
-      right: 5px;
+      top: 2px;
+      right: 2px;
       background: none;
-      border: none;
-      color: #fff;
-      font-size: 18px;
-      cursor: pointer;
+      font-size: 24px;
     }
     .product-title {
       font-weight: bold;
       font-size: 1.1em;
     }
     .toggle-extras {
-      padding: 8px 15px;
-      background-color: #6A1B9A;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
+      width: calc(100% - 20px);
+      height: 40px;
+      padding: 0 10px;
+      font-size: 16px;
       text-align: left;
-      width: 100%;
+      box-sizing: border-box;
     }
+    .item-row input[readonly] {
+      width: calc(100% - 20px);
+      height: 40px;
+      padding: 0 10px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
     .extras-dropdown {
       display: none;
       flex-direction: column;
@@ -118,143 +208,25 @@
       justify-content: space-between;
       align-items: center;
     }
-    .extra-item select {
-      padding: 2px 6px;
-      font-size: 0.9em;
-      margin-left: 4px;
-    }
-    .qty-controls {
-      display: flex;
+    /* Ajuste: botões - e + sempre ao lado do número, sem quebra em celulares */
+    .extra-item .qty-controls {
+      display: inline-flex;
       align-items: center;
-      justify-content: center;
+      flex-wrap: nowrap;
     }
-    .qty-controls button {
+    .extra-item .qty-controls button {
+      height: 28px;
       padding: 0 8px;
-      background-color: #6A1B9A;
-      color: #fff;
-      border: none;
-      border-radius: 3px;
-      cursor: pointer;
-      height: 28px;
+      flex-shrink: 0;
     }
-    .qty-controls .qty-input-extra {
+    .qty-input-extra {
       width: 40px;
       text-align: center;
-      margin: 0 10px;
-      background-color: #3A0A50;
-      border: 1px solid #444;
-      color: #fff;
-      border-radius: 3px;
+      margin: 0 5px;
       height: 28px;
+      flex-shrink: 0;
     }
-    .obs-produto {
-      padding: 8px;
-      border: 1px solid #555;
-      border-radius: 5px;
-      background-color: #2C003E;
-      color: #fff;
-      resize: vertical;
-    }
-    .dropdown {
-      position: relative;
-      margin: 0 auto 15px;
-      width: 100%;
-      max-width: 600px;
-    }
-    .dropdown > button {
-      margin-bottom: 5px;
-    }
-    .dropdown-content {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #2C003E;
-      padding: 15px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      z-index: 2;
-      width: 100%;
-      border-radius: 5px;
-    }
-    .dropdown.show .dropdown-content {
-      display: block;
-    }
-    .close-btn {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: none;
-      border: none;
-      color: #fff;
-      font-size: 24px;
-      cursor: pointer;
-      z-index: 10;
-    }
-    .dropdown-header {
-      display: flex;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .dropdown-header input {
-      width: calc(100% - 50px);
-      padding: 8px;
-      border-radius: 5px;
-      background-color: #3A0A50;
-      color: #fff;
-      border: 1px solid #ccc;
-      margin-right: 0;
-    }
-    #product-list {
-      max-height: 200px;
-      overflow-y: auto;
-    }
-    .product-item {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 10px;
-    }
-    .product-item .qty-controls {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .product-item .qty-controls .qty-input {
-      width: 40px;
-      text-align: center;
-      background-color: #3A0A50;
-      border: 1px solid #444;
-      color: #fff;
-      border-radius: 5px;
-      margin: 0 10px;
-    }
-    .dropdown-content .continuar-btn {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      background-color: #6A1B9A;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    .dropdown-content .continuar-btn:hover {
-      background-color: #4A148C;
-      transition: background-color .3s ease;
-    }
-    .status-container {
-      max-width: 600px;
-      margin: 0 auto 20px;
-      overflow: hidden;
-      border-radius: 8px;
-    }
-    .status-container img {
-      width: 100%;
-      height: auto;
-      display: block;
-    }
+
     #opcao-entrega {
       text-align: center;
       margin-bottom: 15px;
@@ -267,12 +239,18 @@
       background-color: #fff;
       color: #6A1B9A;
       border: 1px solid #6A1B9A;
-      border-radius: 5px;
-      cursor: pointer;
+      box-sizing: border-box;
     }
     #opcao-entrega button.selected {
       background-color: #6A1B9A;
       color: #fff;
+    }
+
+    form button[type="submit"],
+    .dropdown > button {
+      width: 100%;
+      padding: 12px 20px;
+      font-size: 16px;
     }
   </style>
   <script>
@@ -291,14 +269,11 @@
       carregarProdutosDaPlanilha();
       setInterval(mostrarProximaFoto, 3000);
       document.getElementById('itens-container').addEventListener('click', e => {
-        if (e.target.matches('.toggle-extras')) {
-          e.target.nextElementSibling.classList.toggle('show');
-        }
+        if (e.target.matches('.toggle-extras')) e.target.nextElementSibling.classList.toggle('show');
         if (e.target.matches('.increase-extra, .decrease-extra')) {
-          const div = e.target.closest('.extra-item');
-          const inp = div.querySelector('.qty-input-extra');
-          let v = parseInt(inp.value) || 0;
-          inp.value = e.target.matches('.increase-extra') ? v + 1 : Math.max(0, v - 1);
+          const div = e.target.closest('.extra-item'), inp = div.querySelector('.qty-input-extra');
+          let v = parseInt(inp.value)||0;
+          inp.value = e.target.matches('.increase-extra') ? v+1 : Math.max(0, v-1);
           atualizarPrecoTotal(inp);
         }
         if (e.target.matches('.remove-btn')) {
@@ -310,37 +285,28 @@
     async function carregarProdutosDaPlanilha() {
       const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQdgBk-3LeNnqODPocNVQy2bGzJbjtozTrAr7-BX51A7jClHGfAPEEZjy9zFop6d6HpB7O8-nTVHz9E/pub?output=csv";
       const res = await fetch(url), csv = await res.text();
-      const lines = csv.split("\n").filter(l => l.trim());
-      lines.shift();
+      const lines = csv.split("\n").filter(l => l.trim()); lines.shift();
       lines.forEach(l => {
         const c = l.split(",").map(x => x.trim());
-        const nome = c[0], preco = parseFloat(c[1].replace(",", ".")) || 0, desc = c[2];
+        const nome = c[0], preco = parseFloat(c[1].replace(",", "."))||0;
         const add = [];
-        for (let i = 3; i < c.length; i += 2) {
-          if (c[i] && c[i+1]) add.push({ nome: c[i], preco: parseFloat(c[i+1].replace(",", ".")) || 0 });
-        }
-        produtos[nome] = { preco, descricao: desc, adicionais: add };
+        for (let i=3; i<c.length; i+=2) if(c[i]&&c[i+1]) add.push({nome:c[i],preco:parseFloat(c[i+1].replace(",", "."))||0});
+        produtos[nome]={preco,descricao:c[2],adicionais:add};
       });
       buildProductList();
       document.getElementById('search-produto').addEventListener('input', e => {
-        const t = e.target.value.toLowerCase();
-        document.querySelectorAll('.product-item').forEach(it =>
-          it.style.display = it.dataset.product.toLowerCase().includes(t) ? 'flex' : 'none'
+        const t=e.target.value.toLowerCase();
+        document.querySelectorAll('.product-item').forEach(it=>
+          it.style.display=it.dataset.product.toLowerCase().includes(t)?'flex':'none'
         );
       });
     }
-    function toggleDropdown() {
-      document.getElementById('productDropdown').classList.toggle('show');
-    }
-    function buildProductList() {
-      const list = document.getElementById("product-list");
-      list.innerHTML = "";
-      Object.keys(produtos).forEach(p => {
-        const d = document.createElement("div");
-        d.className = "product-item";
-        d.dataset.product = p;
-        d.innerHTML = `
-          <span>${p} - R$ ${produtos[p].preco.toFixed(2)}</span>
+    function toggleDropdown(){ document.getElementById('productDropdown').classList.toggle('show'); }
+    function buildProductList(){
+      const list=document.getElementById("product-list"); list.innerHTML="";
+      Object.keys(produtos).forEach(p=>{
+        const d=document.createElement("div"); d.className="product-item"; d.dataset.product=p;
+        d.innerHTML=`<span>${p} - R$ ${produtos[p].preco.toFixed(2)}</span>
           <div class="qty-controls">
             <button class="decrease">-</button>
             <input type="number" min="0" value="0" class="qty-input">
@@ -348,23 +314,22 @@
           </div>`;
         list.appendChild(d);
       });
-      list.addEventListener('click', e => {
-        if (e.target.matches('.increase, .decrease')) {
-          const itm = e.target.closest('.product-item'), inp = itm.querySelector('.qty-input'), v = parseInt(inp.value)||0;
-          inp.value = e.target.matches('.increase') ? v+1 : Math.max(0, v-1);
+      list.addEventListener('click', e=>{
+        if(e.target.matches('.increase, .decrease')){
+          const itm=e.target.closest('.product-item'), inp=itm.querySelector('.qty-input'), v=parseInt(inp.value)||0;
+          inp.value=e.target.matches('.increase')?v+1:Math.max(0,v-1);
         }
       });
     }
-    function confirmSelection() {
+    function confirmSelection(){
       toggleDropdown();
-      const cont = document.getElementById('itens-container');
-      cont.innerHTML = "";
-      document.querySelectorAll('.product-item').forEach(it => {
-        const nome = it.dataset.product, qtd = parseInt(it.querySelector('.qty-input').value)||0;
-        for (let i = 0; i < qtd; i++) {
-          const row = document.createElement('div');
-          row.className = 'item-row';
-          row.innerHTML = `
+      const cont=document.getElementById('itens-container');
+      cont.innerHTML="";
+      document.querySelectorAll('.product-item').forEach(it=>{
+        const nome=it.dataset.product, qtd=parseInt(it.querySelector('.qty-input').value)||0;
+        for(let i=0;i<qtd;i++){
+          const row=document.createElement('div'); row.className='item-row';
+          row.innerHTML=`
             <button class="remove-btn">×</button>
             <div class="product-title">${nome}</div>
             <button type="button" class="toggle-extras">Adicionais</button>
@@ -379,71 +344,44 @@
       });
       calcularTotal();
     }
-    function buildExtras(container, p) {
-      const itens = produtos[p].adicionais;
-      if (!itens.length) return;
-      const free = p.includes("Açaí")
-        ? (p.includes("200ml")?2:p.includes("500ml")?5:3)
-        : 3;
-      container.innerHTML = `<p>(${free} grátis)</p>` +
-        itens.map(e => `
-          <div class="extra-item" data-price="${e.preco}">
-            <span>${e.nome} (R$ ${e.preco.toFixed(2)})</span>
-            <div class="qty-controls">
-              <button class="decrease-extra">-</button>
-              <input type="number" min="0" value="0" class="qty-input-extra"/>
-              <button class="increase-extra">+</button>
-            </div>
+    function buildExtras(container,p){
+      const itens=produtos[p].adicionais; if(!itens.length) return;
+      const free=p.includes("Açaí")?(p.includes("200ml")?2:p.includes("500ml")?5:3):3;
+      container.innerHTML=`<p>(${free} grátis)</p>`+itens.map(e=>`
+        <div class="extra-item" data-price="${e.preco}">
+          <span>${e.nome} (R$ ${e.preco.toFixed(2)})</span>
+          <div class="qty-controls">
+            <button class="decrease-extra">-</button>
+            <input type="number" min="0" value="0" class="qty-input-extra"/>
+            <button class="increase-extra">+</button>
           </div>
-        `).join("");
+        </div>`).join("");
     }
-    function atualizarPrecoTotal(el) {
-      const row = el.closest('.item-row'),
-            nome = row.querySelector('.product-title').textContent,
-            base = produtos[nome].preco;
-      let cost = 0,
-          free = nome.includes("Açaí")
-            ? (nome.includes("200ml")?2:nome.includes("500ml")?5:3)
-            : 3;
-      row.querySelectorAll('.extra-item').forEach(div => {
-        const q = parseInt(div.querySelector('.qty-input-extra').value)||0,
-              p = parseFloat(div.dataset.price),
-              used = Math.min(q, free);
-        free -= used;
-        cost += p*(q-used);
+    function atualizarPrecoTotal(el){
+      const row=el.closest('.item-row'), nome=row.querySelector('.product-title').textContent, base=produtos[nome].preco;
+      let cost=0, free=nome.includes("Açaí")?(nome.includes("200ml")?2:nome.includes("500ml")?5:3):3;
+      row.querySelectorAll('.extra-item').forEach(div=>{
+        const q=parseInt(div.querySelector('.qty-input-extra').value)||0, p=parseFloat(div.dataset.price), used=Math.min(q,free);
+        free-=used; cost+=p*(q-used);
       });
-      row.querySelector('input[readonly]').value = (base + cost).toFixed(2);
+      row.querySelector('input[readonly]').value=(base+cost).toFixed(2);
       calcularTotal();
     }
-    function calcularTotal() {
-      let sum = 0;
-      document.querySelectorAll('#itens-container input[readonly]').forEach(i => {
-        sum += parseFloat(i.value)||0;
-      });
-      if (sum >= 20 && !mensagemExibida) {
-        alert("Parabéns! Entrega grátis ativada.");
-        entregaGratisAtivada = true;
-        mensagemExibida = true;
-      }
-      if (sum < 20) {
-        entregaGratisAtivada = false;
-        mensagemExibida = false;
-      }
-      const taxa = (opcaoEntrega === "retirada" || entregaGratisAtivada)
-        ? 0
-        : parseFloat(document.getElementById('taxa').value)||0;
-      document.getElementById('total').value = (sum + taxa).toFixed(2);
+    function calcularTotal(){
+      let sum=0;
+      document.querySelectorAll('#itens-container input[readonly]').forEach(i=>sum+=parseFloat(i.value)||0);
+      if(sum>=20&&!mensagemExibida){ alert("Parabéns! Entrega grátis ativada."); entregaGratisAtivada=true; mensagemExibida=true; }
+      if(sum<20){ entregaGratisAtivada=false; mensagemExibida=false; }
+      const taxa=(opcaoEntrega==="retirada"||entregaGratisAtivada)?0:parseFloat(document.getElementById('taxa').value)||0;
+      document.getElementById('total').value=(sum+taxa).toFixed(2);
     }
-    function selecionarOpcao(op) {
-      opcaoEntrega = op;
-      document.getElementById('btn-entrega').classList.toggle('selected', op === 'entrega');
-      document.getElementById('btn-retirada').classList.toggle('selected', op === 'retirada');
+    function selecionarOpcao(op){
+      opcaoEntrega=op;
+      document.getElementById('btn-entrega').classList.toggle('selected',op==="entrega");
+      document.getElementById('btn-retirada').classList.toggle('selected',op==="retirada");
       calcularTotal();
     }
-    function enviarPedido() {
-      // Lógica de envio (AJAX, alert, etc.) conforme sua implementação original
-      alert("Pedido enviado com sucesso!");
-    }
+    function enviarPedido(){ alert("Pedido enviado com sucesso!"); }
   </script>
 </head>
 <body>
@@ -452,18 +390,22 @@
   </div>
   <form onsubmit="event.preventDefault(); enviarPedido();">
     <h1>PEDIDO 🟣🍨🧊</h1>
+
     <label for="nome">Nome do Cliente:</label>
     <input type="text" id="nome" required placeholder="Digite seu nome">
+
     <label for="endereco">Endereço de Entrega:</label>
     <input type="text" id="endereco" placeholder="Cidade, Bairro, Rua, Número">
+
     <label for="whatsapp">WhatsApp:</label>
     <input type="text" id="whatsapp" required placeholder="(xx) 9xxxx-xxxx">
+
     <label for="ponto-referencia">Ponto de Referência:</label>
     <input type="text" id="ponto-referencia" placeholder="Ex: Em frente à padaria">
 
     <label>Itens do Pedido:</label>
     <div class="dropdown" id="productDropdown">
-      <button type="button" onclick="toggleDropdown()">Selecionar Produtos</button>
+      <button type="button" onclick="toggleDropdown()"><strong>Selecionar Produtos</strong></button>
       <div class="dropdown-content">
         <button type="button" class="close-btn" onclick="toggleDropdown()">×</button>
         <div class="dropdown-header">
@@ -473,10 +415,12 @@
         <button type="button" class="continuar-btn" onclick="confirmSelection()">Continuar</button>
       </div>
     </div>
+
     <div id="itens-container"></div>
 
     <label for="taxa">Taxa de Entrega (R$):</label>
     <input type="number" id="taxa" readonly value="2.00">
+
     <label for="pagamento">Forma de Pagamento:</label>
     <select id="pagamento" required>
       <option>Dinheiro</option>
@@ -484,6 +428,7 @@
       <option>Cartão de Débito</option>
       <option>PIX</option>
     </select>
+
     <label for="observacoes">Observações Gerais:</label>
     <textarea id="observacoes" rows="4" placeholder="Observações"></textarea>
 
@@ -495,6 +440,7 @@
 
     <label for="total">Total:</label>
     <input type="number" id="total" readonly placeholder="Total do Pedido">
+
     <button type="submit">Enviar Pedido</button>
   </form>
 </body>
