@@ -14,163 +14,108 @@
         rgba(255,255,255,0.3) 20%, rgba(255,255,255,0) 100%);
       background-size: cover;
     }
-    h1 {
-      text-align: center;
-      color: #fff;
-      font-weight: bold;
-      font-size: 36px;
-    }
+    h1 { text-align: center; color: #fff; font-weight: bold; font-size:36px; }
     form {
-      max-width: 600px;
-      margin: 5px auto;
-      padding: 20px;
-      background-color: #2C003E;
-      border-radius: 10px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      color: #fff;
+      max-width:600px; margin:5px auto; padding:20px;
+      background-color:#2C003E; border-radius:10px;
+      box-shadow:0 4px 8px rgba(0,0,0,0.1); color:#fff;
     }
-    label {
-      font-weight: bold;
-      margin-top: 10px;
-      display: block;
-    }
+    label { font-weight:bold; margin-top:10px; display:block; }
     input, select, textarea {
-      width: calc(100% - 20px);
-      padding: 10px;
-      margin: 5px 0 15px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      background-color: #3A0A50;
-      color: #fff;
-      box-sizing: border-box;
+      width:calc(100% - 20px); padding:10px;
+      margin:5px 0 15px; border:1px solid #ccc;
+      border-radius:5px; background-color:#3A0A50;
+      color:#fff; box-sizing:border-box;
     }
-    #nome, #endereco, #whatsapp, #ponto-referencia {
-      width: 100%;
-    }
+    #nome,#endereco,#whatsapp,#ponto-referencia { width:100%; }
     button {
-      background-color: #6A1B9A;
-      color: #fff;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      box-sizing: border-box;
+      background-color:#6A1B9A; color:#fff;
+      border:none; border-radius:5px; cursor:pointer;
+      box-sizing:border-box;
     }
-    button:hover {
-      background-color: #4A148C;
-      transition: background-color .3s ease;
-    }
-    .status-container {
-      max-width: 600px;
-      margin: 0 auto 20px;
-      overflow: hidden;
-      border-radius: 8px;
-    }
-    .status-container img {
-      width: 100%;
-      display: block;
-    }
+    button:hover { background-color:#4A148C; transition:background-color .3s; }
+    .status-container { max-width:600px; margin:0 auto 20px; border-radius:8px; overflow:hidden; }
+    .status-container img { width:100%; display:block; }
     .dropdown {
-      position: relative;
-      margin: 0 auto 15px;
-      width: 100%;
-      max-width: 600px;
+      position:relative; margin:0 auto 15px;
+      width:100%; max-width:600px;
     }
-    .dropdown > button {
-      width: 100%;
-      padding: 12px 20px;
-      font-size: 16px;
-      font-weight: bold;
+    .dropdown>button {
+      width:100%; padding:12px 20px; font-size:16px; font-weight:bold;
     }
     .dropdown-content {
-      display: none;
-      position: absolute;
-      top: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      background-color: #2C003E;
-      padding: 15px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      z-index: 2;
-      width: 100%;
-      border-radius: 5px;
+      display:none; position:absolute; top:100%;
+      left:50%; transform:translateX(-50%);
+      background-color:#2C003E; padding:15px;
+      box-shadow:0 4px 8px rgba(0,0,0,0.1);
+      z-index:2; width:100%; border-radius:5px;
     }
-    .dropdown.show .dropdown-content { display: block; }
+    .dropdown.show .dropdown-content { display:block; }
     .dropdown-content .close-btn {
-      position: absolute; top: 2px; right: 2px; background: none;
-      font-size: 24px; color: #fff;
+      position:absolute; top:2px; right:2px; background:none;
+      font-size:24px; color:#fff;
     }
-    .dropdown-header {
-      display: flex; align-items: center; margin-bottom: 10px;
-    }
+    .dropdown-header { display:flex; align-items:center; margin-bottom:10px; }
     .dropdown-header input {
-      width: calc(100% - 50px); padding: 8px; border-radius: 5px;
-      background-color: #3A0A50; border: 1px solid #ccc; color: #fff;
-      box-sizing: border-box;
+      width:calc(100% - 50px); padding:8px; border-radius:5px;
+      background-color:#3A0A50; border:1px solid #ccc; color:#fff;
+      box-sizing:border-box;
     }
-    #product-list { max-height: 200px; overflow-y: auto; }
+    #product-list { max-height:200px; overflow-y:auto; }
     .product-item {
-      display: flex; justify-content: space-between; align-items: center;
-      margin-bottom: 10px;
+      display:flex; justify-content:space-between; align-items:center;
+      margin-bottom:10px;
     }
-    .product-item .qty-controls {
-      display: flex; align-items: center;
-    }
-    .product-item .qty-controls .qty-input {
-      width: 40px; text-align: center; margin: 0 10px;
-      background-color: #3A0A50; border: 1px solid #444;
-      color: #fff; border-radius: 5px;
+    .qty-controls { display:flex; align-items:center; }
+    .qty-input {
+      width:40px; text-align:center; margin:0 10px;
+      background-color:#3A0A50; border:1px solid #444;
+      color:#fff; border-radius:5px;
     }
     .continuar-btn {
-      width: 100%; padding: 12px 20px; font-size: 16px; margin-top: 10px;
+      width:100%; padding:12px 20px; font-size:16px; margin-top:10px;
     }
     .item-row {
-      position: relative; background-color: #3A0A50; border: 1px solid #444;
-      border-radius: 5px; padding: 10px; margin-bottom: 10px;
-      display: flex; flex-direction: column; gap: 8px;
+      position:relative; background-color:#3A0A50; border:1px solid #444;
+      border-radius:5px; padding:10px; margin-bottom:10px;
+      display:flex; flex-direction:column; gap:8px;
     }
     .item-row .remove-btn {
-      position: absolute; top: 2px; right: 2px; background: none;
-      font-size: 24px; color: #fff;
+      position:absolute; top:2px; right:2px; background:none;
+      font-size:24px; color:#fff;
     }
-    .product-title { font-weight: bold; font-size: 1.1em; }
+    .product-title { font-weight:bold; font-size:1.1em; }
     .toggle-extras {
-      width: calc(100% - 20px); height: 40px; padding: 0 10px;
-      font-size: 16px; text-align: left; box-sizing: border-box;
+      width:calc(100% - 20px); height:40px; padding:0 10px;
+      font-size:16px; text-align:left; box-sizing:border-box;
     }
     .item-row input[readonly] {
-      width: calc(100% - 20px); height: 40px; padding: 0 10px;
-      font-size: 16px; box-sizing: border-box;
+      width:calc(100% - 20px); height:40px; padding:0 10px;
+      font-size:16px; box-sizing:border-box;
     }
     .extras-dropdown {
-      display: none; flex-direction: column; gap: 5px; margin-top: 5px;
-      padding: 10px; background-color: #2C003E; border-radius: 5px;
-      max-height: 120px; overflow-y: auto;
+      display:none; flex-direction:column; gap:5px; margin-top:5px;
+      padding:10px; background-color:#2C003E; border-radius:5px;
+      max-height:120px; overflow-y:auto;
     }
-    .extras-dropdown.show { display: flex; }
+    .extras-dropdown.show { display:flex; }
     .extra-item {
-      display: flex; justify-content: space-between; align-items: center;
+      display:flex; justify-content:space-between; align-items:center;
     }
-    .extra-item .qty-controls {
-      display: inline-flex; align-items: center; flex-wrap: nowrap;
-    }
-    .extra-item .qty-controls button {
-      height: 28px; padding: 0 8px; flex-shrink: 0;
-    }
+    .extra-item .qty-controls { display:inline-flex; align-items:center; flex-wrap:nowrap; }
+    .extra-item .qty-controls button { height:28px; padding:0 8px; flex-shrink:0; }
     .qty-input-extra {
-      width: 40px; text-align: center; margin: 0 5px; height: 28px;
-      flex-shrink: 0;
+      width:40px; text-align:center; margin:0 5px; height:28px; flex-shrink:0;
     }
-    #opcao-entrega { text-align: center; margin-bottom: 15px; }
+    #opcao-entrega { text-align:center; margin-bottom:15px; }
     #opcao-entrega button {
-      width: 45%; margin: 0 2%; padding: 10px; font-size: 16px;
-      background-color: #fff; color: #6A1B9A; border: 1px solid #6A1B9A;
-      box-sizing: border-box;
+      width:45%; margin:0 2%; padding:10px; font-size:16px;
+      background-color:#fff; color:#6A1B9A; border:1px solid #6A1B9A;
+      box-sizing:border-box;
     }
-    #opcao-entrega button.selected {
-      background-color: #6A1B9A; color: #fff;
-    }
-    form button[type="submit"], .dropdown > button {
-      width: 100%; padding: 12px 20px; font-size: 16px;
+    #opcao-entrega button.selected { background-color:#6A1B9A; color:#fff; }
+    form button[type="submit"], .dropdown>button {
+      width:100%; padding:12px 20px; font-size:16px;
     }
   </style>
   <script>
@@ -187,7 +132,6 @@
         fotoIndex=(fotoIndex+1)%fotos.length;
         document.getElementById('status-img').src=fotos[fotoIndex];
       },3000);
-
       document.getElementById('itens-container').addEventListener('click',e=>{
         if(e.target.matches('.toggle-extras')){
           e.target.nextElementSibling.classList.toggle('show');
@@ -211,17 +155,15 @@
             res=await fetch(url),
             csv=await res.text(),
             lines=csv.split("\n").filter(l=>l.trim());
-      lines.shift();
-      produtos={};
+      lines.shift(); produtos={};
       for(const l of lines){
-        const c=l.split(",").map(x=>x.trim()),
-              nome=c[0],
+        const c=l.split(",").map(x=>x.trim()), nome=c[0],
               preco=parseFloat(c[1].replace(",", "."))||0,
               desc=c[2], adicion=[];
         for(let i=3;i<c.length;i+=2){
           if(c[i]&&c[i+1]) adicion.push({nome:c[i],preco:parseFloat(c[i+1].replace(",", "."))});
         }
-        produtos[nome]={preco, descricao:desc, adicionais:adicion};
+        produtos[nome]={preco,descricao:desc,adicionais:adicion};
       }
       buildProductList();
     }
@@ -231,8 +173,7 @@
       list.innerHTML="";
       Object.keys(produtos).forEach(p=>{
         const div=document.createElement("div");
-        div.className="product-item";
-        div.dataset.product=p;
+        div.className="product-item"; div.dataset.product=p;
         div.innerHTML=`
           <span>${p} - R$ ${produtos[p].preco.toFixed(2)}</span>
           <div class="qty-controls">
@@ -259,7 +200,7 @@
     function getExtrasLabel(nome){
       const lower=nome.toLowerCase();
       if(lower.includes("sorvete")) return "Escolher Bolas";
-      if(lower.includes("picolé"))  return "Sabores";
+      if(lower.includes("picolé")) return "Sabores";
       return "Adicionais";
     }
 
@@ -283,7 +224,7 @@
             <textarea class="obs-produto" placeholder="Observações do produto"></textarea>
           `;
           cont.appendChild(row);
-          buildExtras(row.querySelector('.extras-dropdown'), nome);
+          buildExtras(row.querySelector('.extras-dropdown'),nome);
           atualizarPrecoTotal(row.querySelector('input'));
         }
       });
@@ -293,7 +234,7 @@
     function buildExtras(container,nome){
       const itens=produtos[nome].adicionais;
       if(!itens.length) return;
-      const free=nome.toLowerCase().includes("açaí")
+      const free= nome.toLowerCase().includes("açaí")
         ? (nome.includes("200ml")?2:(nome.includes("500ml")?5:3))
         : 0;
       let html="";
@@ -313,9 +254,10 @@
     function atualizarPrecoTotal(el){
       const row=el.closest('.item-row'),
             nome=row.querySelector('.product-title').textContent,
-            base=produtos[nome].preco;
+            isSorvete=nome.toLowerCase().includes("sorvete"),
+            base=isSorvete?0:produtos[nome].preco;
       let cost=0,
-          free=nome.toLowerCase().includes("açaí")
+          free= nome.toLowerCase().includes("açaí")
             ? (nome.includes("200ml")?2:(nome.includes("500ml")?5:3))
             : 0;
       row.querySelectorAll('.extra-item').forEach(div=>{
@@ -333,12 +275,11 @@
       let sum=0;
       document.querySelectorAll('#itens-container input[readonly]').forEach(i=>sum+=parseFloat(i.value)||0);
       if(sum>=20&&!mensagemExibida){
-        alert("Parabéns! Você atingiu o valor mínimo para entrega grátis! A taxa de entrega não será cobrada.");
+        alert("Entrega grátis ativada!");
         entregaGratisAtivada=true; mensagemExibida=true;
       }
       if(sum<20){ entregaGratisAtivada=false; mensagemExibida=false; }
-      const taxa=(opcaoEntrega==="retirada"||entregaGratisAtivada)
-        ?0:parseFloat(document.getElementById('taxa').value)||0;
+      const taxa=(opcaoEntrega==="retirada"||entregaGratisAtivada)?0:parseFloat(document.getElementById('taxa').value)||0;
       document.getElementById('total').value=(sum+taxa).toFixed(2);
     }
 
@@ -350,23 +291,10 @@
     }
 
     function validaTelefone(t){
-      const d=t.replace(/\D/g,"");
-      return d.length===11&&d.charAt(2)==="9";
+      const d=t.replace(/\D/g,""); return d.length===11&&d.charAt(2)==="9";
     }
 
-    function registerOrder(data){
-      const url="https://script.google.com/macros/s/AKfycbwI23D0w5QmTTEW1QqP95rkfdBoRbQ_Xeq2lfC4iD8hxcUznueDfpNQWs3PmrIiMbcr/exec",
-            qs=`?produtos=${encodeURIComponent(data.itens)}`+
-               `&precoTotal=${encodeURIComponent(data.total)}`+
-               `&nome=${encodeURIComponent(data.nome)}`+
-               `&numero=${encodeURIComponent(data.telefone)}`+
-               `&dataHora=${encodeURIComponent(data.dataHora)}`;
-      return fetch(url+qs);
-    }
-
-    async function enviarPedido(){
-      //...
-    }
+    async function enviarPedido(){ /*...*/ }
   </script>
 </head>
 <body>
@@ -375,24 +303,19 @@
   </div>
   <form onsubmit="event.preventDefault(); enviarPedido();">
     <h1>PEDIDO 🟣🍨🧊</h1>
-
     <label for="nome">Nome do Cliente:</label>
     <input type="text" id="nome" required placeholder="Digite seu nome">
-
     <label for="endereco">Endereço de Entrega:</label>
     <input type="text" id="endereco" placeholder="Cidade, Bairro, Rua, Número">
-
     <label for="whatsapp">WhatsApp:</label>
     <input type="text" id="whatsapp" required placeholder="(xx) 9xxxx-xxxx">
-
     <label for="ponto-referencia">Ponto de Referência:</label>
     <input type="text" id="ponto-referencia" placeholder="Ex: Em frente à padaria">
-
     <label>Itens do Pedido:</label>
     <div class="dropdown" id="productDropdown">
       <button type="button" onclick="toggleDropdown()"><strong>Selecionar Produtos</strong></button>
       <div class="dropdown-content">
-        <button type="button" class="close-btn" onclick="toggleDropdown()">×</button>
+        <button class="close-btn" onclick="toggleDropdown()">×</button>
         <div class="dropdown-header">
           <input type="text" id="search-produto" placeholder="Pesquisar produto">
         </div>
@@ -401,30 +324,22 @@
       </div>
     </div>
     <div id="itens-container"></div>
-
     <label for="taxa">Taxa de Entrega (R$):</label>
     <input type="number" id="taxa" readonly value="2.00">
-
     <label for="pagamento">Forma de Pagamento:</label>
     <select id="pagamento" required>
-      <option>Dinheiro</option>
-      <option>Cartão de Crédito</option>
-      <option>Cartão de Débito</option>
-      <option>PIX</option>
+      <option>Dinheiro</option><option>Cartão de Crédito</option>
+      <option>Cartão de Débito</option><option>PIX</option>
     </select>
-
     <label for="observacoes">Observações:</label>
     <textarea id="observacoes" rows="4" placeholder="Observações gerais"></textarea>
-
     <label>Opção:</label>
     <div id="opcao-entrega">
-      <button type="button" id="btn-entrega" onclick="selecionarOpcao('entrega')" class="selected">Entrega</button>
-      <button type="button" id="btn-retirada" onclick="selecionarOpcao('retirada')">Retirada</button>
+      <button id="btn-entrega" type="button" onclick="selecionarOpcao('entrega')" class="selected">Entrega</button>
+      <button id="btn-retirada" type="button" onclick="selecionarOpcao('retirada')">Retirada</button>
     </div>
-
     <label for="total">Total:</label>
     <input type="number" id="total" readonly placeholder="Total do Pedido">
-
     <button type="submit">Enviar Pedido</button>
   </form>
 </body>
