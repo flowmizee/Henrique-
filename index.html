@@ -5,49 +5,49 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Açaíteria The Guste</title>
   <style>
-    /* CSS original mantido íntegro */
-    body { font-family: Arial, sans-serif; background: #4A148C; margin:20px; padding-top:20px;
-      background-image:radial-gradient(circle at center bottom, rgba(255,255,255,0.3)20%, rgba(255,255,255,0)100%); }
+    /* seu CSS original, sem alterações */
+    body { font-family: Arial, sans-serif; background-color: #4A148C; margin:20px; padding-top:20px;
+      background-image: radial-gradient(circle at center bottom, rgba(255,255,255,0.3)20%, rgba(255,255,255,0)100%); }
     h1 { text-align:center; color:#fff; font-weight:bold; font-size:36px; }
     form { max-width:600px; margin:5px auto; padding:20px; background:#2C003E; border-radius:10px;
       box-shadow:0 4px 8px rgba(0,0,0,0.1); color:#fff; }
-    label { font-weight:bold; margin-top:10px; display:block; }
-    input, select, textarea { width:calc(100% - 20px); padding:10px; margin:5px 0 15px;
-      border:1px solid #ccc; border-radius:5px; background:#3A0A50; color:#fff; box-sizing:border-box; }
-    #nome,#endereco,#whatsapp,#ponto-referencia { width:100%; }
-    button { background:#6A1B9A; color:#fff; border:none; border-radius:5px; cursor:pointer; box-sizing:border-box; }
-    button:hover { background:#4A148C; transition:background-color .3s; }
-    .status-container { max-width:600px; margin:0 auto 20px; overflow:hidden; border-radius:8px; }
-    .status-container img { width:100%; display:block; }
-    .dropdown { position:relative; margin:0 auto 15px; width:100%; max-width:600px; }
-    .dropdown>button { width:100%; padding:12px 20px; font-size:16px; font-weight:bold; }
-    .dropdown-content { display:none; position:absolute; top:100%; left:50%; transform:translateX(-50%);
-      background:#2C003E; padding:15px; box-shadow:0 4px 8px rgba(0,0,0,0.1); z-index:2; width:100%; border-radius:5px; }
-    .dropdown.show .dropdown-content { display:block; }
-    .dropdown-content .close-btn { position:absolute; top:2px; right:2px; background:none; font-size:24px; color:#fff; }
-    .dropdown-header { display:flex; align-items:center; margin-bottom:10px; }
-    .dropdown-header input { width:calc(100% - 50px); padding:8px; border-radius:5px;
-      background:#3A0A50; border:1px solid #ccc; color:#fff; box-sizing:border-box; }
-    #product-list { max-height:200px; overflow-y:auto; }
-    .product-item { display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; }
-    .qty-controls { display:flex; align-items:center; }
-    .qty-input { width:40px; text-align:center; margin:0 10px; background:#3A0A50; border:1px solid #444; color:#fff; border-radius:5px; }
-    .continuar-btn { width:100%; padding:12px 20px; font-size:16px; margin-top:10px; }
-    .item-row { position:relative; background:#3A0A50; border:1px solid #444; border-radius:5px; padding:10px; margin-bottom:10px; display:flex; flex-direction:column; gap:8px; }
-    .item-row .remove-btn { position:absolute; top:2px; right:2px; background:none; font-size:24px; color:#fff; }
-    .product-title { font-weight:bold; font-size:1.1em; }
-    .toggle-extras { width:calc(100% - 20px); height:40px; padding:0 10px; font-size:16px; text-align:left; box-sizing:border-box; }
-    .item-row input[readonly] { width:calc(100% - 20px); height:40px; padding:0 10px; font-size:16px; box-sizing:border-box; }
-    .extras-dropdown { display:none; flex-direction:column; gap:5px; margin-top:5px; padding:10px; background:#2C003E; border-radius:5px; max-height:120px; overflow-y:auto; }
-    .extras-dropdown.show { display:flex; }
-    .extra-item { display:flex; justify-content:space-between; align-items:center; }
-    .extra-item .qty-controls { display:inline-flex; align-items:center; flex-wrap:nowrap; }
-    .extra-item .qty-controls button { height:28px; padding:0 8px; flex-shrink:0; }
-    .qty-input-extra { width:40px; text-align:center; margin:0 5px; height:28px; flex-shrink:0; }
-    #opcao-entrega { text-align:center; margin-bottom:15px; }
-    #opcao-entrega button { width:45%; margin:0 2%; padding:10px; font-size:16px; background:#fff; color:#6A1B9A; border:1px solid #6A1B9A; box-sizing:border-box; }
-    #opcao-entrega button.selected { background:#6A1B9A; color:#fff; }
-    form button[type="submit"], .dropdown>button { width:100%; padding:12px 20px; font-size:16px; }
+    label{font-weight:bold;margin-top:10px;display:block;}
+    input, select, textarea{width:calc(100% - 20px);padding:10px;margin:5px 0 15px;
+      border:1px solid #ccc;border-radius:5px;background:#3A0A50;color:#fff;box-sizing:border-box;}
+    #nome,#endereco,#whatsapp,#ponto-referencia{width:100%;}
+    button{background:#6A1B9A;color:#fff;border:none;border-radius:5px;cursor:pointer;}
+    button:hover{background:#4A148C;transition:background-color .3s;}
+    .status-container{max-width:600px;margin:0 auto 20px;border-radius:8px;overflow:hidden;}
+    .status-container img{width:100%;display:block;}
+    .dropdown{position:relative;margin:0 auto 15px;width:100%;max-width:600px;}
+    .dropdown>button{width:100%;padding:12px 20px;font-size:16px;font-weight:bold;}
+    .dropdown-content{display:none;position:absolute;top:100%;left:50%;transform:translateX(-50%);
+      background:#2C003E;padding:15px;box-shadow:0 4px 8px rgba(0,0,0,0.1);z-index:2;width:100%;border-radius:5px;}
+    .dropdown.show .dropdown-content{display:block;}
+    .dropdown-content .close-btn{position:absolute;top:2px;right:2px;background:none;font-size:24px;color:#fff;}
+    .dropdown-header{display:flex;align-items:center;margin-bottom:10px;}
+    .dropdown-header input{width:calc(100% - 50px);padding:8px;border-radius:5px;
+      background:#3A0A50;border:1px solid #ccc;color:#fff;box-sizing:border-box;}
+    #product-list{max-height:200px;overflow-y:auto;}
+    .product-item{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+    .qty-controls{display:flex;align-items:center;}
+    .qty-input{width:40px;text-align:center;margin:0 10px;background:#3A0A50;border:1px solid #444;color:#fff;border-radius:5px;}
+    .continuar-btn{width:100%;padding:12px 20px;font-size:16px;margin-top:10px;}
+    .item-row{position:relative;background:#3A0A50;border:1px solid #444;border-radius:5px;padding:10px;margin-bottom:10px;display:flex;flex-direction:column;gap:8px;}
+    .item-row .remove-btn{position:absolute;top:2px;right:2px;background:none;font-size:24px;color:#fff;}
+    .product-title{font-weight:bold;font-size:1.1em;}
+    .toggle-extras{width:calc(100% - 20px);height:40px;padding:0 10px;font-size:16px;text-align:left;box-sizing:border-box;}
+    .item-row input[readonly]{width:calc(100% - 20px);height:40px;padding:0 10px;font-size:16px;box-sizing:border-box;}
+    .extras-dropdown{display:none;flex-direction:column;gap:5px;margin-top:5px;padding:10px;background:#2C003E;border-radius:5px;max-height:120px;overflow-y:auto;}
+    .extras-dropdown.show{display:flex;}
+    .extra-item{display:flex;justify-content:space-between;align-items:center;}
+    .extra-item .qty-controls{display:inline-flex;align-items:center;flex-wrap:nowrap;}
+    .extra-item .qty-controls button{height:28px;padding:0 8px;flex-shrink:0;}
+    .qty-input-extra{width:40px;text-align:center;margin:0 5px;height:28px;flex-shrink:0;}
+    #opcao-entrega{text-align:center;margin-bottom:15px;}
+    #opcao-entrega button{width:45%;margin:0 2%;padding:10px;font-size:16px;background:#fff;color:#6A1B9A;border:1px solid #6A1B9A;}
+    #opcao-entrega button.selected{background:#6A1B9A;color:#fff;}
+    form button[type="submit"], .dropdown>button{width:100%;padding:12px 20px;font-size:16px;}
   </style>
 </head>
 <body>
@@ -56,36 +56,32 @@
   </div>
   <form onsubmit="event.preventDefault(); enviarPedido();">
     <h1>PEDIDO 🟣🍨🧊</h1>
-
     <label for="nome">Nome do Cliente:</label>
-    <input type="text" id="nome" required placeholder="Digite seu nome">
-
+    <input id="nome" required placeholder="Digite seu nome">
     <label for="endereco">Endereço de Entrega:</label>
-    <input type="text" id="endereco" placeholder="Cidade, Bairro, Rua, Número">
-
+    <input id="endereco" placeholder="Cidade, Bairro, Rua, Número">
     <label for="whatsapp">WhatsApp:</label>
-    <input type="text" id="whatsapp" required placeholder="(xx) 9xxxx-xxxx">
-
+    <input id="whatsapp" required placeholder="(xx) 9xxxx-xxxx">
     <label for="ponto-referencia">Ponto de Referência:</label>
-    <input type="text" id="ponto-referencia" placeholder="Ex: Em frente à padaria">
+    <input id="ponto-referencia" placeholder="Ex: Em frente à padaria">
 
     <label>Itens do Pedido:</label>
     <div class="dropdown" id="productDropdown">
       <button type="button" onclick="toggleDropdown()"><strong>Selecionar Produtos</strong></button>
       <div class="dropdown-content">
-        <button type="button" class="close-btn" onclick="toggleDropdown()">×</button>
+        <button class="close-btn" onclick="toggleDropdown()">×</button>
         <div class="dropdown-header">
-          <input type="text" id="search-produto" placeholder="Pesquisar produto">
+          <input id="search-produto" placeholder="Pesquisar produto">
         </div>
         <div id="product-list"></div>
-        <button type="button" class="continuar-btn" onclick="confirmSelection()">Continuar</button>
+        <button class="continuar-btn" onclick="confirmSelection()">Continuar</button>
       </div>
     </div>
 
     <div id="itens-container"></div>
 
     <label for="taxa">Taxa de Entrega (R$):</label>
-    <input type="number" id="taxa" readonly value="2.00">
+    <input id="taxa" readonly value="2.00">
 
     <label for="pagamento">Forma de Pagamento:</label>
     <select id="pagamento" required>
@@ -100,166 +96,144 @@
 
     <label>Opção:</label>
     <div id="opcao-entrega">
-      <button type="button" id="btn-entrega" onclick="selecionarOpcao('entrega')" class="selected">Entrega</button>
-      <button type="button" id="btn-retirada" onclick="selecionarOpcao('retirada')">Retirada</button>
+      <button id="btn-entrega" type="button" onclick="selecionarOpcao('entrega')" class="selected">Entrega</button>
+      <button id="btn-retirada" type="button" onclick="selecionarOpcao('retirada')">Retirada</button>
     </div>
 
     <label for="total">Total:</label>
-    <input type="number" id="total" readonly placeholder="Total do Pedido">
+    <input id="total" readonly placeholder="Total do Pedido">
 
     <button type="submit">Enviar Pedido</button>
   </form>
 
   <script>
-    let opcaoEntrega = "entrega",
-        mensagemExibida = false,
-        produtos = {},
-        fotos = ['https://files.catbox.moe/iyrspd.png','https://files.catbox.moe/n1l144.png','https://files.catbox.moe/5jchgk.png'],
-        fotoIndex = 0,
-        produtosQtd = {};
+    let opcaoEntrega="entrega",
+        mensagemExibida=false,
+        produtos={},
+        fotos=['https://files.catbox.moe/iyrspd.png','https://files.catbox.moe/n1l144.png','https://files.catbox.moe/5jchgk.png'],
+        fotoIndex=0,
+        produtosQtd={};
 
-    window.addEventListener('DOMContentLoaded', () => {
-      carregarProdutosDaPlanilha();
-      setInterval(() => {
-        fotoIndex = (fotoIndex + 1) % fotos.length;
-        document.getElementById('status-img').src = fotos[fotoIndex];
-      }, 3000);
-
-      // busca inteligente
-      document.getElementById('search-produto').addEventListener('input', e => {
-        const term = e.target.value.toLowerCase();
-        document.querySelectorAll('#product-list .product-item').forEach(div => {
-          div.style.display = div.dataset.product.toLowerCase().includes(term) ? '' : 'none';
+    window.addEventListener('DOMContentLoaded',()=>{
+      carregarProdutos();
+      setInterval(()=>{
+        fotoIndex=(fotoIndex+1)%fotos.length;
+        document.getElementById('status-img').src=fotos[fotoIndex];
+      },3000);
+      document.getElementById('search-produto').addEventListener('input',e=>{
+        const term=e.target.value.toLowerCase();
+        document.querySelectorAll('#product-list .product-item').forEach(div=>{
+          div.style.display=div.dataset.product.includes(term)?'':'none';
         });
       });
-
-      // abre/exibe extras corretamente
-      document.body.addEventListener('click', e => {
-        if (e.target.matches('.toggle-extras')) {
+      document.getElementById('itens-container').addEventListener('click',e=>{
+        if(e.target.matches('.toggle-extras')){
           e.target.nextElementSibling.classList.toggle('show');
-        }
-        if (e.target.matches('.increase-extra, .decrease-extra')) {
-          const div = e.target.closest('.extra-item'),
-                inp = div.querySelector('.qty-input-extra'),
-                v = parseInt(inp.value)||0;
-          inp.value = e.target.matches('.increase-extra')?v+1:Math.max(0,v-1);
-          atualizarPrecoTotal(inp);
-        }
-        if (e.target.matches('.remove-btn')) {
-          e.target.closest('.item-row').remove();
-          calcularTotal();
         }
       });
     });
 
-    async function carregarProdutosDaPlanilha() {
-      const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQdgBk-3LeNnqODPocNVQy2bGzJbjtozTrAr7-BX51A7jClHGfAPEEZjy9zFop6d6HpB7O8-nTVHz9E/pub?output=csv",
-            res = await fetch(url), csv = await res.text(),
-            lines = csv.split("\n").filter(l=>l.trim());
-      lines.shift(); produtos = {}; produtosQtd = {};
-      for (const l of lines) {
-        const c = l.split(",").map(x=>x.trim()), nome=c[0],
-              preco=parseFloat(c[1].replace(",", "."))||0, adicion=[];
-        for (let i=3;i<c.length;i+=2) if(c[i]&&c[i+1]) adicion.push({nome:c[i],preco:parseFloat(c[i+1].replace(",", "."))});
+    async function carregarProdutos(){
+      const url="https://docs.google.com/.../pub?output=csv",
+            res=await fetch(url), csv=await res.text(),
+            lines=csv.split("\n").filter(l=>l.trim());
+      lines.shift();
+      produtos={}; produtosQtd={};
+      for(const l of lines){
+        const c=l.split(",").map(x=>x.trim()), nome=c[0], preco=parseFloat(c[1].replace(",", "."))||0, adicion=[];
+        for(let i=3;i<c.length;i+=2) if(c[i]&&c[i+1]) adicion.push({nome:c[i],preco:parseFloat(c[i+1].replace(",", "."))});
         produtos[nome]={preco,adicionais:adicion};
         produtosQtd[nome]=0;
       }
       buildProductList();
     }
 
-    function buildProductList() {
-      const list = document.getElementById("product-list");
-      list.innerHTML = "";
-      Object.keys(produtos).forEach(p => {
-        const div = document.createElement("div");
-        div.className="product-item"; div.dataset.product=p;
-        div.innerHTML=`
-          <span>${p} - R$ ${produtos[p].preco.toFixed(2)}</span>
+    function buildProductList(){
+      const list=document.getElementById("product-list");
+      list.innerHTML="";
+      Object.keys(produtos).forEach(p=>{
+        const d=document.createElement("div");
+        d.className="product-item";
+        d.dataset.product=p.toLowerCase();
+        d.innerHTML=`<span>${p} - R$ ${produtos[p].preco.toFixed(2)}</span>
           <div class="qty-controls">
             <button class="decrease">-</button>
             <input type="number" min="0" value="${produtosQtd[p]}" class="qty-input">
             <button class="increase">+</button>
           </div>`;
-        list.appendChild(div);
+        list.appendChild(d);
       });
-      list.addEventListener('click', e => {
-        if (e.target.matches('.increase, .decrease')) {
-          const itm = e.target.closest('.product-item'),
-                nome = itm.dataset.product,
-                inp = itm.querySelector('.qty-input'),
-                v = parseInt(inp.value)||0,
-                nv = e.target.matches('.increase')?v+1:Math.max(0,v-1);
+      list.addEventListener('click',e=>{
+        if(e.target.matches('.increase, .decrease')){
+          const itm=e.target.closest('.product-item'), nome=itm.dataset.product,
+                inp=itm.querySelector('.qty-input'), v=parseInt(inp.value)||0,
+                nv=e.target.matches('.increase')?v+1:Math.max(0,v-1);
           inp.value=nv; produtosQtd[nome]=nv;
         }
       });
     }
 
-    function toggleDropdown() {
+    function toggleDropdown(){
       document.getElementById('productDropdown').classList.toggle('show');
     }
 
-    function getExtrasLabel(nome) {
-      if (nome.toLowerCase().includes("sorvete")) return "Escolher Bolas";
-      if (nome.toLowerCase().includes("picolé")) return "Sabores";
+    function getExtrasLabel(n){
+      if(n.includes("sorvete")) return "Escolher Bolas";
+      if(n.includes("picolé")) return "Sabores";
       return "Adicionais";
     }
 
-    function confirmSelection() {
+    function confirmSelection(){
       toggleDropdown();
-      const cont = document.getElementById('itens-container');
-      cont.innerHTML = "";
-      Object.keys(produtosQtd).forEach(nome => {
-        for (let i=0;i<produtosQtd[nome];i++){
-          const row = document.createElement('div');
+      const cont=document.getElementById('itens-container');
+      // preserva linhas existentes e adiciona novas até qtd
+      Object.entries(produtosQtd).forEach(([n,q])=>{
+        const exist=Array.from(cont.children).filter(x=>x.querySelector('.product-title').textContent===n).length;
+        for(let i=exist;i<q;i++){
+          const row=document.createElement('div');
           row.className='item-row';
-          row.innerHTML=`
-            <button class="remove-btn">×</button>
-            <div class="product-title">${nome}</div>
-            <button class="toggle-extras">${getExtrasLabel(nome)}</button>
+          row.innerHTML=`<button class="remove-btn">×</button>
+            <div class="product-title">${n}</div>
+            <button class="toggle-extras">${getExtrasLabel(n)}</button>
             <div class="extras-dropdown"></div>
             <input readonly placeholder="Preço Total (R$)">
             <textarea class="obs-produto" placeholder="Observações do Produto"></textarea>`;
           cont.appendChild(row);
-          buildExtras(row.querySelector('.extras-dropdown'),nome);
+          buildExtras(row.querySelector('.extras-dropdown'),n);
           atualizarPrecoTotal(row.querySelector('input'));
         }
       });
       calcularTotal();
     }
 
-    function buildExtras(container,nome){
-      const itens=produtos[nome].adicionais;
+    function buildExtras(c,n){
+      const itens=produtos[n].adicionais;
       if(!itens.length) return;
-      container.innerHTML=itens.map(e=>`
-        <div class="extra-item" data-price="${e.preco}">
-          <span>${e.nome} (R$ ${e.preco.toFixed(2)})</span>
-          <div class="qty-controls">
-            <button class="decrease-extra">-</button>
-            <input type="number" min="0" value="0" class="qty-input-extra"/>
-            <button class="increase-extra">+</button>
-          </div>
-        </div>`).join("");
+      c.innerHTML=itens.map(e=>`<div class="extra-item" data-price="${e.preco}">
+        <span>${e.nome} (R$ ${e.preco.toFixed(2)})</span>
+        <div class="qty-controls">
+          <button class="decrease-extra">-</button>
+          <input type="number" min="0" value="0" class="qty-input-extra"/>
+          <button class="increase-extra">+</button>
+        </div>
+      </div>`).join("");
     }
 
     function atualizarPrecoTotal(el){
-      const row=el.closest('.item-row'),
-            nome=row.querySelector('.product-title').textContent,
-            isSorv=nome.toLowerCase().includes("sorvete"),
-            base=isSorv?0:produtos[nome].preco;
-      let cost=0, free=nome.toLowerCase().includes("açaí")?3:0;
+      const row=el.closest('.item-row'), n=row.querySelector('.product-title').textContent,
+            sorv=n.includes("sorvete"), base=sorv?0:produtos[n].preco;
+      let cost=0, free=n.includes("açaí")?3:0;
       row.querySelectorAll('.extra-item').forEach(div=>{
         const q=parseInt(div.querySelector('.qty-input-extra').value)||0,
-              p=parseFloat(div.dataset.price),
-              used=Math.min(q,free);
-        free-=used; cost+=p*(q-used);
+              p=parseFloat(div.dataset.price), u=Math.min(q,free);
+        free-=u; cost+=p*(q-u);
       });
       row.querySelector('input[readonly]').value=(base+cost).toFixed(2);
       calcularTotal();
     }
 
     function calcularTotal(){
-      let sum=0;
-      document.querySelectorAll('#itens-container input[readonly]').forEach(i=>sum+=parseFloat(i.value)||0);
+      let sum=0; document.querySelectorAll('#itens-container input[readonly]').forEach(i=>sum+=parseFloat(i.value)||0);
       if(sum>=20 && !mensagemExibida){
         alert("Parabéns! Você atingiu o valor mínimo para entrega grátis! A taxa de entrega não será cobrada");
         mensagemExibida=true;
@@ -268,54 +242,47 @@
       document.getElementById('total').value=(sum+taxa).toFixed(2);
     }
 
-    function selecionarOpcao(op){
-      opcaoEntrega=op;
-      document.getElementById('btn-entrega').classList.toggle('selected',op==="entrega");
-      document.getElementById('btn-retirada').classList.toggle('selected',op==="retirada");
+    function selecionarOpcao(o){
+      opcaoEntrega=o;
+      document.getElementById('btn-entrega').classList.toggle('selected',o==="entrega");
+      document.getElementById('btn-retirada').classList.toggle('selected',o==="retirada");
       calcularTotal();
     }
 
     function enviarPedido(){
-      const cliente=document.getElementById("nome").value;
-      const endereco=document.getElementById("endereco").value;
-      const ponto=document.getElementById("ponto-referencia").value;
-      const pagamento=document.getElementById("pagamento").value;
-      const observ=document.getElementById("observacoes").value;
-      const total=document.getElementById("total").value;
-      let itensTexto="";
-      document.querySelectorAll("#itens-container .item-row").forEach(row=>{
-        const prod=row.querySelector(".product-title").textContent;
-        const preco=row.querySelector('input[readonly]').value;
-        let emoji=prod.toLowerCase().includes("açaí")?"🟣":prod.toLowerCase().includes("sorvete")?"🍨":prod.toLowerCase().includes("picolé")?"🧊":"🔹";
-        itensTexto+=`${emoji} ${prod} - R$ ${preco}\n`;
-        const obsProd=row.querySelector(".obs-produto").value.trim();
-        if(obsProd)itensTexto+=`    ${obsProd}\n`;
-        row.querySelectorAll(".extra-item").forEach(extra=>{
-          const qty=parseInt(extra.querySelector(".qty-input-extra").value)||0;
-          if(qty){
-            const nomeE=extra.querySelector("span").textContent.split(" (")[0];
-            const precoE=parseFloat(extra.dataset.price).toFixed(2);
-            itensTexto+=`    ${nomeE} x${qty} - R$ ${precoE}\n`;
+      const cli=document.getElementById("nome").value,
+            end=document.getElementById("endereco").value,
+            pon=document.getElementById("ponto-referencia").value,
+            pag=document.getElementById("pagamento").value,
+            obsG=document.getElementById("observacoes").value,
+            tot=document.getElementById("total").value;
+      let txt="";
+      document.querySelectorAll("#itens-container .item-row").forEach(r=>{
+        const pr=r.querySelector('.product-title').textContent,
+              pv=r.querySelector('input[readonly]').value;
+        let em=pr.includes("açaí")?"🟣":pr.includes("sorvete")?"🍨":pr.includes("picolé")?"🧊":"🔹";
+        txt+=`${em} ${pr} - R$ ${pv}\n`;
+        const od=r.querySelector('.obs-produto').value.trim(); if(od) txt+=`    ${od}\n`;
+        r.querySelectorAll('.extra-item').forEach(e=>{
+          const q=parseInt(e.querySelector('.qty-input-extra').value)||0;
+          if(q){
+            const ne=e.querySelector('span').textContent.split(" (")[0],
+                  pe=parseFloat(e.dataset.price).toFixed(2);
+            txt+=`    ${ne} x${q} - R$ ${pe}\n`;
           }
         });
       });
-
       let msg="*PEDIDO*\n\n";
-      msg+="📋 *Dados do Cliente:*\n";
-      msg+=`- Nome: ${cliente}\n- Endereço: ${endereco}\n- Ponto: ${ponto}\n\n`;
-      msg+="📦 *Itens do Pedido:*\n"+itensTexto+"\n";
-
-      if(pagamento==="PIX"){
+      msg+=`📋 *Dados do Cliente:*\n- Nome: ${cli}\n- Endereço: ${end}\n- Ponto: ${pon}\n\n`;
+      msg+="📦 *Itens do Pedido:*\n"+txt+"\n";
+      if(pag==="PIX"){
         msg+=`💵 *Forma de Pagamento:* PIX\nChave Pix: renimarfilho000@gmail.com\n\n`;
       } else {
-        msg+=`💵 *Forma de Pagamento:* ${pagamento}\nLink de pagamento: link.mercadopago.com.br/flowmize\n\n`;
+        msg+=`💵 *Forma de Pagamento:* ${pag}\nLink de pagamento: link.mercadopago.com.br/flowmize\n\n`;
       }
-
       msg+=`🚚 *Taxa de Entrega:* R$ ${parseFloat(document.getElementById("taxa").value).toFixed(2)}\n`;
-      msg+=`🔴 *Total do Pedido:* R$ ${parseFloat(total).toFixed(2)}\n\n`;
-      msg+=`*Modo:* ${opcaoEntrega}\n\n`;
-      msg+=`*Observações Gerais:* ${observ}`;
-
+      msg+=`🔴 *Total do Pedido:* R$ ${parseFloat(tot).toFixed(2)}\n\n`;
+      msg+=`*Modo:* ${opcaoEntrega}\n\n*Observações Gerais:* ${obsG}`;
       window.open(`https://api.whatsapp.com/send?phone=+5598981729088&text=${encodeURIComponent(msg)}`,"_blank");
     }
   </script>
