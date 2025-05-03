@@ -44,6 +44,7 @@
       color: #fff;
       box-sizing: border-box;
     }
+    /* mantém largura específica dos campos principais */
     #nome, #endereco, #whatsapp, #ponto-referencia {
       width: 100%;
     }
@@ -335,6 +336,14 @@
       document.getElementById('productDropdown').classList.toggle('show');
     }
 
+    // Função para rótulo dos extras
+    function getExtrasLabel(nome) {
+      const lower = nome.toLowerCase();
+      if (lower.includes("bola de sorvete"))   return "Escolher Bolas de Sorvete";
+      if (lower.includes("picolé"))            return "Sabores";
+      return "Adicionais";
+    }
+
     function confirmSelection() {
       toggleDropdown();
       const cont = document.getElementById('itens-container');
@@ -345,10 +354,11 @@
         for (let i = 0; i < qtd; i++) {
           const row = document.createElement('div');
           row.className = 'item-row';
+          const label = getExtrasLabel(nome);
           row.innerHTML = `
             <button type="button" class="remove-btn">×</button>
             <div class="product-title">${nome}</div>
-            <button type="button" class="toggle-extras">Adicionais</button>
+            <button type="button" class="toggle-extras">${label}</button>
             <div class="extras-dropdown"></div>
             <input type="number" placeholder="Preço Total (R$)" readonly>
             <textarea class="obs-produto" placeholder="Observações do produto"></textarea>
@@ -364,10 +374,13 @@
     function buildExtras(container, nome) {
       const itens = produtos[nome].adicionais;
       if (!itens.length) return;
-      let free = nome.includes("Açaí")
+      // só Açaí tem freebies; sorvetes, picolés e outros não mostram nada grátis
+      const free = nome.toLowerCase().includes("açaí")
         ? (nome.includes("200ml") ? 2 : nome.includes("500ml") ? 5 : 3)
-        : 3;
-      container.innerHTML = `<p>(${free} grátis)</p>` + itens.map(e => `
+        : 0;
+      let html = "";
+      if (free > 0) html += `<p>(${free} grátis)</p>`;
+      html += itens.map(e => `
         <div class="extra-item" data-price="${e.preco}">
           <span>${e.nome} (R$ ${e.preco.toFixed(2)})</span>
           <div class="qty-controls">
@@ -376,16 +389,17 @@
             <button type="button" class="increase-extra">+</button>
           </div>
         </div>`).join("");
+      container.innerHTML = html;
     }
 
     function atualizarPrecoTotal(el) {
       const row = el.closest('.item-row'),
             nome = row.querySelector('.product-title').textContent,
             base = produtos[nome].preco;
-      let cost = 0,
-          free = nome.includes("Açaí")
-            ? (nome.includes("200ml") ? 2 : nome.includes("500ml") ? 5 : 3)
-            : 3;
+      let cost = 0;
+      let free = nome.toLowerCase().includes("açaí")
+        ? (nome.includes("200ml") ? 2 : nome.includes("500ml") ? 5 : 3)
+        : 0;
       row.querySelectorAll('.extra-item').forEach(div => {
         const q = parseInt(div.querySelector('.qty-input-extra').value) || 0,
               p = parseFloat(div.dataset.price),
