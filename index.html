@@ -22,7 +22,7 @@
     }
     form {
       max-width: 600px;
-      margin: 5px auto 0;
+      margin: 5px auto;
       padding: 20px;
       background-color: #2C003E;
       border-radius: 10px;
@@ -59,7 +59,6 @@
       background-color: #4A148C;
       transition: background-color .3s ease;
     }
-
     .status-container {
       max-width: 600px;
       margin: 0 auto 20px;
@@ -68,10 +67,8 @@
     }
     .status-container img {
       width: 100%;
-      height: auto;
       display: block;
     }
-
     .dropdown {
       position: relative;
       margin: 0 auto 15px;
@@ -106,6 +103,7 @@
       right: 2px;
       background: none;
       font-size: 24px;
+      color: #fff;
     }
     .dropdown-header {
       display: flex;
@@ -150,7 +148,6 @@
       font-size: 16px;
       margin-top: 10px;
     }
-
     .item-row {
       position: relative;
       background-color: #3A0A50;
@@ -168,6 +165,7 @@
       right: 2px;
       background: none;
       font-size: 24px;
+      color: #fff;
     }
     .product-title {
       font-weight: bold;
@@ -188,7 +186,6 @@
       font-size: 16px;
       box-sizing: border-box;
     }
-
     .extras-dropdown {
       display: none;
       flex-direction: column;
@@ -208,7 +205,6 @@
       justify-content: space-between;
       align-items: center;
     }
-    /* Ajuste: botões - e + sempre ao lado do número, sem quebra em celulares */
     .extra-item .qty-controls {
       display: inline-flex;
       align-items: center;
@@ -226,7 +222,6 @@
       height: 28px;
       flex-shrink: 0;
     }
-
     #opcao-entrega {
       text-align: center;
       margin-bottom: 15px;
@@ -245,7 +240,6 @@
       background-color: #6A1B9A;
       color: #fff;
     }
-
     form button[type="submit"],
     .dropdown > button {
       width: 100%;
@@ -254,26 +248,33 @@
     }
   </style>
   <script>
-    let opcaoEntrega = "entrega", entregaGratisAtivada = false, mensagemExibida = false;
-    const produtos = {}, fotos = [
-      'https://files.catbox.moe/iyrspd.png',
-      'https://files.catbox.moe/n1l144.png',
-      'https://files.catbox.moe/5jchgk.png'
-    ];
-    let fotoIndex = 0;
-    function mostrarProximaFoto() {
-      fotoIndex = (fotoIndex + 1) % fotos.length;
-      document.getElementById('status-img').src = fotos[fotoIndex];
-    }
+    let opcaoEntrega = "entrega",
+        entregaGratisAtivada = false,
+        mensagemExibida = false,
+        produtos = {},
+        fotos = [
+          'https://files.catbox.moe/iyrspd.png',
+          'https://files.catbox.moe/n1l144.png',
+          'https://files.catbox.moe/5jchgk.png'
+        ],
+        fotoIndex = 0;
+
     window.addEventListener('DOMContentLoaded', () => {
       carregarProdutosDaPlanilha();
-      setInterval(mostrarProximaFoto, 3000);
+      setInterval(() => {
+        fotoIndex = (fotoIndex + 1) % fotos.length;
+        document.getElementById('status-img').src = fotos[fotoIndex];
+      }, 3000);
+
       document.getElementById('itens-container').addEventListener('click', e => {
-        if (e.target.matches('.toggle-extras')) e.target.nextElementSibling.classList.toggle('show');
+        if (e.target.matches('.toggle-extras')) {
+          e.target.nextElementSibling.classList.toggle('show');
+        }
         if (e.target.matches('.increase-extra, .decrease-extra')) {
-          const div = e.target.closest('.extra-item'), inp = div.querySelector('.qty-input-extra');
-          let v = parseInt(inp.value)||0;
-          inp.value = e.target.matches('.increase-extra') ? v+1 : Math.max(0, v-1);
+          const div = e.target.closest('.extra-item'),
+                inp = div.querySelector('.qty-input-extra'),
+                v = parseInt(inp.value) || 0;
+          inp.value = e.target.matches('.increase-extra') ? v + 1 : Math.max(0, v - 1);
           atualizarPrecoTotal(inp);
         }
         if (e.target.matches('.remove-btn')) {
@@ -282,54 +283,69 @@
         }
       });
     });
+
     async function carregarProdutosDaPlanilha() {
       const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQdgBk-3LeNnqODPocNVQy2bGzJbjtozTrAr7-BX51A7jClHGfAPEEZjy9zFop6d6HpB7O8-nTVHz9E/pub?output=csv";
-      const res = await fetch(url), csv = await res.text();
-      const lines = csv.split("\n").filter(l => l.trim()); lines.shift();
-      lines.forEach(l => {
-        const c = l.split(",").map(x => x.trim());
-        const nome = c[0], preco = parseFloat(c[1].replace(",", "."))||0;
-        const add = [];
-        for (let i=3; i<c.length; i+=2) if(c[i]&&c[i+1]) add.push({nome:c[i],preco:parseFloat(c[i+1].replace(",", "."))||0});
-        produtos[nome]={preco,descricao:c[2],adicionais:add};
-      });
+      const res = await fetch(url);
+      const csv = await res.text();
+      const lines = csv.split("\n").filter(l => l.trim());
+      lines.shift();
+      produtos = {};
+      for (const l of lines) {
+        const c = l.split(",").map(x => x.trim()),
+              nome = c[0],
+              preco = parseFloat(c[1].replace(",", ".")) || 0,
+              desc = c[2],
+              adicion = [];
+        for (let i = 3; i < c.length; i += 2) {
+          if (c[i] && c[i+1]) adicion.push({ nome: c[i], preco: parseFloat(c[i+1].replace(",", ".")) || 0 });
+        }
+        produtos[nome] = { preco, descricao: desc, adicionais: adicion };
+      }
       buildProductList();
-      document.getElementById('search-produto').addEventListener('input', e => {
-        const t=e.target.value.toLowerCase();
-        document.querySelectorAll('.product-item').forEach(it=>
-          it.style.display=it.dataset.product.toLowerCase().includes(t)?'flex':'none'
-        );
-      });
     }
-    function toggleDropdown(){ document.getElementById('productDropdown').classList.toggle('show'); }
-    function buildProductList(){
-      const list=document.getElementById("product-list"); list.innerHTML="";
-      Object.keys(produtos).forEach(p=>{
-        const d=document.createElement("div"); d.className="product-item"; d.dataset.product=p;
-        d.innerHTML=`<span>${p} - R$ ${produtos[p].preco.toFixed(2)}</span>
+
+    function buildProductList() {
+      const list = document.getElementById("product-list");
+      list.innerHTML = "";
+      Object.keys(produtos).forEach(p => {
+        const div = document.createElement("div");
+        div.className = "product-item";
+        div.dataset.product = p;
+        div.innerHTML = `
+          <span>${p} - R$ ${produtos[p].preco.toFixed(2)}</span>
           <div class="qty-controls">
             <button class="decrease">-</button>
             <input type="number" min="0" value="0" class="qty-input">
             <button class="increase">+</button>
           </div>`;
-        list.appendChild(d);
+        list.appendChild(div);
       });
-      list.addEventListener('click', e=>{
-        if(e.target.matches('.increase, .decrease')){
-          const itm=e.target.closest('.product-item'), inp=itm.querySelector('.qty-input'), v=parseInt(inp.value)||0;
-          inp.value=e.target.matches('.increase')?v+1:Math.max(0,v-1);
+      list.addEventListener('click', e => {
+        if (e.target.matches('.increase, .decrease')) {
+          const itm = e.target.closest('.product-item'),
+                inp = itm.querySelector('.qty-input'),
+                v = parseInt(inp.value) || 0;
+          inp.value = e.target.matches('.increase') ? v + 1 : Math.max(0, v - 1);
         }
       });
     }
-    function confirmSelection(){
+
+    function toggleDropdown() {
+      document.getElementById('productDropdown').classList.toggle('show');
+    }
+
+    function confirmSelection() {
       toggleDropdown();
-      const cont=document.getElementById('itens-container');
-      cont.innerHTML="";
-      document.querySelectorAll('.product-item').forEach(it=>{
-        const nome=it.dataset.product, qtd=parseInt(it.querySelector('.qty-input').value)||0;
-        for(let i=0;i<qtd;i++){
-          const row=document.createElement('div'); row.className='item-row';
-          row.innerHTML=`
+      const cont = document.getElementById('itens-container');
+      cont.innerHTML = "";
+      document.querySelectorAll('.product-item').forEach(it => {
+        const nome = it.dataset.product,
+              qtd  = parseInt(it.querySelector('.qty-input').value) || 0;
+        for (let i = 0; i < qtd; i++) {
+          const row = document.createElement('div');
+          row.className = 'item-row';
+          row.innerHTML = `
             <button class="remove-btn">×</button>
             <div class="product-title">${nome}</div>
             <button type="button" class="toggle-extras">Adicionais</button>
@@ -339,15 +355,19 @@
           `;
           cont.appendChild(row);
           buildExtras(row.querySelector('.extras-dropdown'), nome);
-          atualizarPrecoTotal(row.querySelector('input[readonly]'));
+          atualizarPrecoTotal(row.querySelector('input'));
         }
       });
       calcularTotal();
     }
-    function buildExtras(container,p){
-      const itens=produtos[p].adicionais; if(!itens.length) return;
-      const free=p.includes("Açaí")?(p.includes("200ml")?2:p.includes("500ml")?5:3):3;
-      container.innerHTML=`<p>(${free} grátis)</p>`+itens.map(e=>`
+
+    function buildExtras(container, nome) {
+      const itens = produtos[nome].adicionais;
+      if (!itens.length) return;
+      let free = nome.includes("Açaí")
+        ? (nome.includes("200ml") ? 2 : nome.includes("500ml") ? 5 : 3)
+        : 3;
+      container.innerHTML = `<p>(${free} grátis)</p>` + itens.map(e => `
         <div class="extra-item" data-price="${e.preco}">
           <span>${e.nome} (R$ ${e.preco.toFixed(2)})</span>
           <div class="qty-controls">
@@ -357,31 +377,134 @@
           </div>
         </div>`).join("");
     }
-    function atualizarPrecoTotal(el){
-      const row=el.closest('.item-row'), nome=row.querySelector('.product-title').textContent, base=produtos[nome].preco;
-      let cost=0, free=nome.includes("Açaí")?(nome.includes("200ml")?2:nome.includes("500ml")?5:3):3;
-      row.querySelectorAll('.extra-item').forEach(div=>{
-        const q=parseInt(div.querySelector('.qty-input-extra').value)||0, p=parseFloat(div.dataset.price), used=Math.min(q,free);
-        free-=used; cost+=p*(q-used);
+
+    function atualizarPrecoTotal(el) {
+      const row = el.closest('.item-row'),
+            nome = row.querySelector('.product-title').textContent,
+            base = produtos[nome].preco;
+      let cost = 0,
+          free = nome.includes("Açaí")
+            ? (nome.includes("200ml") ? 2 : nome.includes("500ml") ? 5 : 3)
+            : 3;
+      row.querySelectorAll('.extra-item').forEach(div => {
+        const q = parseInt(div.querySelector('.qty-input-extra').value) || 0,
+              p = parseFloat(div.dataset.price),
+              used = Math.min(q, free);
+        free -= used;
+        cost += p * (q - used);
       });
-      row.querySelector('input[readonly]').value=(base+cost).toFixed(2);
+      row.querySelector('input[readonly]').value = (base + cost).toFixed(2);
       calcularTotal();
     }
-    function calcularTotal(){
-      let sum=0;
-      document.querySelectorAll('#itens-container input[readonly]').forEach(i=>sum+=parseFloat(i.value)||0);
-      if(sum>=20&&!mensagemExibida){ alert("Parabéns! Entrega grátis ativada."); entregaGratisAtivada=true; mensagemExibida=true; }
-      if(sum<20){ entregaGratisAtivada=false; mensagemExibida=false; }
-      const taxa=(opcaoEntrega==="retirada"||entregaGratisAtivada)?0:parseFloat(document.getElementById('taxa').value)||0;
-      document.getElementById('total').value=(sum+taxa).toFixed(2);
+
+    function calcularTotal() {
+      let sum = 0;
+      document.querySelectorAll('#itens-container input[readonly]').forEach(i => sum += parseFloat(i.value) || 0);
+      if (sum >= 20 && !mensagemExibida) {
+        alert("Parabéns! Você atingiu o valor mínimo para entrega grátis! A taxa de entrega não será cobrada.");
+        entregaGratisAtivada = true;
+        mensagemExibida = true;
+      }
+      if (sum < 20) {
+        entregaGratisAtivada = false;
+        mensagemExibida = false;
+      }
+      const taxa = (opcaoEntrega === "retirada" || entregaGratisAtivada)
+        ? 0
+        : parseFloat(document.getElementById('taxa').value) || 0;
+      document.getElementById('total').value = (sum + taxa).toFixed(2);
     }
-    function selecionarOpcao(op){
-      opcaoEntrega=op;
-      document.getElementById('btn-entrega').classList.toggle('selected',op==="entrega");
-      document.getElementById('btn-retirada').classList.toggle('selected',op==="retirada");
+
+    function selecionarOpcao(op) {
+      opcaoEntrega = op;
+      document.getElementById('btn-entrega').classList.toggle('selected', op === "entrega");
+      document.getElementById('btn-retirada').classList.toggle('selected', op === "retirada");
       calcularTotal();
     }
-    function enviarPedido(){ alert("Pedido enviado com sucesso!"); }
+
+    function validaTelefone(t) {
+      const d = t.replace(/\D/g, "");
+      return d.length === 11 && d.charAt(2) === "9";
+    }
+
+    function registerOrder(data) {
+      const url = "https://script.google.com/macros/s/AKfycbwI23D0w5QmTTEW1QqP95rkfdBoRbQ_Xeq2lfC4iD8hxcUznueDfpNQWs3PmrIiMbcr/exec";
+      const qs = `?produtos=${encodeURIComponent(data.itens)}` +
+                 `&precoTotal=${encodeURIComponent(data.total)}` +
+                 `&nome=${encodeURIComponent(data.nome)}` +
+                 `&numero=${encodeURIComponent(data.telefone)}` +
+                 `&dataHora=${encodeURIComponent(data.dataHora)}`;
+      return fetch(url + qs);
+    }
+
+    async function enviarPedido() {
+      // coletar dados
+      const nome = document.getElementById('nome').value.trim(),
+            endereco = document.getElementById('endereco').value.trim(),
+            whatsapp = document.getElementById('whatsapp').value.trim(),
+            ponto = document.getElementById('ponto-referencia').value.trim(),
+            pagamento = document.getElementById('pagamento').value,
+            total = document.getElementById('total').value;
+      let itensText = "", vazio = false;
+
+      // validações
+      if (!validaTelefone(whatsapp)) {
+        alert("Número de WhatsApp inválido! Use formato (xx) 9xxxx-xxxx.");
+        return;
+      }
+      document.querySelectorAll('#itens-container .item-row').forEach(row => {
+        const p = row.querySelector('.product-title').textContent;
+        if (!p) vazio = true;
+        const price = row.querySelector('input').value;
+        itensText += `${p} - R$ ${price}\n`;
+        row.querySelectorAll('.extra-item').forEach(div => {
+          const q = parseInt(div.querySelector('.qty-input-extra').value) || 0;
+          if (q) {
+            const nm = div.querySelector('span').textContent;
+            itensText += `   + ${nm} x${q}\n`;
+          }
+        });
+      });
+      if (vazio) {
+        alert("Por favor, remova itens sem escolha de produto.");
+        return;
+      }
+      if (parseFloat(total) <= 0) {
+        alert("Adicione pelo menos um item ao pedido.");
+        return;
+      }
+      if (opcaoEntrega === "entrega" && (!endereco || !ponto)) {
+        alert("Preencha endereço e ponto de referência para entrega.");
+        return;
+      }
+
+      // primeiro registra no Apps Script
+      try {
+        await registerOrder({
+          itens: itensText,
+          total,
+          nome,
+          telefone: whatsapp,
+          dataHora: new Date().toLocaleString()
+        });
+      } catch (err) {
+        console.error("Erro ao registrar pedido:", err);
+        alert("Falha ao registrar pedido. Tente novamente.");
+        return;
+      }
+
+      // só agora abre WhatsApp
+      let msg = `*PEDIDO*%0A%0A*Nome:* ${nome}%0A`;
+      if (opcaoEntrega === "entrega") {
+        msg += `*Endereço:* ${endereco}%0A*Ponto:* ${ponto}%0A`;
+      }
+      msg += `%0A*Itens:*%0A${encodeURIComponent(itensText)}` +
+             `%0A*Pagamento:* ${pagamento}%0A` +
+             `*Taxa:* R$ ${(opcaoEntrega === "retirada" ? 0 : parseFloat(document.getElementById('taxa').value)).toFixed(2)}%0A` +
+             `*Total:* R$ ${total}%0A%0A*Obs:* ${encodeURIComponent(document.getElementById('observacoes').value)}`;
+
+      window.open(`https://wa.me/5598981729088?text=${msg}`, '_blank');
+    }
   </script>
 </head>
 <body>
@@ -415,7 +538,6 @@
         <button type="button" class="continuar-btn" onclick="confirmSelection()">Continuar</button>
       </div>
     </div>
-
     <div id="itens-container"></div>
 
     <label for="taxa">Taxa de Entrega (R$):</label>
@@ -429,8 +551,8 @@
       <option>PIX</option>
     </select>
 
-    <label for="observacoes">Observações Gerais:</label>
-    <textarea id="observacoes" rows="4" placeholder="Observações"></textarea>
+    <label for="observacoes">Observações:</label>
+    <textarea id="observacoes" rows="4" placeholder="Observações gerais"></textarea>
 
     <label>Opção:</label>
     <div id="opcao-entrega">
