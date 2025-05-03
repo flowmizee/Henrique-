@@ -49,7 +49,7 @@
       background-color:#2C003E; padding:15px;
       box-shadow:0 4px 8px rgba(0,0,0,0.1);
       z-index:2; width:100%; border-radius:5px;
-      border: 1px solid #6A1B9A;    /* <-- contorno adicionado */
+      border: 1px solid #6A1B9A;
     }
     .dropdown.show .dropdown-content { display:block; }
     .dropdown-content .close-btn {
@@ -131,7 +131,6 @@
         ],
         fotoIndex = 0;
 
-    // armazenamento de extras por item
     let extrasSelections = {};
     let rowCounter = 0;
 
@@ -142,7 +141,6 @@
         document.getElementById('status-img').src = fotos[fotoIndex];
       }, 3000);
 
-      // filtro inteligente de busca
       const searchInput = document.getElementById('search-produto');
       searchInput.addEventListener('input', () => {
         const query = searchInput.value.toLowerCase();
@@ -334,7 +332,70 @@
       return d.length === 11 && d.charAt(2) === "9";
     }
 
-    async function enviarPedido() { /*...*/ }
+    async function enviarPedido() {
+      // Coleta dos dados do cliente
+      const nome = document.getElementById('nome').value.trim();
+      const endereco = document.getElementById('endereco').value.trim();
+      const ponto = document.getElementById('ponto-referencia').value.trim();
+      const pagamento = document.getElementById('pagamento').value;
+      const taxa = parseFloat(document.getElementById('taxa').value).toFixed(2);
+      const total = parseFloat(document.getElementById('total').value).toFixed(2);
+      const modo = opcaoEntrega;
+      const obsGeral = document.getElementById('observacoes').value.trim();
+
+      // Monta seção de itens
+      let itensTexto = '';
+      document.querySelectorAll('#itens-container .item-row').forEach(row => {
+        const titulo = row.querySelector('.product-title').textContent;
+        const preco = parseFloat(row.querySelector('input[readonly]').value).toFixed(2);
+        itensTexto += `\n🟣 *${titulo}* – R$ ${preco}`;
+        row.querySelectorAll('.extra-item').forEach(div => {
+          const q = parseInt(div.querySelector('.qty-input-extra').value) || 0;
+          if (q > 0) {
+            const nomeExtra = div.querySelector('span').textContent.replace(/\s*.*$/, '');
+            const pExtra = parseFloat(div.dataset.price).toFixed(2);
+            itensTexto += `\n - ${nomeExtra} x${q} – R$ ${pExtra}\n✏️ *Obs (${nomeExtra}):* ${div.querySelector('.qty-input-extra').dataset.obs || ''}`;
+          }
+        });
+        const obsItem = row.querySelector('.obs-produto').value.trim();
+        if (obsItem) {
+          itensTexto += `\n✏️ *Obs (${titulo}):* ${obsItem}`;
+        }
+      });
+
+      // Chave Pix ou descrição para outros pagamentos
+      let pixInfo = '';
+      if (pagamento === 'PIX') {
+        pixInfo = `🔑 Chave Pix: renimarfilho000@gmail.com`;
+      }
+
+      // Montagem final da mensagem
+      const mensagem =
+`*PEDIDO*
+
+📋 *Dados do Cliente:*
+- Nome: ${nome}
+- Endereço: ${endereco}
+- Ponto: ${ponto}
+
+📦 *Itens do Pedido:*${itensTexto}
+
+💵 *Forma de Pagamento:* ${pagamento}
+${pixInfo}
+
+🚚 *Taxa de Entrega:* R$ ${taxa}
+🔴 *Total do Pedido:* R$ ${total}
+
+*Modo:* ${modo}
+
+📝 *Observações:* ${obsGeral}
+`;
+
+      // Envia para o WhatsApp
+      const numero = '5598981729088';
+      const url = `https://api.whatsapp.com/send?phone=${numero}&text=${encodeURIComponent(mensagem)}`;
+      window.open(url, '_blank');
+    }
   </script>
 </head>
 <body>
