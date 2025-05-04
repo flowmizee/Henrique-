@@ -125,7 +125,7 @@
     }
   </style>
   <script>
-    // ↓ logo aqui, antes de “let opcaoEntrega…”
+    // 1) URL do Apps Script
     const APP_SCRIPT_URL = 'https://script.google.com/macros/s/SEU_ID_AQUI/exec';
 
     let opcaoEntrega = "entrega",
@@ -148,6 +148,7 @@
       return 0;
     }
 
+    // 2) Listener de submit com validação
     window.addEventListener('DOMContentLoaded', () => {
       carregarProdutosDaPlanilha();
       setInterval(() => {
@@ -161,12 +162,12 @@
             item.dataset.product.toLowerCase().includes(q) ? 'flex' : 'none'
           );
       });
-document.querySelector('form').addEventListener('submit', e => {
-  e.preventDefault();
-  if (validarFormulario()) {
-    enviarPedido();
-  }
-});  // ← Não esqueça desse parêntese e ponto-e-vírgula
+      document.querySelector('form').addEventListener('submit', e => {
+        e.preventDefault();
+        if (validarFormulario()) {
+          enviarPedido();
+        }
+      });
       document.getElementById('itens-container').addEventListener('click', e => {
         if (e.target.matches('.toggle-extras')) {
           e.target.nextElementSibling.classList.toggle('show');
@@ -308,10 +309,10 @@ document.querySelector('form').addEventListener('submit', e => {
           <span>${e.nome} (R$ ${e.preco.toFixed(2)})</span>
           <div class="qty-controls">
             <button type="button" class="decrease-extra">-</button>
-            <input type="number" min="0" value="0" class="qty-input-extra"/>
-            <button type="button" class="increase-extra">+</button>
-          </div>
-        </div>`).join('');
+            <input type="number" min="0" value="0" class="qty-input-extra"/>`
+          + `<button type="button" class="increase-extra">+</button>`
+        + `</div></div>`
+      ).join('');
 
       container.innerHTML = html;
       container.querySelectorAll('.extra-item').forEach(div => {
@@ -325,15 +326,13 @@ document.querySelector('form').addEventListener('submit', e => {
       const row = el.closest('.item-row'),
             nome = row.querySelector('.product-title').textContent;
       const base = nome.toLowerCase().includes("sorvete") ? 0 : produtos[nome].preco;
-      let freeCount = getFreeCount(nome),
-          cost = 0;
+      let freeCount = getFreeCount(nome), cost = 0;
       row.querySelectorAll('.extra-item').forEach(div => {
         let q = parseInt(div.querySelector('.qty-input-extra').value) || 0;
         const p = parseFloat(div.dataset.price);
         if (!nome.toLowerCase().includes("sorvete") && freeCount > 0) {
           const freeForThis = Math.min(q, freeCount);
-          q -= freeForThis;
-          freeCount -= freeForThis;
+          q -= freeForThis; freeCount -= freeForThis;
         }
         cost += q * p;
       });
@@ -346,108 +345,94 @@ document.querySelector('form').addEventListener('submit', e => {
       document.querySelectorAll('#itens-container input[readonly]').forEach(i => sum += parseFloat(i.value) || 0);
       if (sum >= 20 && !mensagemExibida) {
         alert("Parabéns! Você atingiu o valor mínimo para entrega grátis!");
-        entregaGratisAtivada = true;
-        mensagemExibida = true;
+        entregaGratisAtivada = true; mensagemExibida = true;
       }
-      if (sum < 20) {
-        entregaGratisAtivada = false;
-        mensagemExibida = false;
-      }
-      const taxa = (opcaoEntrega === "retirada" || entregaGratisAtivada) ? 0 : parseFloat(document.getElementById('taxa').value) || 0;
+      if (sum < 20) entregaGratisAtivada = mensagemExibida = false;
+      const taxa = (opcaoEntrega==="retirada"||entregaGratisAtivada)?0:parseFloat(document.getElementById('taxa').value)||0;
       document.getElementById('total').value = (sum + taxa).toFixed(2);
     }
 
     function selecionarOpcao(op) {
       opcaoEntrega = op;
-      document.getElementById('btn-entrega').classList.toggle('selected', op === "entrega");
-      document.getElementById('btn-retirada').classList.toggle('selected', op === "retirada");
+      document.getElementById('btn-entrega').classList.toggle('selected', op==='entrega');
+      document.getElementById('btn-retirada').classList.toggle('selected', op==='retirada');
       calcularTotal();
     }
+
+    // 3) Validação de formulário
     function validarFormulario() {
-  const nome = document.getElementById('nome').value.trim();
-  const whatsapp = document.getElementById('whatsapp').value.trim();
-  if (!nome) {
-    alert('Por favor, informe seu nome.');
-    return false;
-  }
-  if (!whatsapp) {
-    alert('Por favor, informe seu WhatsApp para o banco de dados.');
-    return false;
-  }
-  if (opcaoEntrega === 'entrega') {
-    const endereco = document.getElementById('endereco').value.trim();
-    const ponto    = document.getElementById('ponto-referencia').value.trim();
-    if (!endereco) { alert('Por favor, informe seu endereço de entrega.'); return false; }
-    if (!ponto)    { alert('Por favor, informe um ponto de referência.'); return false; }
-  }
-  // valida extras obrigatórios
-  const rows = document.querySelectorAll('#itens-container .item-row');
-  for (let row of rows) {
-    const id      = row.dataset.id;
-    const nomeProd = row.querySelector('.product-title').textContent;
-    if (produtos[nomeProd].adicionais.length > 0) {
-      const somaExtras = Object.values(extrasSelections[id] || {}).reduce((a,b)=>a+b,0);
-      if (somaExtras === 0) {
-        alert(`Selecione pelo menos um adicional para: ${nomeProd}`);
-        return false;
-      }
-    }
-  }
-  return true;
-    }
-    async function enviarPedido() {
       const nome = document.getElementById('nome').value.trim(),
+            whatsapp = document.getElementById('whatsapp').value.trim();
+      if (!nome)     { alert('Por favor, informe seu nome.'); return false; }
+      if (!whatsapp) { alert('Por favor, informe seu WhatsApp para o banco de dados.'); return false; }
+      if (opcaoEntrega==='entrega') {
+        const endereco = document.getElementById('endereco').value.trim(),
+              ponto    = document.getElementById('ponto-referencia').value.trim();
+        if (!endereco){ alert('Por favor, informe seu endereço de entrega.'); return false; }
+        if (!ponto)   { alert('Por favor, informe um ponto de referência.'); return false; }
+      }
+      const rows = document.querySelectorAll('#itens-container .item-row');
+      for (let row of rows) {
+        const id = row.dataset.id,
+              nomeProd = row.querySelector('.product-title').textContent;
+        if (produtos[nomeProd].adicionais.length>0) {
+          const somaExtras = Object.values(extrasSelections[id]||{}).reduce((a,b)=>a+b,0);
+          if (somaExtras===0) {
+            alert(`Selecione pelo menos um adicional para: ${nomeProd}`); return false;
+          }
+        }
+      }
+      return true;
+    }
+
+    // 4) Envio do pedido
+    async function enviarPedido() {
+      const nome     = document.getElementById('nome').value.trim(),
             endereco = document.getElementById('endereco').value.trim(),
-            ponto = document.getElementById('ponto-referencia').value.trim(),
-            pagamento = document.getElementById('pagamento').value,
-            taxa = parseFloat(document.getElementById('taxa').value).toFixed(2),
-            total = parseFloat(document.getElementById('total').value).toFixed(2),
-            modo = opcaoEntrega,
+            ponto    = document.getElementById('ponto-referencia').value.trim(),
+            pagamento= document.getElementById('pagamento').value,
+            taxa     = parseFloat(document.getElementById('taxa').value).toFixed(2),
+            total    = parseFloat(document.getElementById('total').value).toFixed(2),
+            modo     = opcaoEntrega,
             obsGeral = document.getElementById('observacoes').value.trim();
 
       let itensTexto = '📦 *Itens do Pedido:*';
-      document.querySelectorAll('#itens-container .item-row').forEach((row, idx) => {
+      document.querySelectorAll('#itens-container .item-row').forEach((row,idx) => {
         const titulo = row.querySelector('.product-title').textContent,
-              preco = parseFloat(row.querySelector('input[readonly]').value).toFixed(2);
-        itensTexto += `\n*${titulo}* – R$ ${preco}`;
-
-        // Inclusos
+              preco  = parseFloat(row.querySelector('input[readonly]').value).toFixed(2);
+        itensTexto+=`\n*${titulo}* – R$ ${preco}`;
         const inclusos = Array.from(row.querySelectorAll('.incluso-checkbox'))
-          .filter(cb => cb.checked).map(cb => cb.value);
-        if (inclusos.length) {
-          itensTexto += `\n• Inclusos: ${inclusos.join(', ')}`;
-        }
-
-        // Coberturas
-        const coberturas = Array.from(row.querySelectorAll('.cobertura-checkbox'))
-          .filter(cb => cb.checked).map(cb => cb.value);
-        if (coberturas.length) {
-          itensTexto += `\n• Coberturas: ${coberturas.join(', ')}`;
-        }
-
-        // Adicionais com quantidade
-        row.querySelectorAll('.extra-item').forEach(div => {
-          const q = parseInt(div.querySelector('.qty-input-extra').value) || 0;
-          if (q > 0) {
-            const nomeExtra = div.querySelector('span').textContent.split(" (")[0],
-                  pExtra = parseFloat(div.dataset.price).toFixed(2);
-            itensTexto += `\n• ${nomeExtra} x${q} – R$ ${pExtra}`;
+                       .filter(cb=>cb.checked).map(cb=>cb.value);
+        if(inclusos.length) itensTexto+=`\n• Inclusos: ${inclusos.join(', ')}`;
+        const coberturas=Array.from(row.querySelectorAll('.cobertura-checkbox'))
+                       .filter(cb=>cb.checked).map(cb=>cb.value);
+        if(coberturas.length) itensTexto+=`\n• Coberturas: ${coberturas.join(', ')}`;
+        row.querySelectorAll('.extra-item').forEach(div=>{
+          const q=parseInt(div.querySelector('.qty-input-extra').value)||0;
+          if(q>0){
+            const nomeExtra=div.querySelector('span').textContent.split(" (")[0],
+                  pExtra= parseFloat(div.dataset.price).toFixed(2);
+            itensTexto+=`\n• ${nomeExtra} x${q} – R$ ${pExtra}`;
           }
         });
-
-        const obsItem = row.querySelector('.obs-produto').value.trim();
-        if (obsItem) itensTexto += `\n  Obs: ${obsItem}`;
-        if (idx < document.querySelectorAll('#itens-container .item-row').length - 1) itensTexto += `\n`;
+        const obsItem=row.querySelector('.obs-produto').value.trim();
+        if(obsItem) itensTexto+=`\n  Obs: ${obsItem}`;
+        if(idx<document.querySelectorAll('#itens-container .item-row').length-1) itensTexto+='\n';
       });
 
-      let pixInfo = '', taxaEntrega = '';
-      if (pagamento === 'PIX') pixInfo = `🔑 Chave Pix: renimarfilho000@gmail.com`;
-      if (opcaoEntrega === 'entrega' && !entregaGratisAtivada) taxaEntrega = `🛵 *Taxa de Entrega:* R$ ${taxa}`;
-
+      // manda pro seu WhatsApp
       const mensagem = encodeURIComponent(
-        `📋 *MEU PEDIDO*\n\nDados do Cliente:\n\nNome: ${nome}\n\nEndereço: ${endereco}\n\nPonto: ${ponto}\n\n${itensTexto}\n\n💵 Forma de Pagamento: ${pagamento}${pixInfo}\n\n${taxaEntrega} 🔴 Total do Pedido: R$ ${total} Modo: ${modo} 📝 Observações Gerais: ${obsGeral}`
+        `📋 *MEU PEDIDO*\n\nNome: ${nome}\nEndereço: ${endereco||'---'}\nPonto: ${ponto||'---'}\n\n${itensTexto}\n\n💵 Pagamento: ${pagamento}\n🔴 Total: R$ ${total}`
       );
       window.open(`whatsapp://send?phone=5598981729088&text=${mensagem}`, '_blank');
+
+      // salva no Sheet via Apps Script
+      const params = new URLSearchParams({
+        nome, whatsapp, modo, endereco: endereco||'-',
+        ponto: ponto||'-', pagamento, total
+      });
+      fetch(`${APP_SCRIPT_URL}?${params.toString()}`)
+        .catch(err=>console.error('Erro ao salvar no Apps Script:',err));
     }
   </script>
 </head>
@@ -455,7 +440,7 @@ document.querySelector('form').addEventListener('submit', e => {
   <div class="status-container">
     <img id="status-img" src="https://files.catbox.moe/iyrspd.png" alt="Status">
   </div>
-  <form onsubmit="event.preventDefault(); enviarPedido();">
+  <form>
     <h1>PEDIDO 🟣🍨🧊</h1>
     <label for="nome">Nome do Cliente:</label>
     <input type="text" id="nome" required placeholder="Digite seu nome">
