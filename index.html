@@ -21,7 +21,6 @@
       box-shadow:0 4px 8px rgba(0,0,0,0.1); color:#fff;
     }
     label { font-weight:bold; margin-top:10px; display:block; }
-    /* inputs full width to match dropdown button */
     input, select, textarea {
       width:100%; padding:10px;
       margin:5px 0 15px; border:1px solid #ccc;
@@ -125,7 +124,6 @@
     }
   </style>
   <script>
-    // 1) URL do Apps Script
     const APP_SCRIPT_URL = 'https://script.google.com/macros/s/SEU_ID_AQUI/exec';
 
     let opcaoEntrega = "entrega",
@@ -148,7 +146,6 @@
       return 0;
     }
 
-    // 2) Listener de submit com validação
     window.addEventListener('DOMContentLoaded', () => {
       carregarProdutosDaPlanilha();
       setInterval(() => {
@@ -280,7 +277,6 @@
       if (!itens.length) return;
       let html = '';
 
-      // Inclusos para itens de açaí (Adicionais)
       if (!nome.toLowerCase().includes('sorvete') && !nome.toLowerCase().includes('picolé')) {
         html += `
           <div class="inclusos-section">
@@ -290,7 +286,6 @@
           </div>`;
       }
 
-      // Coberturas para sorvetes (Escolher Bolas)
       if (nome.toLowerCase().includes('sorvete')) {
         html += `
           <div class="coberturas-section">
@@ -303,15 +298,15 @@
           </div>`;
       }
 
-      // Extras normais
       html += itens.map(e => `
         <div class="extra-item" data-price="${e.preco}">
           <span>${e.nome} (R$ ${e.preco.toFixed(2)})</span>
           <div class="qty-controls">
             <button type="button" class="decrease-extra">-</button>
-            <input type="number" min="0" value="0" class="qty-input-extra"/>`
-          + `<button type="button" class="increase-extra">+</button>`
-        + `</div></div>`
+            <input type="number" min="0" value="0" class="qty-input-extra"/>
+            <button type="button" class="increase-extra">+</button>
+          </div>
+        </div>`
       ).join('');
 
       container.innerHTML = html;
@@ -359,7 +354,6 @@
       calcularTotal();
     }
 
-    // 3) Validação de formulário
     function validarFormulario() {
       const nome = document.getElementById('nome').value.trim(),
             whatsapp = document.getElementById('whatsapp').value.trim();
@@ -385,122 +379,68 @@
       return true;
     }
 
-    // 4) Envio do pedido
     async function enviarPedido() {
       const nome     = document.getElementById('nome').value.trim(),
             endereco = document.getElementById('endereco').value.trim(),
             ponto    = document.getElementById('ponto-referencia').value.trim(),
             pagamento= document.getElementById('pagamento').value,
-            taxa     = parseFloat(document.getElementById('taxa').value).toFixed(2),
+            taxaVal  = parseFloat(document.getElementById('taxa').value).toFixed(2),
             total    = parseFloat(document.getElementById('total').value).toFixed(2),
             modo     = opcaoEntrega,
             obsGeral = document.getElementById('observacoes').value.trim();
 
-      let itensTexto = '📦 *Itens do Pedido:*';
-      document.querySelectorAll('#itens-container .item-row').forEach((row,idx) => {
+      // Monta texto dos itens
+      let itensTexto = '📦 Itens do Pedido:\n';
+      document.querySelectorAll('#itens-container .item-row').forEach((row,idx,arr) => {
         const titulo = row.querySelector('.product-title').textContent,
               preco  = parseFloat(row.querySelector('input[readonly]').value).toFixed(2);
-        itensTexto+=`\n*${titulo}* – R$ ${preco}`;
+        itensTexto += `🟣 ${titulo} – R$ ${preco}\n`;
+        // inclusos
         const inclusos = Array.from(row.querySelectorAll('.incluso-checkbox'))
                        .filter(cb=>cb.checked).map(cb=>cb.value);
-        if(inclusos.length) itensTexto+=`\n• Inclusos: ${inclusos.join(', ')}`;
-        const coberturas=Array.from(row.querySelectorAll('.cobertura-checkbox'))
+        if(inclusos.length) itensTexto += `• Inclusos: ${inclusos.join(', ')}\n`;
+        // coberturas
+        const coberturas = Array.from(row.querySelectorAll('.cobertura-checkbox'))
                        .filter(cb=>cb.checked).map(cb=>cb.value);
-        if(coberturas.length) itensTexto+=`\n• Coberturas: ${coberturas.join(', ')}`;
+        if(coberturas.length) itensTexto += `• Coberturas: ${coberturas.join(', ')}\n`;
+        // extras
         row.querySelectorAll('.extra-item').forEach(div=>{
-          const q=parseInt(div.querySelector('.qty-input-extra').value)||0;
+          const q = parseInt(div.querySelector('.qty-input-extra').value)||0;
           if(q>0){
-            const nomeExtra=div.querySelector('span').textContent.split(" (")[0],
-                  pExtra= parseFloat(div.dataset.price).toFixed(2);
-            itensTexto+=`\n• ${nomeExtra} x${q} – R$ ${pExtra}`;
+            const nomeExtra=div.querySelector('span').textContent.split(" (")[0];
+            itensTexto += `• ${nomeExtra} x${q}\n`;
           }
         });
-        const obsItem=row.querySelector('.obs-produto').value.trim();
-        if(obsItem) itensTexto+=`\n  Obs: ${obsItem}`;
-        if(idx<document.querySelectorAll('#itens-container .item-row').length-1) itensTexto+='\n';
+        const obsItem = row.querySelector('.obs-produto').value.trim();
+        if(obsItem) itensTexto += `Obs: ${obsItem}\n`;
+        if(idx < arr.length-1) itensTexto += `\n`;
       });
 
-      // manda pro seu WhatsApp
-      const mensagem = encodeURIComponent(
-        // 1) monta pix e taxa de entrega
-let pixInfo = '';
-if (pagamento === 'PIX') {
-  pixInfo = `\n🔑 *Chave Pix:* renimarfilho000@gmail.com`;
-}
+      // Monta mensagem final
+      const mensagemTexto =
+        `📋 MEU PEDIDO\n\n` +
+        `Dados do Cliente:\n` +
+        `Nome: ${nome}\n` +
+        `Endereço: ${endereco || '---'}\n` +
+        `Ponto de Referência: ${ponto || '---'}\n\n` +
+        itensTexto + `\n` +
+        `💵 Pagamento: ${pagamento}\n` +
+        (pagamento === 'PIX' 
+          ? `Chave Pix: renimarfilho000@gmail.com\n` 
+          : ``) +
+        `🛵 Taxa de Entrega: R$ ${taxaVal}\n` +
+        `🔴 Total: R$ ${total}\n` +
+        `Modo: ${modo.charAt(0).toUpperCase() + modo.slice(1)}\n` +
+        `📝 Observações Gerais:\n${obsGeral || '-'}`;
 
-let taxaEntrega = '';
-if (opcaoEntrega === 'entrega') {
-  if (entregaGratisAtivada) {
-    taxaEntrega = `\n*🛵 Taxa de Entrega:* Grátis`;
-  } else {
-    taxaEntrega = `\n*🛵 Taxa de Entrega:* R$ ${taxa}`;
-  }
-}
+      const mensagem = encodeURIComponent(mensagemTexto);
 
-// 2) cabeçalho com dados do cliente
-const cabecalho =
-  `📋 *MEU PEDIDO*\n\n` +
-  `*Dados do Cliente:*\n` +
-  `Nome: ${nome}\n` +
-  `Endereço: ${endereco || '---'}\n` +
-  `Ponto de Referência: ${ponto || '---'}\n\n`;
+      // envia para WhatsApp
+      window.open(`whatsapp://send?phone=5598981729088&text=${mensagem}`, '_blank');
 
-// 3) formata cada item com emoji, negrito e observações
-let itensTextoFormatado = '📦 *Itens do Pedido:*\n';
-document.querySelectorAll('#itens-container .item-row').forEach(row => {
-  const titulo = row.querySelector('.product-title').textContent;
-  const preco  = parseFloat(row.querySelector('input[readonly]').value).toFixed(2);
-  const emoji  = titulo.toLowerCase().includes('açaí')  ? '🟣'
-               : titulo.toLowerCase().includes('sorvete')? '🍧'
-               : '🔸';
-  itensTextoFormatado += `*${emoji} ${titulo}* – R$ ${preco}\n`;
-
-  // inclusos e coberturas
-  const inclusos = Array.from(row.querySelectorAll('.incluso-checkbox'))
-    .filter(cb=>cb.checked).map(cb=>cb.value);
-  if (inclusos.length) itensTextoFormatado += `• Inclusos: ${inclusos.join(', ')}\n`;
-
-  const coberturas = Array.from(row.querySelectorAll('.cobertura-checkbox'))
-    .filter(cb=>cb.checked).map(cb=>cb.value);
-  if (coberturas.length) itensTextoFormatado += `• Coberturas: ${coberturas.join(', ')}\n`;
-
-  // adicionais
-  row.querySelectorAll('.extra-item').forEach(div => {
-    const q = parseInt(div.querySelector('.qty-input-extra').value) || 0;
-    if (q>0) {
-      const nomeExtra = div.querySelector('span').textContent.split(' (')[0];
-      const pExtra    = parseFloat(div.dataset.price).toFixed(2);
-      itensTextoFormatado += `• ${nomeExtra} x${q} – R$ ${pExtra}\n`;
-    }
-  });
-
-  // observação do item
-  const obsItem = row.querySelector('.obs-produto').value.trim();
-  if (obsItem) itensTextoFormatado += `  Obs: ${obsItem}\n`;
-
-  itensTextoFormatado += `\n`;
-});
-
-// 4) sessão de pagamento
-const pagamentoTexto =
-  `*💵 Pagamento:* ${pagamento}` +
-  pixInfo + '\n' +
-  taxaEntrega + '\n' +
-  `*🔴 Total:* R$ ${total}\n` +
-  `*Modo:* ${modo}\n` +
-  `*📝 Observações Gerais:* ${obsGeral || '---'}`;
-
-// 5) enviar para o WhatsApp
-const mensagem = encodeURIComponent(
-  cabecalho +
-  itensTextoFormatado +
-  '\n' +
-  pagamentoTexto
-);
-window.open(`whatsapp://send?phone=5598981729088&text=${mensagem}`, '_blank');
-      // salva no Sheet via Apps Script
+      // salva no Sheet
       const params = new URLSearchParams({
-        nome, whatsapp, modo, endereco: endereco||'-',
+        nome, whatsapp: nome, modo, endereco: endereco||'-',
         ponto: ponto||'-', pagamento, total
       });
       fetch(`${APP_SCRIPT_URL}?${params.toString()}`)
