@@ -391,7 +391,8 @@
 
       // Monta texto dos itens
       let itensTexto = '📦 Itens do Pedido:\n';
-      document.querySelectorAll('#itens-container .item-row').forEach((row,idx,arr) => {
+      const rows = Array.from(document.querySelectorAll('#itens-container .item-row'));
+      rows.forEach((row, idx) => {
         const titulo = row.querySelector('.product-title').textContent,
               preco  = parseFloat(row.querySelector('input[readonly]').value).toFixed(2);
         itensTexto += `🟣 ${titulo} – R$ ${preco}\n`;
@@ -403,17 +404,18 @@
         const coberturas = Array.from(row.querySelectorAll('.cobertura-checkbox'))
                        .filter(cb=>cb.checked).map(cb=>cb.value);
         if(coberturas.length) itensTexto += `• Coberturas: ${coberturas.join(', ')}\n`;
-        // extras
-        row.querySelectorAll('.extra-item').forEach(div=>{
-          const q = parseInt(div.querySelector('.qty-input-extra').value)||0;
-          if(q>0){
-            const nomeExtra=div.querySelector('span').textContent.split(" (")[0];
-            itensTexto += `• ${nomeExtra} x${q}\n`;
+        // extras com preço
+        row.querySelectorAll('.extra-item').forEach(div => {
+          const q = parseInt(div.querySelector('.qty-input-extra').value) || 0;
+          if (q > 0) {
+            const nomeExtra  = div.querySelector('span').textContent.split(" (")[0];
+            const precoExtra = parseFloat(div.dataset.price).toFixed(2);
+            itensTexto += `• ${nomeExtra} x${q} – R$ ${precoExtra}\n`;
           }
         });
         const obsItem = row.querySelector('.obs-produto').value.trim();
-        if(obsItem) itensTexto += `Obs: ${obsItem}\n`;
-        if(idx < arr.length-1) itensTexto += `\n`;
+        if (obsItem) itensTexto += `Obs: ${obsItem}\n`;
+        if (idx < rows.length - 1) itensTexto += `\n`;
       });
 
       // Monta mensagem final
@@ -425,8 +427,8 @@
         `Ponto de Referência: ${ponto || '---'}\n\n` +
         itensTexto + `\n` +
         `💵 Pagamento: ${pagamento}\n` +
-        (pagamento === 'PIX' 
-          ? `Chave Pix: renimarfilho000@gmail.com\n` 
+        (pagamento === 'PIX'
+          ? `Chave Pix: renimarfilho000@gmail.com\n`
           : ``) +
         `🛵 Taxa de Entrega: R$ ${taxaVal}\n` +
         `🔴 Total: R$ ${total}\n` +
