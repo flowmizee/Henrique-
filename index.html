@@ -125,9 +125,9 @@
         mensagemExibida = false,
         produtos = {},
         fotos = [
-          '',
-          '',
-          ''
+          'https://files.catbox.moe/iyrspd.png',
+          'https://files.catbox.moe/n1l144.png',
+          'https://files.catbox.moe/5jchgk.png'
         ],
         fotoIndex = 0;
     let extrasSelections = {};
@@ -146,7 +146,7 @@
           item.style.display = name.includes(query) ? 'flex' : 'none';
         });
       });
-      document.getElementById('itens-container').addEventListener('click', e => {
+      document.getElementById('productDropdown').addEventListener('click', e => {
         if (e.target.matches('.toggle-extras')) {
           e.target.nextElementSibling.classList.toggle('show');
         }
@@ -167,6 +167,11 @@
           delete extrasSelections[row.dataset.id];
           row.remove();
           calcularTotal();
+        }
+        // Verifica se o click foi no botão "Enviar Pedido"
+        if (e.target.matches('form button[type="submit"]')) {
+          e.preventDefault(); // Impede o envio do formulário
+          enviarPedido();     // Chama a função de envio
         }
       });
     });
@@ -382,7 +387,7 @@
 </head>
 <body>
   <div class="status-container">
-    <img id="status-img" src="" alt="Status">
+    <img id="status-img" src="https://files.catbox.moe/iyrspd.png" alt="Status">
   </div>
   <form onsubmit="event.preventDefault(); enviarPedido();">
     <h1>PEDIDO 🟣🍨🧊</h1>
@@ -426,4 +431,4 @@
     <button type="submit">Enviar Pedido</button>
   </form>
 </body>
-</html>
+</html> 
