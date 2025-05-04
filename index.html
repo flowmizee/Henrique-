@@ -336,13 +336,8 @@
         const titulo = row.querySelector('.product-title').textContent;
         const preco = parseFloat(row.querySelector('input[readonly]').value).toFixed(2);
 
-        // Emoji para cada tipo de produto
-        let emoji = '🟣';
-        if (titulo.toLowerCase().includes('sorvete')) emoji = '🍨';
-        if (titulo.toLowerCase().includes('picolé')) emoji = '🧊';
-
-        // Adiciona o item à mensagem
-        itensTexto += `\n${emoji} *${titulo}* – R$ ${preco}`;
+        // Adiciona o item à mensagem (sem emojis, pois o Cardápio Manda os emojis)
+        itensTexto += `\n*${titulo}* – R$ ${preco}`;
 
         // Adiciona os extras com a quantidade e preço
         row.querySelectorAll('.extra-item').forEach(div => {
@@ -378,6 +373,12 @@
         pixInfo = `🔑 Chave Pix: renimarfilho000@gmail.com`;
       }
 
+      // Exibe a taxa de entrega apenas se necessário
+      let taxaEntrega = '';
+      if (opcaoEntrega === 'entrega' && !entregaGratisAtivada) {
+        taxaEntrega = `🛵 *Taxa de Entrega:* R$ ${taxa}`;
+      }
+
       // Montagem final da mensagem
       const mensagem = `📋 *MEU PEDIDO*
 - *Dados do Cliente:*
@@ -389,7 +390,7 @@ ${itensTexto}
 
 💵 *Forma de Pagamento:* ${pagamento}${pixInfo}
 
-🛵 *Taxa de Entrega:* R$ ${taxa}
+${taxaEntrega} 
 🔴 *Total do Pedido:* R$ ${total}
 *Modo:* ${modo}
 📝 *Observações Gerais:* ${obsGeral}`;
