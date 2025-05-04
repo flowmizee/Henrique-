@@ -332,7 +332,7 @@
 
       // Monta seção de itens
       let itensTexto = '📦 *Itens do Pedido:*';
-      document.querySelectorAll('#itens-container .item-row').forEach(row => {
+      document.querySelectorAll('#itens-container .item-row').forEach((row, index) => {
         const titulo = row.querySelector('.product-title').textContent;
         const preco = parseFloat(row.querySelector('input[readonly]').value).toFixed(2);
 
@@ -341,6 +341,7 @@
         if (titulo.toLowerCase().includes('sorvete')) emoji = '🍨';
         if (titulo.toLowerCase().includes('picolé')) emoji = '🧊';
 
+        // Adiciona o item à mensagem
         itensTexto += `\n${emoji} *${titulo}* – R$ ${preco}`;
 
         // Adiciona os extras com a quantidade e preço
@@ -364,6 +365,11 @@
         if (obsItem) {
           itensTexto += `\n  Obs: ${obsItem}`;
         }
+
+        // Adiciona uma quebra de linha entre os itens, exceto o último
+        if (index < document.querySelectorAll('#itens-container .item-row').length - 1) {
+          itensTexto += '\n';
+        }
       });
 
       // Chave Pix ou descrição para outros pagamentos
@@ -373,7 +379,17 @@
       }
 
       // Montagem final da mensagem
-      const mensagem = `📋 *MEU PEDIDO*\n- *Dados do Cliente:*\n- Nome: ${nome}\n- Endereço: ${endereco}\n- Ponto: ${ponto}${itensTexto}\n💵 *Forma de Pagamento:* ${pagamento}${pixInfo}\n🚚 *Taxa de Entrega:* R$ ${taxa}\n🔴 *Total do Pedido:* R$ ${total}\n*Modo:* ${modo}\n📝 *Observações:* ${obsGeral}`;
+      const mensagem = `📋 *MEU PEDIDO*
+- *Dados do Cliente:*
+- Nome: ${nome}
+- Endereço: ${endereco}
+- Ponto: ${ponto}
+${itensTexto}
+💵 *Forma de Pagamento:* ${pagamento}${pixInfo}
+🛵 *Taxa de Entrega:* R$ ${taxa}
+🔴 *Total do Pedido:* R$ ${total}
+*Modo:* ${modo}
+📝 *Observações Gerais:* ${obsGeral}`;
 
       // Envia para o WhatsApp
       const numero = '5598981729088';
