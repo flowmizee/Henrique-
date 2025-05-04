@@ -422,10 +422,82 @@
 
       // manda pro seu WhatsApp
       const mensagem = encodeURIComponent(
-        `📋 *MEU PEDIDO*\n\nNome: ${nome}\nEndereço: ${endereco||'---'}\nPonto: ${ponto||'---'}\n\n${itensTexto}\n\n💵 Pagamento: ${pagamento}\n🔴 Total: R$ ${total}`
-      );
-      window.open(`whatsapp://send?phone=5598981729088&text=${mensagem}`, '_blank');
+        // 1) monta pix e taxa de entrega
+let pixInfo = '';
+if (pagamento === 'PIX') {
+  pixInfo = `\n🔑 *Chave Pix:* renimarfilho000@gmail.com`;
+}
 
+let taxaEntrega = '';
+if (opcaoEntrega === 'entrega') {
+  if (entregaGratisAtivada) {
+    taxaEntrega = `\n*🛵 Taxa de Entrega:* Grátis`;
+  } else {
+    taxaEntrega = `\n*🛵 Taxa de Entrega:* R$ ${taxa}`;
+  }
+}
+
+// 2) cabeçalho com dados do cliente
+const cabecalho =
+  `📋 *MEU PEDIDO*\n\n` +
+  `*Dados do Cliente:*\n` +
+  `Nome: ${nome}\n` +
+  `Endereço: ${endereco || '---'}\n` +
+  `Ponto de Referência: ${ponto || '---'}\n\n`;
+
+// 3) formata cada item com emoji, negrito e observações
+let itensTextoFormatado = '📦 *Itens do Pedido:*\n';
+document.querySelectorAll('#itens-container .item-row').forEach(row => {
+  const titulo = row.querySelector('.product-title').textContent;
+  const preco  = parseFloat(row.querySelector('input[readonly]').value).toFixed(2);
+  const emoji  = titulo.toLowerCase().includes('açaí')  ? '🟣'
+               : titulo.toLowerCase().includes('sorvete')? '🍧'
+               : '🔸';
+  itensTextoFormatado += `*${emoji} ${titulo}* – R$ ${preco}\n`;
+
+  // inclusos e coberturas
+  const inclusos = Array.from(row.querySelectorAll('.incluso-checkbox'))
+    .filter(cb=>cb.checked).map(cb=>cb.value);
+  if (inclusos.length) itensTextoFormatado += `• Inclusos: ${inclusos.join(', ')}\n`;
+
+  const coberturas = Array.from(row.querySelectorAll('.cobertura-checkbox'))
+    .filter(cb=>cb.checked).map(cb=>cb.value);
+  if (coberturas.length) itensTextoFormatado += `• Coberturas: ${coberturas.join(', ')}\n`;
+
+  // adicionais
+  row.querySelectorAll('.extra-item').forEach(div => {
+    const q = parseInt(div.querySelector('.qty-input-extra').value) || 0;
+    if (q>0) {
+      const nomeExtra = div.querySelector('span').textContent.split(' (')[0];
+      const pExtra    = parseFloat(div.dataset.price).toFixed(2);
+      itensTextoFormatado += `• ${nomeExtra} x${q} – R$ ${pExtra}\n`;
+    }
+  });
+
+  // observação do item
+  const obsItem = row.querySelector('.obs-produto').value.trim();
+  if (obsItem) itensTextoFormatado += `  Obs: ${obsItem}\n`;
+
+  itensTextoFormatado += `\n`;
+});
+
+// 4) sessão de pagamento
+const pagamentoTexto =
+  `*💵 Pagamento:* ${pagamento}` +
+  pixInfo + '\n' +
+  taxaEntrega + '\n' +
+  `*🔴 Total:* R$ ${total}\n` +
+  `*Modo:* ${modo}\n` +
+  `*📝 Observações Gerais:* ${obsGeral || '---'}`;
+
+// 5) enviar para o WhatsApp
+const mensagem = encodeURIComponent(
+  cabecalho +
+  itensTextoFormatado +
+  '\n' +
+  pagamentoTexto
+);
+window.open(`whatsapp://send?phone=5598981729088&text=${mensagem}`, '_blank');
       // salva no Sheet via Apps Script
       const params = new URLSearchParams({
         nome, whatsapp, modo, endereco: endereco||'-',
