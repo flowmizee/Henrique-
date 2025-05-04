@@ -225,14 +225,12 @@
     }
 
     function getExtrasLabel(nome) {
-      const lower = nome.toLowerCase();
-      if (lower.includes("sorvete")) {
-        return "Escolher Bolas";
-      }
-      const free = getFreeCount(nome),
-            label = lower.includes("picolé") ? "Sabores" : "Adicionais";
-      return `${label} (${free} grátis)`;
-    }
+  const lower = nome.toLowerCase();
+  if (lower.includes("sorvete")) return 'Escolher Bolas';
+  if (lower.includes("picolé"))  return 'Sabores';
+  const free = getFreeCount(nome);
+  return `Adicionais (${free} grátis)`;
+}
 
     function confirmSelection() {
       toggleDropdown();
