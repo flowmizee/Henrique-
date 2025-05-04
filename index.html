@@ -363,7 +363,38 @@ document.querySelector('form').addEventListener('submit', e => {
       document.getElementById('btn-retirada').classList.toggle('selected', op === "retirada");
       calcularTotal();
     }
-
+    function validarFormulario() {
+  const nome = document.getElementById('nome').value.trim();
+  const whatsapp = document.getElementById('whatsapp').value.trim();
+  if (!nome) {
+    alert('Por favor, informe seu nome.');
+    return false;
+  }
+  if (!whatsapp) {
+    alert('Por favor, informe seu WhatsApp para o banco de dados.');
+    return false;
+  }
+  if (opcaoEntrega === 'entrega') {
+    const endereco = document.getElementById('endereco').value.trim();
+    const ponto    = document.getElementById('ponto-referencia').value.trim();
+    if (!endereco) { alert('Por favor, informe seu endereço de entrega.'); return false; }
+    if (!ponto)    { alert('Por favor, informe um ponto de referência.'); return false; }
+  }
+  // valida extras obrigatórios
+  const rows = document.querySelectorAll('#itens-container .item-row');
+  for (let row of rows) {
+    const id      = row.dataset.id;
+    const nomeProd = row.querySelector('.product-title').textContent;
+    if (produtos[nomeProd].adicionais.length > 0) {
+      const somaExtras = Object.values(extrasSelections[id] || {}).reduce((a,b)=>a+b,0);
+      if (somaExtras === 0) {
+        alert(`Selecione pelo menos um adicional para: ${nomeProd}`);
+        return false;
+      }
+    }
+  }
+  return true;
+    }
     async function enviarPedido() {
       const nome = document.getElementById('nome').value.trim(),
             endereco = document.getElementById('endereco').value.trim(),
