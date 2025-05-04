@@ -146,7 +146,13 @@
           item.style.display = name.includes(query) ? 'flex' : 'none';
         });
       });
-      document.getElementById('productDropdown').addEventListener('click', e => {
+      // Evento "click" no botão "Enviar Pedido"
+      document.querySelector('form button[type="submit"]').addEventListener('click', e => {
+        e.preventDefault(); // Impede o envio do formulário
+        enviarPedido();     // Chama a função de envio
+      });
+      // Evento "click" para cada extras-dropdown
+      document.getElementById('itens-container').addEventListener('click', e => {
         if (e.target.matches('.toggle-extras')) {
           e.target.nextElementSibling.classList.toggle('show');
         }
@@ -167,11 +173,6 @@
           delete extrasSelections[row.dataset.id];
           row.remove();
           calcularTotal();
-        }
-        // Verifica se o click foi no botão "Enviar Pedido"
-        if (e.target.matches('form button[type="submit"]')) {
-          e.preventDefault(); // Impede o envio do formulário
-          enviarPedido();     // Chama a função de envio
         }
       });
     });
@@ -431,4 +432,4 @@
     <button type="submit">Enviar Pedido</button>
   </form>
 </body>
-</html> 
+</html>
