@@ -93,7 +93,7 @@
     .extras-dropdown {
       display:none; flex-direction:column; gap:5px; margin-top:5px;
       padding:10px; background-color:#2C003E; border-radius:5px;
-      max-height:120px; overflow-y:auto;
+      max-height:200px; overflow-y:auto;
     }
     .extras-dropdown.show { display:flex; }
     .extra-item {
@@ -103,6 +103,15 @@
     .extra-item .qty-controls button { height:28px; padding:0 8px; flex-shrink:0; }
     .qty-input-extra {
       width:40px; text-align:center; margin:0 5px; height:28px; flex-shrink:0;
+    }
+    .inclusos-section, .coberturas-section {
+      background-color:#452264; padding:10px; border-radius:5px; margin-bottom:10px;
+    }
+    .inclusos-section p, .coberturas-section p {
+      margin:0 0 5px; font-size:0.9em; color:#ddd;
+    }
+    .inclusos-section label, .coberturas-section label {
+      display:flex; align-items:center; gap:5px; font-size:0.95em; margin-bottom:5px;
     }
     #opcao-entrega { text-align:center; margin-bottom:15px; }
     #opcao-entrega button {
@@ -129,7 +138,6 @@
     let extrasSelections = {};
     let rowCounter = 0;
 
-    // Quantidade de adicionais grátis por tamanho
     function getFreeCount(nome) {
       if (nome.includes('200ml')) return 2;
       if (nome.includes('250ml') || nome.includes('300ml') || nome.includes('400ml')) return 3;
@@ -225,12 +233,12 @@
     }
 
     function getExtrasLabel(nome) {
-  const lower = nome.toLowerCase();
-  if (lower.includes("sorvete")) return 'Escolher Bolas';
-  if (lower.includes("picolé"))  return 'Sabores';
-  const free = getFreeCount(nome);
-  return `Adicionais (${free} grátis)`;
-}
+      const lower = nome.toLowerCase();
+      if (lower.includes("sorvete")) return 'Escolher Bolas';
+      if (lower.includes("picolé"))  return 'Sabores';
+      const free = getFreeCount(nome);
+      return `Adicionais (${free} grátis)`;
+    }
 
     function confirmSelection() {
       toggleDropdown();
@@ -260,11 +268,36 @@
       calcularTotal();
     }
 
-    function buildExtras(container,nome,id){
-      const itens=produtos[nome].adicionais;
-      if(!itens.length) return;
-      let html='';
-      html+=itens.map(e=>`
+    function buildExtras(container, nome, id) {
+      const itens = produtos[nome].adicionais;
+      if (!itens.length) return;
+      let html = '';
+
+      // Inclusos para itens de açaí (Adicionais)
+      if (!nome.toLowerCase().includes('sorvete') && !nome.toLowerCase().includes('picolé')) {
+        html += `
+          <div class="inclusos-section">
+            <p>Desmarque se não quiser os itens marcados nos inclusos</p>
+            <label><input type="checkbox" class="incluso-checkbox" value="Leite em pó" checked> Leite em pó</label>
+            <label><input type="checkbox" class="incluso-checkbox" value="Leite Condensado" checked> Leite Condensado</label>
+          </div>`;
+      }
+
+      // Coberturas para sorvetes (Escolher Bolas)
+      if (nome.toLowerCase().includes('sorvete')) {
+        html += `
+          <div class="coberturas-section">
+            <p>Desmarque se não quiser os itens marcados nas Coberturas</p>
+            <label><input type="checkbox" class="cobertura-checkbox" value="Morango" checked> Morango</label>
+            <label><input type="checkbox" class="cobertura-checkbox" value="Chocolate" checked> Chocolate</label>
+            <label><input type="checkbox" class="cobertura-checkbox" value="Kiwi" checked> Kiwi</label>
+            <label><input type="checkbox" class="cobertura-checkbox" value="Sonho Azul" checked> Sonho Azul</label>
+            <label><input type="checkbox" class="cobertura-checkbox" value="Caramelo" checked> Caramelo</label>
+          </div>`;
+      }
+
+      // Extras normais
+      html += itens.map(e => `
         <div class="extra-item" data-price="${e.preco}">
           <span>${e.nome} (R$ ${e.preco.toFixed(2)})</span>
           <div class="qty-controls">
@@ -272,16 +305,17 @@
             <input type="number" min="0" value="0" class="qty-input-extra"/>
             <button type="button" class="increase-extra">+</button>
           </div>
-        </div>`).join("");
-      container.innerHTML=html;
-      container.querySelectorAll('.extra-item').forEach(div=>{
-        const nomeExtra=div.querySelector('span').textContent.split(" (")[0],
-              inp=div.querySelector('.qty-input-extra');
-        inp.value=extrasSelections[id][nomeExtra]||0;
+        </div>`).join('');
+
+      container.innerHTML = html;
+      container.querySelectorAll('.extra-item').forEach(div => {
+        const nomeExtra = div.querySelector('span').textContent.split(" (")[0],
+              inp = div.querySelector('.qty-input-extra');
+        inp.value = extrasSelections[id][nomeExtra] || 0;
       });
     }
 
-    function atualizarPrecoTotal(el){
+    function atualizarPrecoTotal(el) {
       const row = el.closest('.item-row'),
             nome = row.querySelector('.product-title').textContent;
       const base = nome.toLowerCase().includes("sorvete") ? 0 : produtos[nome].preco;
@@ -290,7 +324,6 @@
       row.querySelectorAll('.extra-item').forEach(div => {
         let q = parseInt(div.querySelector('.qty-input-extra').value) || 0;
         const p = parseFloat(div.dataset.price);
-        // só aplica gratuidade para não-sorvete
         if (!nome.toLowerCase().includes("sorvete") && freeCount > 0) {
           const freeForThis = Math.min(q, freeCount);
           q -= freeForThis;
@@ -302,69 +335,82 @@
       calcularTotal();
     }
 
-    function calcularTotal(){
-      let sum=0;
-      document.querySelectorAll('#itens-container input[readonly]').forEach(i=>sum+=parseFloat(i.value)||0);
-      if(sum>=20&&!mensagemExibida){
+    function calcularTotal() {
+      let sum = 0;
+      document.querySelectorAll('#itens-container input[readonly]').forEach(i => sum += parseFloat(i.value) || 0);
+      if (sum >= 20 && !mensagemExibida) {
         alert("Parabéns! Você atingiu o valor mínimo para entrega grátis!");
-        entregaGratisAtivada=true;mensagemExibida=true;
+        entregaGratisAtivada = true;
+        mensagemExibida = true;
       }
-      if(sum<20){entregaGratisAtivada=false;mensagemExibida=false;}
-      const taxa=(opcaoEntrega==="retirada"||entregaGratisAtivada)?0:parseFloat(document.getElementById('taxa').value)||0;
-      document.getElementById('total').value=(sum+taxa).toFixed(2);
+      if (sum < 20) {
+        entregaGratisAtivada = false;
+        mensagemExibida = false;
+      }
+      const taxa = (opcaoEntrega === "retirada" || entregaGratisAtivada) ? 0 : parseFloat(document.getElementById('taxa').value) || 0;
+      document.getElementById('total').value = (sum + taxa).toFixed(2);
     }
 
-    function selecionarOpcao(op){
-      opcaoEntrega=op;
-      document.getElementById('btn-entrega').classList.toggle('selected',op==="entrega");
-      document.getElementById('btn-retirada').classList.toggle('selected',op==="retirada");
+    function selecionarOpcao(op) {
+      opcaoEntrega = op;
+      document.getElementById('btn-entrega').classList.toggle('selected', op === "entrega");
+      document.getElementById('btn-retirada').classList.toggle('selected', op === "retirada");
       calcularTotal();
     }
 
-    async function enviarPedido(){
-      const nome=document.getElementById('nome').value.trim(),
-            endereco=document.getElementById('endereco').value.trim(),
-            ponto=document.getElementById('ponto-referencia').value.trim(),
-            pagamento=document.getElementById('pagamento').value,
-            taxa=parseFloat(document.getElementById('taxa').value).toFixed(2),
-            total=parseFloat(document.getElementById('total').value).toFixed(2),
-            modo=opcaoEntrega,
-            obsGeral=document.getElementById('observacoes').value.trim();
-      let itensTexto='📦 *Itens do Pedido:*';
-      document.querySelectorAll('#itens-container .item-row').forEach((row,idx)=>{
-        const titulo=row.querySelector('.product-title').textContent,
-              preco=parseFloat(row.querySelector('input[readonly]').value).toFixed(2);
-        itensTexto+=`\n*${titulo}* – R$ ${preco}`;
-        row.querySelectorAll('.extra-item').forEach(div=>{
-          const q=parseInt(div.querySelector('.qty-input-extra').value)||0;
-          if(q>0){
-            const nomeExtra=div.querySelector('span').textContent.split(" (")[0],
-                  pExtra=parseFloat(div.dataset.price).toFixed(2);
-            itensTexto+=`\n• ${nomeExtra} x${q} – R$ ${pExtra}`;
+    async function enviarPedido() {
+      const nome = document.getElementById('nome').value.trim(),
+            endereco = document.getElementById('endereco').value.trim(),
+            ponto = document.getElementById('ponto-referencia').value.trim(),
+            pagamento = document.getElementById('pagamento').value,
+            taxa = parseFloat(document.getElementById('taxa').value).toFixed(2),
+            total = parseFloat(document.getElementById('total').value).toFixed(2),
+            modo = opcaoEntrega,
+            obsGeral = document.getElementById('observacoes').value.trim();
+
+      let itensTexto = '📦 *Itens do Pedido:*';
+      document.querySelectorAll('#itens-container .item-row').forEach((row, idx) => {
+        const titulo = row.querySelector('.product-title').textContent,
+              preco = parseFloat(row.querySelector('input[readonly]').value).toFixed(2);
+        itensTexto += `\n*${titulo}* – R$ ${preco}`;
+
+        // Inclusos
+        const inclusos = Array.from(row.querySelectorAll('.incluso-checkbox'))
+          .filter(cb => cb.checked).map(cb => cb.value);
+        if (inclusos.length) {
+          itensTexto += `\n• Inclusos: ${inclusos.join(', ')}`;
+        }
+
+        // Coberturas
+        const coberturas = Array.from(row.querySelectorAll('.cobertura-checkbox'))
+          .filter(cb => cb.checked).map(cb => cb.value);
+        if (coberturas.length) {
+          itensTexto += `\n• Coberturas: ${coberturas.join(', ')}`;
+        }
+
+        // Adicionais com quantidade
+        row.querySelectorAll('.extra-item').forEach(div => {
+          const q = parseInt(div.querySelector('.qty-input-extra').value) || 0;
+          if (q > 0) {
+            const nomeExtra = div.querySelector('span').textContent.split(" (")[0],
+                  pExtra = parseFloat(div.dataset.price).toFixed(2);
+            itensTexto += `\n• ${nomeExtra} x${q} – R$ ${pExtra}`;
           }
         });
-        const obsItem=row.querySelector('.obs-produto').value.trim();
-        if(obsItem) itensTexto+=`\n  Obs: ${obsItem}`;
-        if(idx<document.querySelectorAll('#itens-container .item-row').length-1) itensTexto+='\n';
+
+        const obsItem = row.querySelector('.obs-produto').value.trim();
+        if (obsItem) itensTexto += `\n  Obs: ${obsItem}`;
+        if (idx < document.querySelectorAll('#itens-container .item-row').length - 1) itensTexto += `\n`;
       });
-      let pixInfo='', taxaEntrega='';
-      if(pagamento==='PIX') pixInfo=`🔑 Chave Pix: renimarfilho000@gmail.com`;
-      if(opcaoEntrega==='entrega'&&!entregaGratisAtivada) taxaEntrega=`🛵 *Taxa de Entrega:* R$ ${taxa}`;
-      const mensagem=`📋 *MEU PEDIDO*
-- *Dados do Cliente:*
-- Nome: ${nome}
-- Endereço: ${endereco}
-- Ponto: ${ponto}
 
-${itensTexto}
+      let pixInfo = '', taxaEntrega = '';
+      if (pagamento === 'PIX') pixInfo = `🔑 Chave Pix: renimarfilho000@gmail.com`;
+      if (opcaoEntrega === 'entrega' && !entregaGratisAtivada) taxaEntrega = `🛵 *Taxa de Entrega:* R$ ${taxa}`;
 
-💵 *Forma de Pagamento:* ${pagamento}${pixInfo}
-
-${taxaEntrega} 
-🔴 *Total do Pedido:* R$ ${total}
-*Modo:* ${modo}
-📝 *Observações Gerais:* ${obsGeral}`;
-      window.open(`whatsapp://send?phone=5598981729088&text=${encodeURIComponent(mensagem)}`,'_blank');
+      const mensagem = encodeURIComponent(
+        `📋 *MEU PEDIDO*\n\nDados do Cliente:\n\nNome: ${nome}\n\nEndereço: ${endereco}\n\nPonto: ${ponto}\n\n${itensTexto}\n\n💵 Forma de Pagamento: ${pagamento}${pixInfo}\n\n${taxaEntrega} 🔴 Total do Pedido: R$ ${total} Modo: ${modo} 📝 Observações Gerais: ${obsGeral}`
+      );
+      window.open(`whatsapp://send?phone=5598981729088&text=${mensagem}`, '_blank');
     }
   </script>
 </head>
