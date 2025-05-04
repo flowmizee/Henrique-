@@ -52,10 +52,6 @@
       border: 1px solid #6A1B9A;
     }
     .dropdown.show .dropdown-content { display:block; }
-    .dropdown-content .close-btn {
-      position:absolute; top:2px; right:2px; background:none;
-      font-size:24px; color:#fff;
-    }
     .dropdown-header { display:flex; align-items:center; margin-bottom:10px; }
     .dropdown-header input {
       width:calc(100% - 50px); padding:8px; border-radius:5px;
@@ -404,7 +400,6 @@
     <div class="dropdown" id="productDropdown">
       <button type="button" onclick="toggleDropdown()"><strong>Selecionar Produtos</strong></button>
       <div class="dropdown-content">
-        <button class="close-btn" onclick="toggleDropdown()">×</button>
         <div class="dropdown-header">
           <input type="text" id="search-produto" placeholder="Pesquisar produto">
         </div>
