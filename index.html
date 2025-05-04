@@ -389,13 +389,13 @@
             modo     = opcaoEntrega,
             obsGeral = document.getElementById('observacoes').value.trim();
 
-      // Monta texto dos itens
+      // Monta texto dos itens sem inserir emoji extra
       let itensTexto = '📦 Itens do Pedido:\n';
       const rows = Array.from(document.querySelectorAll('#itens-container .item-row'));
       rows.forEach((row, idx) => {
         const titulo = row.querySelector('.product-title').textContent,
               preco  = parseFloat(row.querySelector('input[readonly]').value).toFixed(2);
-        itensTexto += `🟣 ${titulo} – R$ ${preco}\n`;
+        itensTexto += `${titulo} – R$ ${preco}\n`;
         // inclusos
         const inclusos = Array.from(row.querySelectorAll('.incluso-checkbox'))
                        .filter(cb=>cb.checked).map(cb=>cb.value);
@@ -437,10 +437,8 @@
 
       const mensagem = encodeURIComponent(mensagemTexto);
 
-      // envia para WhatsApp
       window.open(`whatsapp://send?phone=5598981729088&text=${mensagem}`, '_blank');
 
-      // salva no Sheet
       const params = new URLSearchParams({
         nome, whatsapp: nome, modo, endereco: endereco||'-',
         ponto: ponto||'-', pagamento, total
