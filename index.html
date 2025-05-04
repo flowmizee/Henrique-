@@ -348,7 +348,7 @@
         row.querySelectorAll('.extra-item').forEach(div => {
           const q = parseInt(div.querySelector('.qty-input-extra').value) || 0;
           if (q > 0) {
-            const nomeExtra = div.querySelector('span').textContent.replace(/\s*.*$/, '');
+            const nomeExtra = div.querySelector('span').textContent; // Inclui o nome completo do extra
             const pExtra = parseFloat(div.dataset.price).toFixed(2);
             itensTexto += `\n• ${nomeExtra} (R$ ${pExtra}) x${q}`;
 
