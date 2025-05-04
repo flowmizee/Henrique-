@@ -142,12 +142,10 @@
           item.style.display = name.includes(query) ? 'flex' : 'none';
         });
       });
-      // Evento "click" no botão "Enviar Pedido"
       document.querySelector('form button[type="submit"]').addEventListener('click', e => {
-        e.preventDefault(); // Impede o envio do formulário
-        enviarPedido();     // Chama a função de envio
+        e.preventDefault();
+        enviarPedido();
       });
-      // Evento "click" para cada extras-dropdown
       document.getElementById('itens-container').addEventListener('click', e => {
         if (e.target.matches('.toggle-extras')) {
           e.target.nextElementSibling.classList.toggle('show');
@@ -320,7 +318,6 @@
       return d.length === 11 && d.charAt(2) === "9";
     }
     async function enviarPedido() {
-      // Coleta dos dados do cliente
       const nome = document.getElementById('nome').value.trim();
       const endereco = document.getElementById('endereco').value.trim();
       const ponto = document.getElementById('ponto-referencia').value.trim();
@@ -330,56 +327,44 @@
       const modo = opcaoEntrega;
       const obsGeral = document.getElementById('observacoes').value.trim();
 
-      // Monta seção de itens
       let itensTexto = '📦 *Itens do Pedido:*';
       document.querySelectorAll('#itens-container .item-row').forEach((row, index) => {
         const titulo = row.querySelector('.product-title').textContent;
-        const preco = parseFloat(row.querySelector('input[readonly]').value).toFixed(2);
+        // usar apenas o preço base sem adicionais
+        const precoBase = produtos[titulo] 
+          ? produtos[titulo].preco.toFixed(2) 
+          : parseFloat(row.querySelector('input[readonly]').value).toFixed(2);
+        itensTexto += `\n*${titulo}* – R$ ${precoBase}`;
 
-        // Adiciona o item à mensagem (sem emojis, pois o Cardápio Manda os emojis)
-        itensTexto += `\n*${titulo}* – R$ ${preco}`;
-
-        // Adiciona os extras com a quantidade e preço
         row.querySelectorAll('.extra-item').forEach(div => {
           const q = parseInt(div.querySelector('.qty-input-extra').value) || 0;
           if (q > 0) {
-            const nomeExtra = div.querySelector('span').textContent; // Inclui o nome completo do extra
+            const nomeExtra = div.querySelector('span').textContent;
             const pExtra = parseFloat(div.dataset.price).toFixed(2);
             itensTexto += `\n• ${nomeExtra} (R$ ${pExtra}) x${q}`;
-
-            // Adiciona a observação do extra, se houver
-            const obsExtra = div.querySelector('.qty-input-extra').dataset.obs || '';
-            if (obsExtra) {
-              itensTexto += `  Obs: ${obsExtra}`;
-            }
           }
         });
 
-        // Adiciona a observação do item, se houver
         const obsItem = row.querySelector('.obs-produto').value.trim();
         if (obsItem) {
           itensTexto += `\n  Obs: ${obsItem}`;
         }
 
-        // Adiciona uma quebra de linha entre os itens, exceto o último
         if (index < document.querySelectorAll('#itens-container .item-row').length - 1) {
           itensTexto += '\n';
         }
       });
 
-      // Chave Pix ou descrição para outros pagamentos
       let pixInfo = '';
       if (pagamento === 'PIX') {
         pixInfo = `🔑 Chave Pix: renimarfilho000@gmail.com`;
       }
 
-      // Exibe a taxa de entrega apenas se necessário
       let taxaEntrega = '';
       if (opcaoEntrega === 'entrega' && !entregaGratisAtivada) {
         taxaEntrega = `🛵 *Taxa de Entrega:* R$ ${taxa}`;
       }
 
-      // Montagem final da mensagem
       const mensagem = `📋 *MEU PEDIDO*
 - *Dados do Cliente:*
 - Nome: ${nome}
@@ -395,7 +380,6 @@ ${taxaEntrega}
 *Modo:* ${modo}
 📝 *Observações Gerais:* ${obsGeral}`;
 
-      // Envia para o WhatsApp
       const numero = '5598981729088';
       const url = `whatsapp://send?phone=${numero}&text=${encodeURIComponent(mensagem)}`;
       window.open(url, '_blank');
