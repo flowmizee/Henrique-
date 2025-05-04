@@ -141,7 +141,7 @@
 
     function getFreeCount(nome) {
       if (nome.includes('200ml')) return 2;
-      if (nome.includes('250ml') || nome.includes('300ml') || nome.includes('400ml')) return 3;
+      if (nome.includes('250ml')||nome.includes('300ml')||nome.includes('400ml')) return 3;
       if (nome.includes('500ml')) return 5;
       return 0;
     }
@@ -161,9 +161,7 @@
       });
       document.querySelector('form').addEventListener('submit', e => {
         e.preventDefault();
-        if (validarFormulario()) {
-          enviarPedido();
-        }
+        if (validarFormulario()) enviarPedido();
       });
       document.getElementById('itens-container').addEventListener('click', e => {
         if (e.target.matches('.toggle-extras')) {
@@ -172,17 +170,17 @@
         if (e.target.matches('.increase-extra, .decrease-extra')) {
           const div = e.target.closest('.extra-item'),
                 inp = div.querySelector('.qty-input-extra'),
-                prev = parseInt(inp.value) || 0,
-                novo = e.target.matches('.increase-extra') ? prev + 1 : Math.max(0, prev - 1);
-          inp.value = novo;
-          const row = e.target.closest('.item-row'),
-                id = row.dataset.id,
-                nomeExtra = div.querySelector('span').textContent.split(" (")[0];
-          extrasSelections[id][nomeExtra] = novo;
+                prev = parseInt(inp.value)||0,
+                novo = e.target.matches('.increase-extra')?prev+1:Math.max(0,prev-1);
+          inp.value=novo;
+          const row=e.target.closest('.item-row'),
+                id=row.dataset.id,
+                nomeExtra=div.querySelector('span').textContent.split(" (")[0];
+          extrasSelections[id][nomeExtra]=novo;
           atualizarPrecoTotal(row.querySelector('input[readonly]'));
         }
         if (e.target.matches('.remove-btn')) {
-          const row = e.target.closest('.item-row');
+          const row=e.target.closest('.item-row');
           delete extrasSelections[row.dataset.id];
           row.remove();
           calcularTotal();
@@ -192,28 +190,29 @@
 
     async function carregarProdutosDaPlanilha() {
       const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQdgBk-3LeNnqODPocNVQy2bGzJbjtozTrAr7-BX51A7jClHGfAPEEZjy9zFop6d6HpB7O8-nTVHz9E/pub?output=csv",
-            res = await fetch(url), csv = await res.text(),
-            lines = csv.split("\n").filter(l => l.trim());
-      lines.shift(); produtos = {};
-      lines.forEach(l => {
-        const c = l.split(",").map(x => x.trim()),
-              nome = c[0], preco = parseFloat(c[1].replace(",", ".")) || 0,
-              adicion = [];
-        for (let i = 3; i < c.length; i += 2) {
-          if (c[i] && c[i+1]) adicion.push({ nome: c[i], preco: parseFloat(c[i+1].replace(",", ".")) });
+            res=await fetch(url), csv=await res.text(),
+            lines=csv.split("\n").filter(l=>l.trim());
+      lines.shift(); produtos={};
+      lines.forEach(l=>{
+        const c=l.split(",").map(x=>x.trim()),
+              nome=c[0],
+              preco=parseFloat(c[1].replace(",", "."))||0,
+              adicion=[];
+        for(let i=3;i<c.length;i+=2){
+          if(c[i]&&c[i+1]) adicion.push({nome:c[i],preco:parseFloat(c[i+1].replace(",", "."))});
         }
-        produtos[nome] = { preco, adicionais: adicion };
+        produtos[nome]={preco,adicionais:adicion};
       });
       buildProductList();
     }
 
-    function buildProductList() {
-      const list = document.getElementById("product-list");
-      list.innerHTML = "";
-      Object.keys(produtos).forEach(p => {
-        const div = document.createElement("div");
-        div.className = "product-item"; div.dataset.product = p;
-        div.innerHTML = `
+    function buildProductList(){
+      const list=document.getElementById("product-list");
+      list.innerHTML="";
+      Object.keys(produtos).forEach(p=>{
+        const div=document.createElement("div");
+        div.className="product-item"; div.dataset.product=p;
+        div.innerHTML=`
           <span>${p} - R$ ${produtos[p].preco.toFixed(2)}</span>
           <div class="qty-controls">
             <button type="button" class="decrease">-</button>
@@ -222,12 +221,12 @@
           </div>`;
         list.appendChild(div);
       });
-      list.addEventListener('click', e => {
-        if (e.target.matches('.increase, .decrease')) {
-          const itm = e.target.closest('.product-item'),
-                inp = itm.querySelector('.qty-input'),
-                v = parseInt(inp.value) || 0;
-          inp.value = e.target.matches('.increase') ? v + 1 : Math.max(0, v - 1);
+      list.addEventListener('click', e=>{
+        if(e.target.matches('.increase, .decrease')){
+          const itm=e.target.closest('.product-item'),
+                inp=itm.querySelector('.qty-input'),
+                v=parseInt(inp.value)||0;
+          inp.value=e.target.matches('.increase')?v+1:Math.max(0,v-1);
         }
       });
     }
@@ -237,24 +236,23 @@
     }
 
     function getExtrasLabel(nome) {
-      const lower = nome.toLowerCase();
-      if (lower.includes("sorvete")) return 'Escolher Bolas';
-      if (lower.includes("picolé"))  return 'Sabores';
-      const free = getFreeCount(nome);
-      return `Adicionais (${free} grátis)`;
+      const lower=nome.toLowerCase();
+      if(lower.includes("sorvete")) return 'Escolher Bolas';
+      if(lower.includes("picolé"))  return 'Sabores';
+      return `Adicionais (${getFreeCount(nome)} grátis)`;
     }
 
-    function confirmSelection() {
+    function confirmSelection(){
       toggleDropdown();
-      const cont = document.getElementById('itens-container');
-      document.querySelectorAll('.product-item').forEach(it => {
-        const nome = it.dataset.product,
-              qtd = parseInt(it.querySelector('.qty-input').value) || 0;
-        for (let i = 0; i < qtd; i++) {
-          const key = nome + "-" + i;
-          if (cont.querySelector(`[data-key="${key}"]`)) continue;
-          const row = document.createElement('div'); row.className='item-row';
-          const id = 'item-'+rowCounter++;
+      const cont=document.getElementById('itens-container');
+      document.querySelectorAll('.product-item').forEach(it=>{
+        const nome=it.dataset.product,
+              qtd=parseInt(it.querySelector('.qty-input').value)||0;
+        for(let i=0;i<qtd;i++){
+          const key=nome+"-"+i;
+          if(cont.querySelector(`[data-key="${key}"]`)) continue;
+          const row=document.createElement('div'); row.className='item-row';
+          const id='item-'+rowCounter++;
           row.dataset.id=id; row.dataset.key=key;
           extrasSelections[id]={};
           row.innerHTML=`
@@ -265,29 +263,27 @@
             <input type="number" placeholder="Preço Total (R$)" readonly>
             <textarea class="obs-produto" placeholder="Observações do produto"></textarea>`;
           cont.appendChild(row);
-          buildExtras(row.querySelector('.extras-dropdown'),nome,id);
+          buildExtras(row.querySelector('.extras-dropdown'), nome, id);
           atualizarPrecoTotal(row.querySelector('input[readonly]'));
         }
       });
       calcularTotal();
     }
 
-    function buildExtras(container, nome, id) {
-      const itens = produtos[nome].adicionais;
-      if (!itens.length) return;
-      let html = '';
-
-      if (!nome.toLowerCase().includes('sorvete') && !nome.toLowerCase().includes('picolé')) {
-        html += `
+    function buildExtras(container,nome,id){
+      const itens=produtos[nome].adicionais;
+      if(!itens.length) return;
+      let html='';
+      if(!nome.toLowerCase().includes('sorvete')&&!nome.toLowerCase().includes('picolé')){
+        html+=`
           <div class="inclusos-section">
             <p>Desmarque se não quiser os itens marcados nos inclusos</p>
             <label><input type="checkbox" class="incluso-checkbox" value="Leite em pó" checked> Leite em pó</label>
             <label><input type="checkbox" class="incluso-checkbox" value="Leite Condensado" checked> Leite Condensado</label>
           </div>`;
       }
-
-      if (nome.toLowerCase().includes('sorvete')) {
-        html += `
+      if(nome.toLowerCase().includes('sorvete')){
+        html+=`
           <div class="coberturas-section">
             <p>Desmarque se não quiser os itens marcados nas Coberturas</p>
             <label><input type="checkbox" class="cobertura-checkbox" value="Morango" checked> Morango</label>
@@ -297,8 +293,7 @@
             <label><input type="checkbox" class="cobertura-checkbox" value="Caramelo" checked> Caramelo</label>
           </div>`;
       }
-
-      html += itens.map(e => `
+      html+=itens.map(e=>`
         <div class="extra-item" data-price="${e.preco}">
           <span>${e.nome} (R$ ${e.preco.toFixed(2)})</span>
           <div class="qty-controls">
@@ -306,142 +301,140 @@
             <input type="number" min="0" value="0" class="qty-input-extra"/>
             <button type="button" class="increase-extra">+</button>
           </div>
-        </div>`
-      ).join('');
-
-      container.innerHTML = html;
-      container.querySelectorAll('.extra-item').forEach(div => {
-        const nomeExtra = div.querySelector('span').textContent.split(" (")[0],
-              inp = div.querySelector('.qty-input-extra');
-        inp.value = extrasSelections[id][nomeExtra] || 0;
+        </div>`).join('');
+      container.innerHTML=html;
+      container.querySelectorAll('.extra-item').forEach(div=>{
+        const nomeExtra=div.querySelector('span').textContent.split(" (")[0],
+              inp=div.querySelector('.qty-input-extra');
+        inp.value=extrasSelections[id][nomeExtra]||0;
       });
     }
 
-    function atualizarPrecoTotal(el) {
-      const row = el.closest('.item-row'),
-            nome = row.querySelector('.product-title').textContent;
-      const base = nome.toLowerCase().includes("sorvete") ? 0 : produtos[nome].preco;
-      let freeCount = getFreeCount(nome), cost = 0;
-      row.querySelectorAll('.extra-item').forEach(div => {
-        let q = parseInt(div.querySelector('.qty-input-extra').value) || 0;
-        const p = parseFloat(div.dataset.price);
-        if (!nome.toLowerCase().includes("sorvete") && freeCount > 0) {
-          const freeForThis = Math.min(q, freeCount);
-          q -= freeForThis; freeCount -= freeForThis;
+    function atualizarPrecoTotal(el){
+      const row=el.closest('.item-row'),
+            nome=row.querySelector('.product-title').textContent;
+      const base=nome.toLowerCase().includes("sorvete")?0:produtos[nome].preco;
+      let freeCount=getFreeCount(nome), cost=0;
+      row.querySelectorAll('.extra-item').forEach(div=>{
+        let q=parseInt(div.querySelector('.qty-input-extra').value)||0;
+        const p=parseFloat(div.dataset.price);
+        if(!nome.toLowerCase().includes("sorvete")&&freeCount>0){
+          const freeForThis=Math.min(q,freeCount);
+          q-=freeForThis; freeCount-=freeForThis;
         }
-        cost += q * p;
+        cost+=q*p;
       });
-      el.value = (base + cost).toFixed(2);
+      el.value=(base+cost).toFixed(2);
       calcularTotal();
     }
 
-    function calcularTotal() {
-      let sum = 0;
-      document.querySelectorAll('#itens-container input[readonly]').forEach(i => sum += parseFloat(i.value) || 0);
-      if (sum >= 20 && !mensagemExibida) {
+    function calcularTotal(){
+      let sum=0;
+      document.querySelectorAll('#itens-container input[readonly]').forEach(i=>sum+=parseFloat(i.value)||0);
+      if(sum>=20&&!mensagemExibida){
         alert("Parabéns! Você atingiu o valor mínimo para entrega grátis!");
-        entregaGratisAtivada = true; mensagemExibida = true;
+        entregaGratisAtivada=true; mensagemExibida=true;
       }
-      if (sum < 20) entregaGratisAtivada = mensagemExibida = false;
-      const taxa = (opcaoEntrega==="retirada"||entregaGratisAtivada)?0:parseFloat(document.getElementById('taxa').value)||0;
-      document.getElementById('total').value = (sum + taxa).toFixed(2);
+      if(sum<20) entregaGratisAtivada=mensagemExibida=false;
+      const taxa=(opcaoEntrega==="retirada"||entregaGratisAtivada)?0:parseFloat(document.getElementById('taxa').value)||0;
+      document.getElementById('total').value=(sum+taxa).toFixed(2);
     }
 
-    function selecionarOpcao(op) {
-      opcaoEntrega = op;
-      document.getElementById('btn-entrega').classList.toggle('selected', op==='entrega');
-      document.getElementById('btn-retirada').classList.toggle('selected', op==='retirada');
+    function selecionarOpcao(op){
+      opcaoEntrega=op;
+      document.getElementById('btn-entrega').classList.toggle('selected',op==='entrega');
+      document.getElementById('btn-retirada').classList.toggle('selected',op==='retirada');
       calcularTotal();
     }
 
-    function validarFormulario() {
-      const nome = document.getElementById('nome').value.trim(),
-            whatsapp = document.getElementById('whatsapp').value.trim();
-      if (!nome)     { alert('Por favor, informe seu nome.'); return false; }
-      if (!whatsapp) { alert('Por favor, informe seu WhatsApp para o banco de dados.'); return false; }
-      if (opcaoEntrega==='entrega') {
-        const endereco = document.getElementById('endereco').value.trim(),
-              ponto    = document.getElementById('ponto-referencia').value.trim();
-        if (!endereco){ alert('Por favor, informe seu endereço de entrega.'); return false; }
-        if (!ponto)   { alert('Por favor, informe um ponto de referência.'); return false; }
+    function validarFormulario(){
+      const nome=document.getElementById('nome').value.trim(),
+            whatsapp=document.getElementById('whatsapp').value.trim();
+      if(!nome){ alert('Por favor, informe seu nome.'); return false; }
+      if(!whatsapp){ alert('Por favor, informe seu WhatsApp.'); return false; }
+      if(opcaoEntrega==='entrega'){
+        const endereco=document.getElementById('endereco').value.trim(),
+              ponto=document.getElementById('ponto-referencia').value.trim();
+        if(!endereco){ alert('Por favor, informe seu endereço de entrega.'); return false; }
+        if(!ponto){ alert('Por favor, informe um ponto de referência.'); return false; }
       }
-      const rows = document.querySelectorAll('#itens-container .item-row');
-      for (let row of rows) {
-        const id = row.dataset.id,
-              nomeProd = row.querySelector('.product-title').textContent;
-        if (produtos[nomeProd].adicionais.length>0) {
-          const somaExtras = Object.values(extrasSelections[id]||{}).reduce((a,b)=>a+b,0);
-          if (somaExtras===0) {
-            alert(`Selecione pelo menos um adicional para: ${nomeProd}`); return false;
+      const rows=document.querySelectorAll('#itens-container .item-row');
+      for(let row of rows){
+        const id=row.dataset.id,
+              nomeProd=row.querySelector('.product-title').textContent;
+        if(produtos[nomeProd].adicionais.length>0){
+          const somaExtras=Object.values(extrasSelections[id]||{}).reduce((a,b)=>a+b,0);
+          if(somaExtras===0){
+            alert(`Selecione pelo menos um adicional para: ${nomeProd}`);
+            return false;
           }
         }
       }
       return true;
     }
 
-    async function enviarPedido() {
-      const nome     = document.getElementById('nome').value.trim(),
-            endereco = document.getElementById('endereco').value.trim(),
-            ponto    = document.getElementById('ponto-referencia').value.trim(),
-            pagamento= document.getElementById('pagamento').value,
-            taxaVal  = parseFloat(document.getElementById('taxa').value).toFixed(2),
-            total    = parseFloat(document.getElementById('total').value).toFixed(2),
-            modo     = opcaoEntrega,
-            obsGeral = document.getElementById('observacoes').value.trim();
+    async function enviarPedido(){
+      const nome=document.getElementById('nome').value.trim(),
+            endereco=document.getElementById('endereco').value.trim(),
+            ponto=document.getElementById('ponto-referencia').value.trim(),
+            pagamento=document.getElementById('pagamento').value,
+            taxaVal=parseFloat(document.getElementById('taxa').value).toFixed(2),
+            total=parseFloat(document.getElementById('total').value).toFixed(2),
+            modo=opcaoEntrega,
+            obsGeral=document.getElementById('observacoes').value.trim();
 
-      // Monta texto dos itens sem inserir emoji extra
+      // Monta Dados do Cliente
+      let dadosCliente = `Dados do Cliente:\nNome: ${nome}\n`;
+      if(modo==='entrega'){
+        dadosCliente += `Endereço: ${endereco||'---'}\nPonto de Referência: ${ponto||'---'}\n`;
+      }
+
+      // Monta texto dos itens
       let itensTexto = '📦 Itens do Pedido:\n';
       const rows = Array.from(document.querySelectorAll('#itens-container .item-row'));
       rows.forEach((row, idx) => {
-        const titulo = row.querySelector('.product-title').textContent,
-              preco  = parseFloat(row.querySelector('input[readonly]').value).toFixed(2);
-        itensTexto += `${titulo} – R$ ${preco}\n`;
-        // inclusos
-        const inclusos = Array.from(row.querySelectorAll('.incluso-checkbox'))
-                       .filter(cb=>cb.checked).map(cb=>cb.value);
-        if(inclusos.length) itensTexto += `• Inclusos: ${inclusos.join(', ')}\n`;
-        // coberturas
-        const coberturas = Array.from(row.querySelectorAll('.cobertura-checkbox'))
-                       .filter(cb=>cb.checked).map(cb=>cb.value);
-        if(coberturas.length) itensTexto += `• Coberturas: ${coberturas.join(', ')}\n`;
-        // extras com preço
-        row.querySelectorAll('.extra-item').forEach(div => {
-          const q = parseInt(div.querySelector('.qty-input-extra').value) || 0;
-          if (q > 0) {
-            const nomeExtra  = div.querySelector('span').textContent.split(" (")[0];
-            const precoExtra = parseFloat(div.dataset.price).toFixed(2);
-            itensTexto += `• ${nomeExtra} x${q} – R$ ${precoExtra}\n`;
+        const titulo=row.querySelector('.product-title').textContent,
+              preco=parseFloat(row.querySelector('input[readonly]').value).toFixed(2);
+        itensTexto+=`${titulo} – R$ ${preco}\n`;
+        const inclusos=Array.from(row.querySelectorAll('.incluso-checkbox'))
+                        .filter(cb=>cb.checked).map(cb=>cb.value);
+        if(inclusos.length) itensTexto+=`• Inclusos: ${inclusos.join(', ')}\n`;
+        const coberturas=Array.from(row.querySelectorAll('.cobertura-checkbox'))
+                         .filter(cb=>cb.checked).map(cb=>cb.value);
+        if(coberturas.length) itensTexto+=`• Coberturas: ${coberturas.join(', ')}\n`;
+        row.querySelectorAll('.extra-item').forEach(div=>{
+          const q=parseInt(div.querySelector('.qty-input-extra').value)||0;
+          if(q>0){
+            const nomeExtra=div.querySelector('span').textContent.split(" (")[0],
+                  precoExtra=parseFloat(div.dataset.price).toFixed(2);
+            itensTexto+=`• ${nomeExtra} x${q} – R$ ${precoExtra}\n`;
           }
         });
-        const obsItem = row.querySelector('.obs-produto').value.trim();
-        if (obsItem) itensTexto += `Obs: ${obsItem}\n`;
-        if (idx < rows.length - 1) itensTexto += `\n`;
+        const obsItem=row.querySelector('.obs-produto').value.trim();
+        if(obsItem) itensTexto+=`Obs: ${obsItem}\n`;
+        if(idx<rows.length-1) itensTexto+=`\n`;
       });
 
       // Monta mensagem final
       const mensagemTexto =
         `📋 MEU PEDIDO\n\n` +
-        `Dados do Cliente:\n` +
-        `Nome: ${nome}\n` +
-        `Endereço: ${endereco || '---'}\n` +
-        `Ponto de Referência: ${ponto || '---'}\n\n` +
+        dadosCliente + `\n` +
         itensTexto + `\n` +
         `💵 Pagamento: ${pagamento}\n` +
-        (pagamento === 'PIX'
-          ? `Chave Pix: renimarfilho000@gmail.com\n`
-          : ``) +
+        (pagamento==='PIX' ? `Chave Pix: renimarfilho000@gmail.com\n` : ``) +
         `🛵 Taxa de Entrega: R$ ${taxaVal}\n` +
         `🔴 Total: R$ ${total}\n` +
-        `Modo: ${modo.charAt(0).toUpperCase() + modo.slice(1)}\n` +
-        `📝 Observações Gerais:\n${obsGeral || '-'}`;
+        `Modo: ${modo.charAt(0).toUpperCase()+modo.slice(1)}\n` +
+        `📝 Observações Gerais:\n${obsGeral||'-'}`;
 
-      const mensagem = encodeURIComponent(mensagemTexto);
+      const mensagem=encodeURIComponent(mensagemTexto);
 
       window.open(`whatsapp://send?phone=5598981729088&text=${mensagem}`, '_blank');
 
-      const params = new URLSearchParams({
-        nome, whatsapp: nome, modo, endereco: endereco||'-',
-        ponto: ponto||'-', pagamento, total
+      const params=new URLSearchParams({
+        nome, whatsapp: document.getElementById('whatsapp').value.trim(),
+        modo, endereco: endereco||'-', ponto: ponto||'-',
+        pagamento, total
       });
       fetch(`${APP_SCRIPT_URL}?${params.toString()}`)
         .catch(err=>console.error('Erro ao salvar no Apps Script:',err));
