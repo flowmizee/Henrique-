@@ -339,18 +339,24 @@
         // Adiciona o item à mensagem (sem emojis, pois o Cardápio Manda os emojis)
         itensTexto += `\n*${titulo}* – R$ ${preco}`;
 
-        // Adiciona os extras com a quantidade e preço
+        // Adiciona os extras com a quantidade e preço (sem repetir o valor)
+        let extrasAdicionados = new Set(); // Conjunto para evitar repetições
         row.querySelectorAll('.extra-item').forEach(div => {
           const q = parseInt(div.querySelector('.qty-input-extra').value) || 0;
           if (q > 0) {
             const nomeExtra = div.querySelector('span').textContent; // Inclui o nome completo do extra
             const pExtra = parseFloat(div.dataset.price).toFixed(2);
-            itensTexto += `\n• ${nomeExtra} (R$ ${pExtra}) x${q}`;
 
-            // Adiciona a observação do extra, se houver
-            const obsExtra = div.querySelector('.qty-input-extra').dataset.obs || '';
-            if (obsExtra) {
-              itensTexto += `  Obs: ${obsExtra}`;
+            // Adiciona o extra ao conjunto apenas se não estiver lá
+            if (!extrasAdicionados.has(nomeExtra)) {
+              extrasAdicionados.add(nomeExtra);
+              itensTexto += `\n• ${nomeExtra} (R$ ${pExtra}) x${q}`;
+
+              // Adiciona a observação do extra, se houver
+              const obsExtra = div.querySelector('.qty-input-extra').dataset.obs || '';
+              if (obsExtra) {
+                itensTexto += `  Obs: ${obsExtra}`;
+              }
             }
           }
         });
