@@ -161,11 +161,12 @@
             item.dataset.product.toLowerCase().includes(q) ? 'flex' : 'none'
           );
       });
-      document.querySelector('form').addEventListener('submit', e => {
+document.querySelector('form').addEventListener('submit', e => {
   e.preventDefault();
   if (validarFormulario()) {
     enviarPedido();
-      });
+  }
+});  // ← Não esqueça desse parêntese e ponto-e-vírgula
       document.getElementById('itens-container').addEventListener('click', e => {
         if (e.target.matches('.toggle-extras')) {
           e.target.nextElementSibling.classList.toggle('show');
