@@ -339,28 +339,21 @@
         // Adiciona o item à mensagem (sem emojis, pois o Cardápio Manda os emojis)
         itensTexto += `\n*${titulo}* – R$ ${preco}`;
 
-        // Adiciona os extras com a quantidade e preço (sem repetir o valor)
-        const extrasAdicionados = {}; // Objeto para contar a quantidade de cada extra
+        // Adiciona os extras com a quantidade e preço
         row.querySelectorAll('.extra-item').forEach(div => {
           const q = parseInt(div.querySelector('.qty-input-extra').value) || 0;
           if (q > 0) {
-            const nomeExtra = div.querySelector('span').textContent; 
+            const nomeExtra = div.querySelector('span').textContent; // Inclui o nome completo do extra
             const pExtra = parseFloat(div.dataset.price).toFixed(2);
+            itensTexto += `\n• ${nomeExtra} (R$ ${pExtra}) x${q}`;
 
-            // Conta a quantidade de cada extra
-            extrasAdicionados[nomeExtra] = (extrasAdicionados[nomeExtra] || 0) + q;
+            // Adiciona a observação do extra, se houver
+            const obsExtra = div.querySelector('.qty-input-extra').dataset.obs || '';
+            if (obsExtra) {
+              itensTexto += `  Obs: ${obsExtra}`;
+            }
           }
         });
-
-        // Adiciona os extras à mensagem (sem repetição de valores)
-        for (const nomeExtra in extrasAdicionados) {
-          const quantidade = extrasAdicionados[nomeExtra];
-          // Usa o preço do primeiro extra encontrado, pois todos tem o mesmo preço
-          const precoExtra = parseFloat(row.querySelector('.extra-item:first-child').dataset.price);
-          const precoTotalExtra = (quantidade * precoExtra).toFixed(2);
-          itensTexto += `\n• ${nomeExtra} (R$ ${precoExtra}) x${quantidade}`;
-        }
-
 
         // Adiciona a observação do item, se houver
         const obsItem = row.querySelector('.obs-produto').value.trim();
@@ -411,7 +404,7 @@ ${taxaEntrega}
 </head>
 <body>
   <div class="status-container">
-    <img id="status-img" src="" alt="Status">
+    <img id="status-img" src="https://files.catbox.moe/iyrspd.png" alt="Status">
   </div>
   <form onsubmit="event.preventDefault(); enviarPedido();">
     <h1>PEDIDO 🟣🍨🧊</h1>
