@@ -161,8 +161,10 @@
             item.dataset.product.toLowerCase().includes(q) ? 'flex' : 'none'
           );
       });
-      document.querySelector('form button[type="submit"]').addEventListener('click', e => {
-        e.preventDefault(); enviarPedido();
+      document.querySelector('form').addEventListener('submit', e => {
+  e.preventDefault();
+  if (validarFormulario()) {
+    enviarPedido();
       });
       document.getElementById('itens-container').addEventListener('click', e => {
         if (e.target.matches('.toggle-extras')) {
