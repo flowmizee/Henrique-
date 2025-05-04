@@ -21,13 +21,13 @@
       box-shadow:0 4px 8px rgba(0,0,0,0.1); color:#fff;
     }
     label { font-weight:bold; margin-top:10px; display:block; }
+    /* inputs full width to match dropdown button */
     input, select, textarea {
-      width:calc(100% - 20px); padding:10px;
+      width:100%; padding:10px;
       margin:5px 0 15px; border:1px solid #ccc;
       border-radius:5px; background-color:#3A0A50;
       color:#fff; box-sizing:border-box;
     }
-    #nome,#endereco,#whatsapp,#ponto-referencia { width:100%; }
     button {
       background-color:#6A1B9A; color:#fff;
       border:none; border-radius:5px; cursor:pointer;
@@ -54,7 +54,7 @@
     .dropdown.show .dropdown-content { display:block; }
     .dropdown-header { display:flex; align-items:center; margin-bottom:10px; }
     .dropdown-header input {
-      width:calc(100% - 50px); padding:8px; border-radius:5px;
+      width:calc(100% - 20px); padding:8px; border-radius:5px;
       background-color:#3A0A50; border:1px solid #ccc; color:#fff;
       box-sizing:border-box;
     }
@@ -128,20 +128,28 @@
         fotoIndex = 0;
     let extrasSelections = {};
     let rowCounter = 0;
+
+    // Quantidade de adicionais grátis por tamanho
+    function getFreeCount(nome) {
+      if (nome.includes('200ml')) return 2;
+      if (nome.includes('250ml') || nome.includes('300ml') || nome.includes('400ml')) return 3;
+      if (nome.includes('500ml')) return 5;
+      return 0;
+    }
+
     window.addEventListener('DOMContentLoaded', () => {
       carregarProdutosDaPlanilha();
       setInterval(() => {
         fotoIndex = (fotoIndex + 1) % fotos.length;
         document.getElementById('status-img').src = fotos[fotoIndex];
       }, 3000);
-      document.getElementById('search-produto')
-        .addEventListener('input', e => {
-          const q = e.target.value.toLowerCase();
-          document.querySelectorAll('#product-list .product-item')
-            .forEach(item => item.style.display =
-              item.dataset.product.toLowerCase().includes(q) ? 'flex' : 'none'
-            );
-        });
+      document.getElementById('search-produto').addEventListener('input', e => {
+        const q = e.target.value.toLowerCase();
+        document.querySelectorAll('#product-list .product-item')
+          .forEach(item => item.style.display =
+            item.dataset.product.toLowerCase().includes(q) ? 'flex' : 'none'
+          );
+      });
       document.querySelector('form button[type="submit"]').addEventListener('click', e => {
         e.preventDefault(); enviarPedido();
       });
@@ -152,13 +160,13 @@
         if (e.target.matches('.increase-extra, .decrease-extra')) {
           const div = e.target.closest('.extra-item'),
                 inp = div.querySelector('.qty-input-extra'),
-                v = parseInt(inp.value) || 0,
-                newV = e.target.matches('.increase-extra') ? v + 1 : Math.max(0, v - 1);
-          inp.value = newV;
+                prev = parseInt(inp.value) || 0,
+                novo = e.target.matches('.increase-extra') ? prev + 1 : Math.max(0, prev - 1);
+          inp.value = novo;
           const row = e.target.closest('.item-row'),
                 id = row.dataset.id,
                 nomeExtra = div.querySelector('span').textContent.split(" (")[0];
-          extrasSelections[id][nomeExtra] = newV;
+          extrasSelections[id][nomeExtra] = novo;
           atualizarPrecoTotal(row.querySelector('input[readonly]'));
         }
         if (e.target.matches('.remove-btn')) {
@@ -169,6 +177,7 @@
         }
       });
     });
+
     async function carregarProdutosDaPlanilha() {
       const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQdgBk-3LeNnqODPocNVQy2bGzJbjtozTrAr7-BX51A7jClHGfAPEEZjy9zFop6d6HpB7O8-nTVHz9E/pub?output=csv",
             res = await fetch(url), csv = await res.text(),
@@ -185,6 +194,7 @@
       });
       buildProductList();
     }
+
     function buildProductList() {
       const list = document.getElementById("product-list");
       list.innerHTML = "";
@@ -209,15 +219,21 @@
         }
       });
     }
+
     function toggleDropdown() {
       document.getElementById('productDropdown').classList.toggle('show');
     }
+
     function getExtrasLabel(nome) {
       const lower = nome.toLowerCase();
-      if (lower.includes("sorvete")) return "Escolher Bolas";
-      if (lower.includes("picolé")) return "Sabores";
-      return "Adicionais";
+      if (lower.includes("sorvete")) {
+        return "Escolher Bolas";
+      }
+      const free = getFreeCount(nome),
+            label = lower.includes("picolé") ? "Sabores" : "Adicionais";
+      return `${label} (${free} grátis)`;
     }
+
     function confirmSelection() {
       toggleDropdown();
       const cont = document.getElementById('itens-container');
@@ -245,9 +261,10 @@
       });
       calcularTotal();
     }
+
     function buildExtras(container,nome,id){
       const itens=produtos[nome].adicionais;
-      if(!itens.length)return;
+      if(!itens.length) return;
       let html='';
       html+=itens.map(e=>`
         <div class="extra-item" data-price="${e.preco}">
@@ -265,20 +282,28 @@
         inp.value=extrasSelections[id][nomeExtra]||0;
       });
     }
+
     function atualizarPrecoTotal(el){
-      const row=el.closest('.item-row'),
-            nome=row.querySelector('.product-title').textContent,
-            isSorvete=nome.toLowerCase().includes("sorvete"),
-            base=isSorvete?0:produtos[nome].preco;
-      let cost=0;
-      row.querySelectorAll('.extra-item').forEach(div=>{
-        const q=parseInt(div.querySelector('.qty-input-extra').value)||0,
-              p=parseFloat(div.dataset.price);
-        cost+=p*q;
+      const row = el.closest('.item-row'),
+            nome = row.querySelector('.product-title').textContent;
+      const base = nome.toLowerCase().includes("sorvete") ? 0 : produtos[nome].preco;
+      let freeCount = getFreeCount(nome),
+          cost = 0;
+      row.querySelectorAll('.extra-item').forEach(div => {
+        let q = parseInt(div.querySelector('.qty-input-extra').value) || 0;
+        const p = parseFloat(div.dataset.price);
+        // só aplica gratuidade para não-sorvete
+        if (!nome.toLowerCase().includes("sorvete") && freeCount > 0) {
+          const freeForThis = Math.min(q, freeCount);
+          q -= freeForThis;
+          freeCount -= freeForThis;
+        }
+        cost += q * p;
       });
-      row.querySelector('input[readonly]').value=(base+cost).toFixed(2);
+      el.value = (base + cost).toFixed(2);
       calcularTotal();
     }
+
     function calcularTotal(){
       let sum=0;
       document.querySelectorAll('#itens-container input[readonly]').forEach(i=>sum+=parseFloat(i.value)||0);
@@ -290,12 +315,14 @@
       const taxa=(opcaoEntrega==="retirada"||entregaGratisAtivada)?0:parseFloat(document.getElementById('taxa').value)||0;
       document.getElementById('total').value=(sum+taxa).toFixed(2);
     }
+
     function selecionarOpcao(op){
       opcaoEntrega=op;
       document.getElementById('btn-entrega').classList.toggle('selected',op==="entrega");
       document.getElementById('btn-retirada').classList.toggle('selected',op==="retirada");
       calcularTotal();
     }
+
     async function enviarPedido(){
       const nome=document.getElementById('nome').value.trim(),
             endereco=document.getElementById('endereco').value.trim(),
