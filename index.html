@@ -61,7 +61,7 @@
     #product-list { max-height:200px; overflow-y:auto; }
     .product-item {
       display:flex; justify-content:space-between; align-items:center;
-      margin-bottom: 10px;
+      margin-bottom:10px;
     }
     .qty-controls { display:flex; align-items:center; }
     .qty-input {
@@ -121,9 +121,9 @@
         mensagemExibida = false,
         produtos = {},
         fotos = [
-          'https://i.imgur.com/G5j02uH.jpg',
-          'https://i.imgur.com/i41m03x.jpg',
-          'https://i.imgur.com/R5pW7sE.jpg'
+          'https://files.catbox.moe/iyrspd.png',
+          'https://files.catbox.moe/n1l144.png',
+          'https://files.catbox.moe/5jchgk.png'
         ],
         fotoIndex = 0;
     let extrasSelections = {};
@@ -134,20 +134,17 @@
         fotoIndex = (fotoIndex + 1) % fotos.length;
         document.getElementById('status-img').src = fotos[fotoIndex];
       }, 3000);
-      const searchInput = document.getElementById('search-produto');
-      searchInput.addEventListener('input', () => {
-        const query = searchInput.value.toLowerCase();
-        document.querySelectorAll('#product-list .product-item').forEach(item => {
-          const name = item.dataset.product.toLowerCase();
-          item.style.display = name.includes(query) ? 'flex' : 'none';
+      document.getElementById('search-produto')
+        .addEventListener('input', e => {
+          const q = e.target.value.toLowerCase();
+          document.querySelectorAll('#product-list .product-item')
+            .forEach(item => item.style.display =
+              item.dataset.product.toLowerCase().includes(q) ? 'flex' : 'none'
+            );
         });
-      });
-      // Evento "click" no botão "Enviar Pedido"
       document.querySelector('form button[type="submit"]').addEventListener('click', e => {
-        e.preventDefault(); // Impede o envio do formulário
-        enviarPedido();     // Chama a função de envio
+        e.preventDefault(); enviarPedido();
       });
-      // Evento "click" para cada extras-dropdown
       document.getElementById('itens-container').addEventListener('click', e => {
         if (e.target.matches('.toggle-extras')) {
           e.target.nextElementSibling.classList.toggle('show');
@@ -160,9 +157,9 @@
           inp.value = newV;
           const row = e.target.closest('.item-row'),
                 id = row.dataset.id,
-                nomeExtra = div.querySelector('span').textContent;
+                nomeExtra = div.querySelector('span').textContent.split(" (")[0];
           extrasSelections[id][nomeExtra] = newV;
-          atualizarPrecoTotal(inp);
+          atualizarPrecoTotal(row.querySelector('input[readonly]'));
         }
         if (e.target.matches('.remove-btn')) {
           const row = e.target.closest('.item-row');
@@ -174,19 +171,18 @@
     });
     async function carregarProdutosDaPlanilha() {
       const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQdgBk-3LeNnqODPocNVQy2bGzJbjtozTrAr7-BX51A7jClHGfAPEEZjy9zFop6d6HpB7O8-nTVHz9E/pub?output=csv",
-            res = await fetch(url),
-            csv = await res.text(),
+            res = await fetch(url), csv = await res.text(),
             lines = csv.split("\n").filter(l => l.trim());
       lines.shift(); produtos = {};
-      for (const l of lines) {
-        const c = l.split(",").map(x => x.trim()), nome = c[0],
-              preco = parseFloat(c[1].replace(",", ".")) || 0, desc = c[2],
+      lines.forEach(l => {
+        const c = l.split(",").map(x => x.trim()),
+              nome = c[0], preco = parseFloat(c[1].replace(",", ".")) || 0,
               adicion = [];
         for (let i = 3; i < c.length; i += 2) {
           if (c[i] && c[i+1]) adicion.push({ nome: c[i], preco: parseFloat(c[i+1].replace(",", ".")) });
         }
-        produtos[nome] = { preco, descricao: desc, adicionais: adicion };
-      }
+        produtos[nome] = { preco, adicionais: adicion };
+      });
       buildProductList();
     }
     function buildProductList() {
@@ -201,8 +197,7 @@
             <button type="button" class="decrease">-</button>
             <input type="number" min="0" value="0" class="qty-input">
             <button type="button" class="increase">+</button>
-          </div>
-        `;
+          </div>`;
         list.appendChild(div);
       });
       list.addEventListener('click', e => {
@@ -231,159 +226,126 @@
               qtd = parseInt(it.querySelector('.qty-input').value) || 0;
         for (let i = 0; i < qtd; i++) {
           const key = nome + "-" + i;
-          if (cont.querySelector(`.item-row[data-key="${key}"]`)) continue;
-          const row = document.createElement('div');
-          row.className = 'item-row';
-          const id = 'item-' + (rowCounter++);
-          row.dataset.id = id;
-          row.dataset.key = key;
-          extrasSelections[id] = extrasSelections[id] || {};
-          const label = getExtrasLabel(nome);
-          row.innerHTML = `
+          if (cont.querySelector(`[data-key="${key}"]`)) continue;
+          const row = document.createElement('div'); row.className='item-row';
+          const id = 'item-'+rowCounter++;
+          row.dataset.id=id; row.dataset.key=key;
+          extrasSelections[id]={};
+          row.innerHTML=`
             <button type="button" class="remove-btn">×</button>
             <div class="product-title">${nome}</div>
-            <button type="button" class="toggle-extras">${label}</button>
+            <button type="button" class="toggle-extras">${getExtrasLabel(nome)}</button>
             <div class="extras-dropdown"></div>
             <input type="number" placeholder="Preço Total (R$)" readonly>
-            <textarea class="obs-produto" placeholder="Observações do produto"></textarea>
-          `;
+            <textarea class="obs-produto" placeholder="Observações do produto"></textarea>`;
           cont.appendChild(row);
-          buildExtras(row.querySelector('.extras-dropdown'), nome, id);
-          atualizarPrecoTotal(row.querySelector('input'));
+          buildExtras(row.querySelector('.extras-dropdown'),nome,id);
+          atualizarPrecoTotal(row.querySelector('input[readonly]'));
         }
       });
       calcularTotal();
     }
-    function buildExtras(container, nome, id) {
-      const itens = produtos[nome].adicionais;
-      if (!itens.length) return;
-      const free = nome.toLowerCase().includes("açaí")
-        ? (nome.includes("200ml") ? 2 : (nome.includes("500ml") ? 5 : 3))
-        : 0;
-      let html = "";
-      if (free > 0) html += `<p>(${free} grátis)</p>`;
-      html += itens.map(e => `
+    function buildExtras(container,nome,id){
+      const itens=produtos[nome].adicionais;
+      if(!itens.length)return;
+      let html='';
+      html+=itens.map(e=>`
         <div class="extra-item" data-price="${e.preco}">
-          <span>${e.nome}</span>
+          <span>${e.nome} (R$ ${e.preco.toFixed(2)})</span>
           <div class="qty-controls">
             <button type="button" class="decrease-extra">-</button>
             <input type="number" min="0" value="0" class="qty-input-extra"/>
             <button type="button" class="increase-extra">+</button>
           </div>
-        </div>
-      `).join("");
-      container.innerHTML = html;
-      container.querySelectorAll('.extra-item').forEach(div => {
-        const nomeExtra = div.querySelector('span').textContent;
-        const inp = div.querySelector('.qty-input-extra');
-        inp.value = extrasSelections[id][nomeExtra] || 0;
+        </div>`).join("");
+      container.innerHTML=html;
+      container.querySelectorAll('.extra-item').forEach(div=>{
+        const nomeExtra=div.querySelector('span').textContent.split(" (")[0],
+              inp=div.querySelector('.qty-input-extra');
+        inp.value=extrasSelections[id][nomeExtra]||0;
       });
     }
-    function atualizarPrecoTotal(el) {
-      const row = el.closest('.item-row'),
-            nome = row.querySelector('.product-title').textContent,
-            isSorvete = nome.toLowerCase().includes("sorvete"),
-            base = isSorvete ? 0 : produtos[nome].preco;
-      let cost = 0,
-          free = nome.toLowerCase().includes("açaí")
-            ? (nome.includes("200ml") ? 2 : (nome.includes("500ml") ? 5 : 3))
-            : 0;
-      row.querySelectorAll('.extra-item').forEach(div => {
-        const q = parseInt(div.querySelector('.qty-input-extra').value) || 0,
-              p = parseFloat(div.dataset.price),
-              used = Math.min(q, free);
-        free -= used;
-        cost += p * (q - used);
+    function atualizarPrecoTotal(el){
+      const row=el.closest('.item-row'),
+            nome=row.querySelector('.product-title').textContent,
+            isSorvete=nome.toLowerCase().includes("sorvete"),
+            base=isSorvete?0:produtos[nome].preco;
+      let cost=0;
+      row.querySelectorAll('.extra-item').forEach(div=>{
+        const q=parseInt(div.querySelector('.qty-input-extra').value)||0,
+              p=parseFloat(div.dataset.price);
+        cost+=p*q;
       });
-      row.querySelector('input[readonly]').value = (base + cost).toFixed(2);
+      row.querySelector('input[readonly]').value=(base+cost).toFixed(2);
       calcularTotal();
     }
-    function calcularTotal() {
-      let sum = 0;
-      document.querySelectorAll('#itens-container input[readonly]').forEach(i => sum += parseFloat(i.value) || 0);
-      if (sum >= 20 && !mensagemExibida) {
-        alert("Parabéns! Você atingiu o valor mínimo para entrega grátis! A taxa de entrega não será cobrada.");
-        entregaGratisAtivada = true; mensagemExibida = true;
+    function calcularTotal(){
+      let sum=0;
+      document.querySelectorAll('#itens-container input[readonly]').forEach(i=>sum+=parseFloat(i.value)||0);
+      if(sum>=20&&!mensagemExibida){
+        alert("Parabéns! Você atingiu o valor mínimo para entrega grátis!");
+        entregaGratisAtivada=true;mensagemExibida=true;
       }
-      if (sum < 20) {
-        entregaGratisAtivada = false; mensagemExibida = false;
-      }
-      const taxa = (opcaoEntrega === "retirada" || entregaGratisAtivada) ? 0 : parseFloat(document.getElementById('taxa').value) || 0;
-      document.getElementById('total').value = (sum + taxa).toFixed(2);
+      if(sum<20){entregaGratisAtivada=false;mensagemExibida=false;}
+      const taxa=(opcaoEntrega==="retirada"||entregaGratisAtivada)?0:parseFloat(document.getElementById('taxa').value)||0;
+      document.getElementById('total').value=(sum+taxa).toFixed(2);
     }
-    function selecionarOpcao(op) {
-      opcaoEntrega = op;
-      document.getElementById('btn-entrega').classList.toggle('selected', op === "entrega");
-      document.getElementById('btn-retirada').classList.toggle('selected', op === "retirada");
+    function selecionarOpcao(op){
+      opcaoEntrega=op;
+      document.getElementById('btn-entrega').classList.toggle('selected',op==="entrega");
+      document.getElementById('btn-retirada').classList.toggle('selected',op==="retirada");
       calcularTotal();
     }
-    function validaTelefone(t) {
-      const d = t.replace(/\D/g, "");
-      return d.length === 11 && d.charAt(2) === "9";
-    }
-    async function enviarPedido() {
-      // Coleta dos dados do cliente
-      const nome = document.getElementById('nome').value.trim();
-      const endereco = document.getElementById('endereco').value.trim();
-      const ponto = document.getElementById('ponto-referencia').value.trim();
-      const pagamento = document.getElementById('pagamento').value;
-      const taxa = parseFloat(document.getElementById('taxa').value).toFixed(2);
-      const total = parseFloat(document.getElementById('total').value).toFixed(2);
-      const modo = opcaoEntrega;
-      const obsGeral = document.getElementById('observacoes').value.trim();
-      // Monta seção de itens
-      let itensTexto = '📦 *Itens do Pedido:*';
-      document.querySelectorAll('#itens-container .item-row').forEach((row, index) => {
-        const titulo = row.querySelector('.product-title').textContent;
-        const preco = parseFloat(row.querySelector('input[readonly]').value).toFixed(2);
-        // Adiciona o item à mensagem (sem emojis, pois o Cardápio Manda os emojis)
-        itensTexto += `\n*${titulo}* – R$ ${preco}`;
-        // Adiciona os extras com a quantidade e preço
-        row.querySelectorAll('.extra-item').forEach(div => {
-          const q = parseInt(div.querySelector('.qty-input-extra').value) || 0;
-          if (q > 0) {
-            const nomeExtra = div.querySelector('span').textContent; // Inclui o nome completo do extra
-            const pExtra = parseFloat(div.dataset.price).toFixed(2);
-            itensTexto += `\n• ${nomeExtra} x${q}`; // Removendo o preço do extra da mensagem
-            // Adiciona a observação do extra, se houver
-            const obsExtra = div.querySelector('.qty-input-extra').dataset.obs || '';
-            if (obsExtra) {
-              itensTexto += `  Obs: ${obsExtra}`;
-            }
+    async function enviarPedido(){
+      const nome=document.getElementById('nome').value.trim(),
+            endereco=document.getElementById('endereco').value.trim(),
+            ponto=document.getElementById('ponto-referencia').value.trim(),
+            pagamento=document.getElementById('pagamento').value,
+            taxa=parseFloat(document.getElementById('taxa').value).toFixed(2),
+            total=parseFloat(document.getElementById('total').value).toFixed(2),
+            modo=opcaoEntrega,
+            obsGeral=document.getElementById('observacoes').value.trim();
+      let itensTexto='📦 *Itens do Pedido:*';
+      document.querySelectorAll('#itens-container .item-row').forEach((row,idx)=>{
+        const titulo=row.querySelector('.product-title').textContent,
+              preco=parseFloat(row.querySelector('input[readonly]').value).toFixed(2);
+        itensTexto+=`\n*${titulo}* – R$ ${preco}`;
+        row.querySelectorAll('.extra-item').forEach(div=>{
+          const q=parseInt(div.querySelector('.qty-input-extra').value)||0;
+          if(q>0){
+            const nomeExtra=div.querySelector('span').textContent.split(" (")[0],
+                  pExtra=parseFloat(div.dataset.price).toFixed(2);
+            itensTexto+=`\n• ${nomeExtra} x${q} – R$ ${pExtra}`;
           }
         });
-        // Adiciona a observação do item, se houver
-        const obsItem = row.querySelector('.obs-produto').value.trim();
-        if (obsItem) {
-          itensTexto += `\n  Obs: ${obsItem}`;
-        }
-        // Adiciona uma quebra de linha entre os itens, exceto o último
-        if (index < document.querySelectorAll('#itens-container .item-row').length - 1) {
-          itensTexto += '\n';
-        }
+        const obsItem=row.querySelector('.obs-produto').value.trim();
+        if(obsItem) itensTexto+=`\n  Obs: ${obsItem}`;
+        if(idx<document.querySelectorAll('#itens-container .item-row').length-1) itensTexto+='\n';
       });
-      // Chave Pix ou descrição para outros pagamentos
-      let pixInfo = '';
-      if (pagamento === 'PIX') {
-        pixInfo = `🔑 Chave Pix: renimarfilho000@gmail.com`;
-      }
-      // Exibe a taxa de entrega apenas se necessário
-      let taxaEntrega = '';
-      if (opcaoEntrega === 'entrega' && !entregaGratisAtivada) {
-        taxaEntrega = `🛵 *Taxa de Entrega:* R$ ${taxa}`;
-      }
-      // Montagem final da mensagem
-      const mensagem = `📋 *MEU PEDIDO*- *Dados do Cliente:*- Nome: ${nome}- Endereço: ${endereco}- Ponto: ${ponto}${itensTexto}💵 *Forma de Pagamento:* ${pagamento}${pixInfo}${taxaEntrega} 🔴 *Total do Pedido:* R$ ${total}*Modo:* ${modo}📝 *Observações Gerais:* ${obsGeral}`;
-      // Envia para o WhatsApp
-      const numero = '5598981729088';
-      const url = `whatsapp://send?phone=${numero}&text=${encodeURIComponent(mensagem)}`;
-      window.open(url, '_blank');
+      let pixInfo='', taxaEntrega='';
+      if(pagamento==='PIX') pixInfo=`🔑 Chave Pix: renimarfilho000@gmail.com`;
+      if(opcaoEntrega==='entrega'&&!entregaGratisAtivada) taxaEntrega=`🛵 *Taxa de Entrega:* R$ ${taxa}`;
+      const mensagem=`📋 *MEU PEDIDO*
+- *Dados do Cliente:*
+- Nome: ${nome}
+- Endereço: ${endereco}
+- Ponto: ${ponto}
+
+${itensTexto}
+
+💵 *Forma de Pagamento:* ${pagamento}${pixInfo}
+
+${taxaEntrega} 
+🔴 *Total do Pedido:* R$ ${total}
+*Modo:* ${modo}
+📝 *Observações Gerais:* ${obsGeral}`;
+      window.open(`whatsapp://send?phone=5598981729088&text=${encodeURIComponent(mensagem)}`,'_blank');
     }
   </script>
 </head>
 <body>
   <div class="status-container">
-    <img id="status-img" src="" alt="Status">
+    <img id="status-img" src="https://files.catbox.moe/iyrspd.png" alt="Status">
   </div>
   <form onsubmit="event.preventDefault(); enviarPedido();">
     <h1>PEDIDO 🟣🍨🧊</h1>
@@ -427,4 +389,3 @@
   </form>
 </body>
 </html>
-
