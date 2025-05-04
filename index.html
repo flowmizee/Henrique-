@@ -27,7 +27,6 @@
       border-radius:5px; background-color:#3A0A50;
       color:#fff; box-sizing:border-box;
     }
-    #nome,#endereco,#whatsapp,#ponto-referencia { width:100%; }
     button {
       background-color:#6A1B9A; color:#fff;
       border:none; border-radius:5px; cursor:pointer;
@@ -39,9 +38,6 @@
     .dropdown {
       position:relative; margin:0 auto 15px;
       width:100%; max-width:600px;
-    }
-    .dropdown>button {
-      width:100%; padding:12px 20px; font-size:16px; font-weight:bold;
     }
     .dropdown-content {
       display:none; position:absolute; top:100%;
@@ -124,6 +120,8 @@
         entregaGratisAtivada = false,
         mensagemExibida = false,
         produtos = {},
+        extrasSelections = {},
+        rowCounter = 0,
         fotos = [
           'https://files.catbox.moe/iyrspd.png',
           'https://files.catbox.moe/n1l144.png',
@@ -131,25 +129,18 @@
         ],
         fotoIndex = 0;
 
-    let extrasSelections = {};
-    let rowCounter = 0;
-
     window.addEventListener('DOMContentLoaded', () => {
       carregarProdutosDaPlanilha();
       setInterval(() => {
         fotoIndex = (fotoIndex + 1) % fotos.length;
         document.getElementById('status-img').src = fotos[fotoIndex];
       }, 3000);
-
-      const searchInput = document.getElementById('search-produto');
-      searchInput.addEventListener('input', () => {
-        const query = searchInput.value.toLowerCase();
+      document.getElementById('search-produto').addEventListener('input', e => {
+        const q = e.target.value.toLowerCase();
         document.querySelectorAll('#product-list .product-item').forEach(item => {
-          const name = item.dataset.product.toLowerCase();
-          item.style.display = name.includes(query) ? 'flex' : 'none';
+          item.style.display = item.dataset.product.toLowerCase().includes(q) ? 'flex' : 'none';
         });
       });
-
       document.getElementById('itens-container').addEventListener('click', e => {
         if (e.target.matches('.toggle-extras')) {
           e.target.nextElementSibling.classList.toggle('show');
@@ -157,13 +148,12 @@
         if (e.target.matches('.increase-extra, .decrease-extra')) {
           const div = e.target.closest('.extra-item'),
                 inp = div.querySelector('.qty-input-extra'),
-                v = parseInt(inp.value) || 0,
-                newV = e.target.matches('.increase-extra') ? v + 1 : Math.max(0, v - 1);
-          inp.value = newV;
-          const row = e.target.closest('.item-row'),
-                id = row.dataset.id,
-                nomeExtra = div.querySelector('span').textContent;
-          extrasSelections[id][nomeExtra] = newV;
+                v = parseInt(inp.value)||0,
+                nv = e.target.matches('.increase-extra')?v+1:Math.max(0,v-1);
+          inp.value = nv;
+          const id = e.target.closest('.item-row').dataset.id,
+                ne = div.querySelector('span').textContent;
+          extrasSelections[id][ne] = nv;
           atualizarPrecoTotal(inp);
         }
         if (e.target.matches('.remove-btn')) {
@@ -179,16 +169,14 @@
       const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQdgBk-3LeNnqODPocNVQy2bGzJbjtozTrAr7-BX51A7jClHGfAPEEZjy9zFop6d6HpB7O8-nTVHz9E/pub?output=csv",
             res = await fetch(url),
             csv = await res.text(),
-            lines = csv.split("\n").filter(l => l.trim());
+            lines = csv.split("\n").filter(l=>l.trim());
       lines.shift(); produtos = {};
       for (const l of lines) {
-        const c = l.split(",").map(x => x.trim()), nome = c[0],
-              preco = parseFloat(c[1].replace(",", ".")) || 0, desc = c[2],
-              adicion = [];
-        for (let i = 3; i < c.length; i += 2) {
-          if (c[i] && c[i+1]) adicion.push({ nome: c[i], preco: parseFloat(c[i+1].replace(",", ".")) });
-        }
-        produtos[nome] = { preco, descricao: desc, adicionais: adicion };
+        const c = l.split(",").map(x=>x.trim()), nome=c[0],
+              preco=parseFloat(c[1].replace(",", "."))||0, desc=c[2],
+              adicion=[];
+        for(let i=3;i<c.length;i+=2) if(c[i]&&c[i+1]) adicion.push({nome:c[i],preco:parseFloat(c[i+1].replace(",", "."))});
+        produtos[nome]={preco,descricao:desc,adicionais:adicion};
       }
       buildProductList();
     }
@@ -196,10 +184,10 @@
     function buildProductList() {
       const list = document.getElementById("product-list");
       list.innerHTML = "";
-      Object.keys(produtos).forEach(p => {
-        const div = document.createElement("div");
-        div.className = "product-item"; div.dataset.product = p;
-        div.innerHTML = `
+      Object.keys(produtos).forEach(p=>{
+        const div=document.createElement("div");
+        div.className="product-item"; div.dataset.product=p;
+        div.innerHTML=`
           <span>${p} - R$ ${produtos[p].preco.toFixed(2)}</span>
           <div class="qty-controls">
             <button type="button" class="decrease">-</button>
@@ -208,44 +196,43 @@
           </div>`;
         list.appendChild(div);
       });
-      list.addEventListener('click', e => {
-        if (e.target.matches('.increase, .decrease')) {
-          const itm = e.target.closest('.product-item'),
-                inp = itm.querySelector('.qty-input'),
-                v = parseInt(inp.value) || 0;
-          inp.value = e.target.matches('.increase') ? v + 1 : Math.max(0, v - 1);
+      list.addEventListener('click', e=>{
+        if(e.target.matches('.increase, .decrease')){
+          const itm=e.target.closest('.product-item'),
+                inp=itm.querySelector('.qty-input'),
+                v=parseInt(inp.value)||0;
+          inp.value=e.target.matches('.increase')?v+1:Math.max(0,v-1);
         }
       });
     }
 
-    function toggleDropdown() {
+    function toggleDropdown(){
       document.getElementById('productDropdown').classList.toggle('show');
     }
 
-    function getExtrasLabel(nome) {
-      const lower = nome.toLowerCase();
-      if (lower.includes("sorvete")) return "Escolher Bolas";
-      if (lower.includes("picolé")) return "Sabores";
+    function getExtrasLabel(nome){
+      const l=nome.toLowerCase();
+      if(l.includes("sorvete")) return "Escolher Bolas";
+      if(l.includes("picolé")) return "Sabores";
       return "Adicionais";
     }
 
-    function confirmSelection() {
+    function confirmSelection(){
       toggleDropdown();
-      const cont = document.getElementById('itens-container');
-      document.querySelectorAll('.product-item').forEach(it => {
-        const nome = it.dataset.product,
-              qtd = parseInt(it.querySelector('.qty-input').value) || 0;
-        for (let i = 0; i < qtd; i++) {
-          const key = nome + "-" + i;
-          if (cont.querySelector(`.item-row[data-key="${key}"]`)) continue;
-          const row = document.createElement('div');
-          row.className = 'item-row';
-          const id = 'item-' + (rowCounter++);
-          row.dataset.id = id;
-          row.dataset.key = key;
-          extrasSelections[id] = extrasSelections[id] || {};
-          const label = getExtrasLabel(nome);
-          row.innerHTML = `
+      const cont=document.getElementById('itens-container');
+      document.querySelectorAll('.product-item').forEach(it=>{
+        const nome=it.dataset.product,
+              qtd=parseInt(it.querySelector('.qty-input').value)||0;
+        for(let i=0;i<qtd;i++){
+          const key=nome+"-"+i;
+          if(cont.querySelector(`.item-row[data-key="${key}"]`)) continue;
+          const row=document.createElement('div');
+          row.className='item-row';
+          row.dataset.id='item-'+(rowCounter++);
+          row.dataset.key=key;
+          extrasSelections[row.dataset.id]={};
+          const label=getExtrasLabel(nome);
+          row.innerHTML=`
             <button type="button" class="remove-btn">×</button>
             <div class="product-title">${nome}</div>
             <button type="button" class="toggle-extras">${label}</button>
@@ -254,22 +241,21 @@
             <textarea class="obs-produto" placeholder="Observações do produto"></textarea>
           `;
           cont.appendChild(row);
-          buildExtras(row.querySelector('.extras-dropdown'), nome, id);
+          buildExtras(row.querySelector('.extras-dropdown'), nome, row.dataset.id);
           atualizarPrecoTotal(row.querySelector('input'));
         }
       });
       calcularTotal();
     }
 
-    function buildExtras(container, nome, id) {
-      const itens = produtos[nome].adicionais;
-      if (!itens.length) return;
-      const free = nome.toLowerCase().includes("açaí")
-        ? (nome.includes("200ml") ? 2 : (nome.includes("500ml") ? 5 : 3))
+    function buildExtras(container, nome, id){
+      const itens=produtos[nome].adicionais;
+      if(!itens.length) return;
+      let free= nome.toLowerCase().includes("açaí")
+        ? (nome.includes("200ml")?2:(nome.includes("500ml")?5:3))
         : 0;
-      let html = "";
-      if (free > 0) html += `<p>(${free} grátis)</p>`;
-      html += itens.map(e => `
+      let html = free>0?`<p>(${free} grátis)</p>`:"";
+      html += itens.map(e=>`
         <div class="extra-item" data-price="${e.preco}">
           <span>${e.nome} (R$ ${e.preco.toFixed(2)})</span>
           <div class="qty-controls">
@@ -278,62 +264,58 @@
             <button type="button" class="increase-extra">+</button>
           </div>
         </div>`).join("");
-      container.innerHTML = html;
-      container.querySelectorAll('.extra-item').forEach(div => {
-        const nomeExtra = div.querySelector('span').textContent;
-        const inp = div.querySelector('.qty-input-extra');
-        inp.value = extrasSelections[id][nomeExtra] || 0;
+      container.innerHTML=html;
+      container.querySelectorAll('.extra-item').forEach(div=>{
+        const ne=div.querySelector('span').textContent;
+        div.querySelector('.qty-input-extra').value = extrasSelections[id][ne]||0;
       });
     }
 
-    function atualizarPrecoTotal(el) {
-      const row = el.closest('.item-row'),
-            nome = row.querySelector('.product-title').textContent,
-            isSorvete = nome.toLowerCase().includes("sorvete"),
-            base = isSorvete ? 0 : produtos[nome].preco;
-      let cost = 0,
-          free = nome.toLowerCase().includes("açaí")
-            ? (nome.includes("200ml") ? 2 : (nome.includes("500ml") ? 5 : 3))
-            : 0;
-      row.querySelectorAll('.extra-item').forEach(div => {
-        const q = parseInt(div.querySelector('.qty-input-extra').value) || 0,
-              p = parseFloat(div.dataset.price),
-              used = Math.min(q, free);
-        free -= used;
-        cost += p * (q - used);
+    function atualizarPrecoTotal(el){
+      const row=el.closest('.item-row'),
+            nome=row.querySelector('.product-title').textContent,
+            isSorvete=nome.toLowerCase().includes("sorvete"),
+            base=isSorvete?0:produtos[nome].preco;
+      let cost=0,
+          free= nome.toLowerCase().includes("açaí")
+            ? (nome.includes("200ml")?2:(nome.includes("500ml")?5:3))
+            :0;
+      row.querySelectorAll('.extra-item').forEach(div=>{
+        const q=parseInt(div.querySelector('.qty-input-extra').value)||0,
+              p=parseFloat(div.dataset.price),
+              used=Math.min(q, free);
+        free-=used;
+        cost+=p*(q-used);
       });
-      row.querySelector('input[readonly]').value = (base + cost).toFixed(2);
+      row.querySelector('input[readonly]').value=(base+cost).toFixed(2);
       calcularTotal();
     }
 
-    function calcularTotal() {
-      let sum = 0;
-      document.querySelectorAll('#itens-container input[readonly]').forEach(i => sum += parseFloat(i.value) || 0);
-      if (sum >= 20 && !mensagemExibida) {
+    function calcularTotal(){
+      let sum=0;
+      document.querySelectorAll('#itens-container input[readonly]').forEach(i=>sum+=parseFloat(i.value)||0);
+      if(sum>=20 && !mensagemExibida){
         alert("Parabéns! Você atingiu o valor mínimo para entrega grátis! A taxa de entrega não será cobrada.");
-        entregaGratisAtivada = true; mensagemExibida = true;
+        entregaGratisAtivada=true; mensagemExibida=true;
       }
-      if (sum < 20) {
-        entregaGratisAtivada = false; mensagemExibida = false;
-      }
-      const taxa = (opcaoEntrega === "retirada" || entregaGratisAtivada) ? 0 : parseFloat(document.getElementById('taxa').value) || 0;
-      document.getElementById('total').value = (sum + taxa).toFixed(2);
+      if(sum<20){ entregaGratisAtivada=false; mensagemExibida=false; }
+      const taxa=(opcaoEntrega==="retirada"||entregaGratisAtivada)?0:parseFloat(document.getElementById('taxa').value)||0;
+      document.getElementById('total').value=(sum+taxa).toFixed(2);
     }
 
-    function selecionarOpcao(op) {
-      opcaoEntrega = op;
-      document.getElementById('btn-entrega').classList.toggle('selected', op === "entrega");
-      document.getElementById('btn-retirada').classList.toggle('selected', op === "retirada");
+    function selecionarOpcao(op){
+      opcaoEntrega=op;
+      document.getElementById('btn-entrega').classList.toggle('selected',op==="entrega");
+      document.getElementById('btn-retirada').classList.toggle('selected',op==="retirada");
       calcularTotal();
     }
 
-    function validaTelefone(t) {
-      const d = t.replace(/\D/g, "");
-      return d.length === 11 && d.charAt(2) === "9";
+    function validaTelefone(t){
+      const d=t.replace(/\D/g,"");
+      return d.length===11&&d.charAt(2)==="9";
     }
 
     async function enviarPedido() {
-      // Coleta dos dados do cliente
       const nome = document.getElementById('nome').value.trim();
       const endereco = document.getElementById('endereco').value.trim();
       const ponto = document.getElementById('ponto-referencia').value.trim();
@@ -343,55 +325,45 @@
       const modo = opcaoEntrega;
       const obsGeral = document.getElementById('observacoes').value.trim();
 
-      // Monta seção de itens
-      let itensTexto = '';
+      let itensTexto = '\n\nItens do Pedido:\n';
       document.querySelectorAll('#itens-container .item-row').forEach(row => {
         const titulo = row.querySelector('.product-title').textContent;
         const preco = parseFloat(row.querySelector('input[readonly]').value).toFixed(2);
-        itensTexto += `\n🟣 *${titulo}* – R$ ${preco}`;
+        const icon = titulo.toLowerCase().includes('açaí') ? '🟣' :
+                     titulo.toLowerCase().includes('sorvete') ? '🍨' : '🧊';
+        itensTexto += `\n${icon} ${titulo} – R$ ${preco}`;
         row.querySelectorAll('.extra-item').forEach(div => {
           const q = parseInt(div.querySelector('.qty-input-extra').value) || 0;
           if (q > 0) {
             const nomeExtra = div.querySelector('span').textContent.replace(/\s*.*$/, '');
             const pExtra = parseFloat(div.dataset.price).toFixed(2);
-            itensTexto += `\n - ${nomeExtra} x${q} – R$ ${pExtra}\n✏️ *Obs (${nomeExtra}):* ${div.querySelector('.qty-input-extra').dataset.obs || ''}`;
+            itensTexto += `\n- ${nomeExtra} (R$ ${pExtra}) x${q}`;
           }
         });
         const obsItem = row.querySelector('.obs-produto').value.trim();
         if (obsItem) {
-          itensTexto += `\n✏️ *Obs (${titulo}):* ${obsItem}`;
+          itensTexto += `\nObs: ${obsItem}`;
         }
       });
 
-      // Chave Pix ou descrição para outros pagamentos
-      let pixInfo = '';
-      if (pagamento === 'PIX') {
-        pixInfo = `🔑 Chave Pix: renimarfilho000@gmail.com`;
-      }
-
-      // Montagem final da mensagem
       const mensagem =
-`*PEDIDO*
+`📋 MEU PEDIDO
 
-📋 *Dados do Cliente:*
-- Nome: ${nome}
-- Endereço: ${endereco}
-- Ponto: ${ponto}
+Dados do Cliente:  
+- Nome: ${nome}  
+- Endereço: ${endereco}  
+- Ponto: ${ponto}  
 
-📦 *Itens do Pedido:*${itensTexto}
+Itens do Pedido:${itensTexto}
 
-💵 *Forma de Pagamento:* ${pagamento}
-${pixInfo}
+💵 Forma de Pagamento: ${pagamento}  
+Taxa de Entrega: R$ ${taxa}  
+Total do Pedido: R$ ${total}  
 
-🚚 *Taxa de Entrega:* R$ ${taxa}
-🔴 *Total do Pedido:* R$ ${total}
-
-*Modo:* ${modo}
-
-📝 *Observações:* ${obsGeral}
+Modo: ${modo}  
+Observações: ${obsGeral}
 `;
 
-      // Envia para o WhatsApp
       const numero = '5598981729088';
       const url = `https://api.whatsapp.com/send?phone=${numero}&text=${encodeURIComponent(mensagem)}`;
       window.open(url, '_blank');
@@ -408,8 +380,6 @@ ${pixInfo}
     <input type="text" id="nome" required placeholder="Digite seu nome">
     <label for="endereco">Endereço de Entrega:</label>
     <input type="text" id="endereco" placeholder="Cidade, Bairro, Rua, Número">
-    <label for="whatsapp">WhatsApp:</label>
-    <input type="text" id="whatsapp" required placeholder="(xx) 9xxxx-xxxx">
     <label for="ponto-referencia">Ponto de Referência:</label>
     <input type="text" id="ponto-referencia" placeholder="Ex: Em frente à padaria">
     <label>Itens do Pedido:</label>
