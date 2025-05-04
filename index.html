@@ -124,7 +124,7 @@
     }
   </style>
   <script>
-    const APP_SCRIPT_URL = 'https://script.google.com/macros/s/SEU_ID_AQUI/exec';
+    const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwwGsRzxHmtUQKV7zWHgpgIHdZRa8KkXdqmGHg1HiFlT1GR1fy7nY_-JZ8FJJgdIIiO/exec';
 
     let opcaoEntrega = "entrega",
         entregaGratisAtivada = false,
@@ -189,7 +189,7 @@
     });
 
     async function carregarProdutosDaPlanilha() {
-      const url = "https://script.google.com/macros/s/AKfycbwwGsRzxHmtUQKV7zWHgpgIHdZRa8KkXdqmGHg1HiFlT1GR1fy7nY_-JZ8FJJgdIIiO/exec",
+      const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQdgBk-3LeNnqODPocNVQy2bGzJbjtozTrAr7-BX51A7jClHGfAPEEZjy9zFop6d6HpB7O8-nTVHz9E/pub?output=csv",
             res=await fetch(url), csv=await res.text(),
             lines=csv.split("\n").filter(l=>l.trim());
       lines.shift(); produtos={};
