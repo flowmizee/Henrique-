@@ -61,7 +61,7 @@
     #product-list { max-height:200px; overflow-y:auto; }
     .product-item {
       display:flex; justify-content:space-between; align-items:center;
-      margin-bottom:10px;
+      margin-bottom: 10px;
     }
     .qty-controls { display:flex; align-items:center; }
     .qty-input {
@@ -121,9 +121,9 @@
         mensagemExibida = false,
         produtos = {},
         fotos = [
-          'https://files.catbox.moe/iyrspd.png',
-          'https://files.catbox.moe/n1l144.png',
-          'https://files.catbox.moe/5jchgk.png'
+          ',
+          ',
+          '
         ],
         fotoIndex = 0;
     let extrasSelections = {};
@@ -201,7 +201,8 @@
             <button type="button" class="decrease">-</button>
             <input type="number" min="0" value="0" class="qty-input">
             <button type="button" class="increase">+</button>
-          </div>`;
+          </div>
+        `;
         list.appendChild(div);
       });
       list.addEventListener('click', e => {
@@ -263,13 +264,14 @@
       if (free > 0) html += `<p>(${free} grátis)</p>`;
       html += itens.map(e => `
         <div class="extra-item" data-price="${e.preco}">
-          <span>${e.nome} (R$ ${e.preco.toFixed(2)})</span>
+          <span>${e.nome}</span>
           <div class="qty-controls">
             <button type="button" class="decrease-extra">-</button>
             <input type="number" min="0" value="0" class="qty-input-extra"/>
             <button type="button" class="increase-extra">+</button>
           </div>
-        </div>`).join("");
+        </div>
+      `).join("");
       container.innerHTML = html;
       container.querySelectorAll('.extra-item').forEach(div => {
         const nomeExtra = div.querySelector('span').textContent;
@@ -329,24 +331,20 @@
       const total = parseFloat(document.getElementById('total').value).toFixed(2);
       const modo = opcaoEntrega;
       const obsGeral = document.getElementById('observacoes').value.trim();
-
       // Monta seção de itens
       let itensTexto = '📦 *Itens do Pedido:*';
       document.querySelectorAll('#itens-container .item-row').forEach((row, index) => {
         const titulo = row.querySelector('.product-title').textContent;
         const preco = parseFloat(row.querySelector('input[readonly]').value).toFixed(2);
-
         // Adiciona o item à mensagem (sem emojis, pois o Cardápio Manda os emojis)
         itensTexto += `\n*${titulo}* – R$ ${preco}`;
-
         // Adiciona os extras com a quantidade e preço
         row.querySelectorAll('.extra-item').forEach(div => {
           const q = parseInt(div.querySelector('.qty-input-extra').value) || 0;
           if (q > 0) {
             const nomeExtra = div.querySelector('span').textContent; // Inclui o nome completo do extra
             const pExtra = parseFloat(div.dataset.price).toFixed(2);
-            itensTexto += `\n• ${nomeExtra} (R$ ${pExtra}) x${q}`;
-
+            itensTexto += `\n• ${nomeExtra} x${q}`; // Removendo o preço do extra da mensagem
             // Adiciona a observação do extra, se houver
             const obsExtra = div.querySelector('.qty-input-extra').dataset.obs || '';
             if (obsExtra) {
@@ -354,47 +352,28 @@
             }
           }
         });
-
         // Adiciona a observação do item, se houver
         const obsItem = row.querySelector('.obs-produto').value.trim();
         if (obsItem) {
           itensTexto += `\n  Obs: ${obsItem}`;
         }
-
         // Adiciona uma quebra de linha entre os itens, exceto o último
         if (index < document.querySelectorAll('#itens-container .item-row').length - 1) {
           itensTexto += '\n';
         }
       });
-
       // Chave Pix ou descrição para outros pagamentos
       let pixInfo = '';
       if (pagamento === 'PIX') {
         pixInfo = `🔑 Chave Pix: renimarfilho000@gmail.com`;
       }
-
       // Exibe a taxa de entrega apenas se necessário
       let taxaEntrega = '';
       if (opcaoEntrega === 'entrega' && !entregaGratisAtivada) {
         taxaEntrega = `🛵 *Taxa de Entrega:* R$ ${taxa}`;
       }
-
       // Montagem final da mensagem
-      const mensagem = `📋 *MEU PEDIDO*
-- *Dados do Cliente:*
-- Nome: ${nome}
-- Endereço: ${endereco}
-- Ponto: ${ponto}
-
-${itensTexto}
-
-💵 *Forma de Pagamento:* ${pagamento}${pixInfo}
-
-${taxaEntrega} 
-🔴 *Total do Pedido:* R$ ${total}
-*Modo:* ${modo}
-📝 *Observações Gerais:* ${obsGeral}`;
-
+      const mensagem = `📋 *MEU PEDIDO*- *Dados do Cliente:*- Nome: ${nome}- Endereço: ${endereco}- Ponto: ${ponto}${itensTexto}💵 *Forma de Pagamento:* ${pagamento}${pixInfo}${taxaEntrega} 🔴 *Total do Pedido:* R$ ${total}*Modo:* ${modo}📝 *Observações Gerais:* ${obsGeral}`;
       // Envia para o WhatsApp
       const numero = '5598981729088';
       const url = `whatsapp://send?phone=${numero}&text=${encodeURIComponent(mensagem)}`;
@@ -404,7 +383,7 @@ ${taxaEntrega}
 </head>
 <body>
   <div class="status-container">
-    <img id="status-img" src="https://files.catbox.moe/iyrspd.png" alt="Status">
+    <img id="status-img" src="" alt="Status">
   </div>
   <form onsubmit="event.preventDefault(); enviarPedido();">
     <h1>PEDIDO 🟣🍨🧊</h1>
@@ -448,3 +427,4 @@ ${taxaEntrega}
   </form>
 </body>
 </html>
+
