@@ -434,7 +434,7 @@
       const params=new URLSearchParams({
         nome, whatsapp: document.getElementById('whatsapp').value.trim(),
         modo, endereco: endereco||'-', ponto: ponto||'-',
-        pagamento, total
+        pagamento, total, itens: itensTexto
       });
       fetch(`${APP_SCRIPT_URL}?${params.toString()}`)
         .catch(err=>console.error('Erro ao salvar no Apps Script:',err));
