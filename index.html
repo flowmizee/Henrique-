@@ -135,7 +135,7 @@
     <label for="endereco">Endereço de Entrega:</label>
     <input type="text" id="endereco" placeholder="Cidade, Bairro, Rua, Número">
     <label for="whatsapp">WhatsApp:</label>
-    <input type="text" id="whatsapp" required placeholder="(xx) 9xxxx-xxxx">
+    <input type="text" id="whatsapp" required placeholder="DD 9xxxx-xxxx">
     <label for="ponto-referencia">Ponto de Referência:</label>
     <input type="text" id="ponto-referencia" placeholder="Ex: Em frente à padaria">
     <label>Itens do Pedido:</label>
@@ -170,20 +170,15 @@
   </form>
 
   <script>
-    const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzzI2d198xP-SlhIJvW8GI-2fQaLAfx0hXVEibeLF4N_4mbE6ALKJhUlC09qGlJNSlK/exec';
+    const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzdg4tqc96tVYNC1Vo0rC5t-k1d2-9wDByglLOFpYCsz7UBUM844yx61zqUunL_2Dq2/exec';
 
     let opcaoEntrega = "entrega",
         entregaGratisAtivada = false,
         mensagemExibida = false,
         produtos = {},
-        fotos = [
-          'primeira.png',
-          'segunda.png',
-          'terceira.png'
-        ],
+        fotos = ['primeira.png','segunda.png','terceira.png'],
         fotoIndex = 0;
-    let extrasSelections = {};
-    let rowCounter = 0;
+    let extrasSelections = {}, rowCounter = 0;
 
     function getFreeCount(nome) {
       if (nome.includes('200ml')) return 2;
@@ -198,7 +193,6 @@
         fotoIndex = (fotoIndex + 1) % fotos.length;
         document.getElementById('status-img').src = fotos[fotoIndex];
       }, 3000);
-
       document.getElementById('search-produto').addEventListener('input', e => {
         const q = e.target.value.toLowerCase();
         document.querySelectorAll('#product-list .product-item')
@@ -206,12 +200,10 @@
             item.dataset.product.toLowerCase().includes(q) ? 'flex' : 'none'
           );
       });
-
       document.querySelector('form').addEventListener('submit', e => {
         e.preventDefault();
         if (validarFormulario()) enviarPedido();
       });
-
       document.getElementById('itens-container').addEventListener('click', e => {
         if (e.target.matches('.toggle-extras')) {
           e.target.nextElementSibling.classList.toggle('show');
@@ -237,28 +229,24 @@
       });
     });
 
-    // validações extras
     function validarFormulario() {
       const nome = document.getElementById('nome').value.trim();
       const whatsapp = document.getElementById('whatsapp').value.trim();
-      // nome obrigatório
       if (!nome) {
         alert('Por favor, informe seu nome.');
         return false;
       }
-      // regex para WhatsApp brasileiro
-      const padrao = /^(\+55)?9\d{8}$/;
+      // exige 11 dígitos: 2 de DDD + 9xxxxxxx
+      const padrao = /^([1-9]{2})9\d{8}$/;
       if (!padrao.test(whatsapp)) {
-        alert('Por favor, insira um WhatsApp válido (ex: 9XXXXXXXX ou +559XXXXXXXX).');
+        alert('WhatsApp deve ter 11 dígitos: DDD (2 dígitos) + número começando em 9 (ex: 98981420070).');
         return false;
       }
-      // pelo menos um produto
       const linhas = document.querySelectorAll('#itens-container .item-row');
       if (linhas.length === 0) {
         alert('Por favor, selecione ao menos um produto.');
         return false;
       }
-      // se extras obrigatórios
       for (let row of linhas) {
         const id = row.dataset.id;
         const nomeProd = row.querySelector('.product-title').textContent;
@@ -270,26 +258,18 @@
           }
         }
       }
-      // se entrega, checar endereço e ponto
       if (opcaoEntrega === 'entrega') {
         const end = document.getElementById('endereco').value.trim();
         const pt  = document.getElementById('ponto-referencia').value.trim();
-        if (!end) {
-          alert('Por favor, informe seu endereço de entrega.');
-          return false;
-        }
-        if (!pt) {
-          alert('Por favor, informe um ponto de referência.');
-          return false;
-        }
+        if (!end) { alert('Por favor, informe seu endereço de entrega.'); return false; }
+        if (!pt ) { alert('Por favor, informe um ponto de referência.'); return false; }
       }
       return true;
     }
 
     async function carregarProdutosDaPlanilha() {
       const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQdgBk-3LeNnqODPocNVQy2bGzJbjtozTrAr7-BX51A7jClHGfAPEEZjy9zFop6d6HpB7O8-nTVHz9E/pub?output=csv";
-      const res = await fetch(url);
-      const csv = await res.text();
+      const res = await fetch(url), csv = await res.text();
       const lines = csv.split("\n").filter(l => l.trim());
       lines.shift(); produtos = {};
       lines.forEach(l => {
@@ -347,8 +327,7 @@
           const row = document.createElement('div');
           row.className = 'item-row';
           const id = 'item-' + rowCounter++;
-          row.dataset.id = id;
-          row.dataset.key = key;
+          row.dataset.id = id; row.dataset.key = key;
           extrasSelections[id] = {};
           row.innerHTML = `
             <button type="button" class="remove-btn">×</button>
@@ -435,13 +414,9 @@
       document.querySelectorAll('#itens-container input[readonly]').forEach(i => sum += parseFloat(i.value) || 0);
       if (sum >= 20 && !mensagemExibida) {
         alert("Parabéns! Você atingiu o valor mínimo para entrega grátis!");
-        entregaGratisAtivada = true;
-        mensagemExibida = true;
+        entregaGratisAtivada = true; mensagemExibida = true;
       }
-      if (sum < 20) {
-        entregaGratisAtivada = false;
-        mensagemExibida = false;
-      }
+      if (sum < 20) { entregaGratisAtivada = false; mensagemExibida = false; }
       const taxa = (opcaoEntrega === "retirada" || entregaGratisAtivada) ? 0 : parseFloat(document.getElementById('taxa').value) || 0;
       document.getElementById('total').value = (sum + taxa).toFixed(2);
     }
@@ -454,7 +429,6 @@
     }
 
     async function enviarPedido(){
-      // lê dados básicos
       const nome = document.getElementById('nome').value.trim();
       const endereco = document.getElementById('endereco').value.trim();
       const ponto = document.getElementById('ponto-referencia').value.trim();
@@ -463,11 +437,9 @@
       const modo = opcaoEntrega;
       const obsGeral = document.getElementById('observacoes').value.trim();
 
-      // recalcula subtotal
       let subtotal = 0;
       document.querySelectorAll('#itens-container input[readonly]').forEach(i=>subtotal += parseFloat(i.value)||0);
 
-      // define texto da taxa
       let taxaTexto = '';
       if (modo === 'entrega') {
         if (subtotal >= 20) {
@@ -479,13 +451,11 @@
         taxaTexto = `🛵 Taxa de Entrega: R$ 0,00\n`;
       }
 
-      // monta dados do cliente
       let dadosCliente = `Dados do Cliente:\nNome: ${nome}\n`;
       if (modo === 'entrega') {
         dadosCliente += `Endereço: ${endereco||'---'}\nPonto de Referência: ${ponto||'---'}\n`;
       }
 
-      // monta itens
       let itensTexto = '📦 Itens do Pedido:\n';
       const rows = Array.from(document.querySelectorAll('#itens-container .item-row'));
       rows.forEach((row, idx) => {
@@ -511,7 +481,6 @@
         if (idx < rows.length - 1) itensTexto += `\n`;
       });
 
-      // mensagem final
       const total = (subtotal + (modo==='retirada'?0:(subtotal>=20?0:parseFloat(taxaVal)))).toFixed(2);
       const mensagemTexto =
         `📋 MEU PEDIDO\n\n` +
@@ -524,11 +493,9 @@
         `Modo: ${modo.charAt(0).toUpperCase()+modo.slice(1)}\n` +
         `📝 Observações Gerais:\n${obsGeral||'-'}`;
 
-      // envia via WhatsApp
       const mensagem = encodeURIComponent(mensagemTexto);
       window.open(`whatsapp://send?phone=5598981729088&text=${mensagem}`, '_blank');
 
-      // salva no Apps Script
       const params = new URLSearchParams({
         nome, whatsapp: document.getElementById('whatsapp').value.trim(),
         modo, endereco: endereco||'-', ponto: ponto||'-',
