@@ -123,6 +123,52 @@
       width:100%; padding:12px 20px; font-size:16px;
     }
   </style>
+</head>
+<body>
+  <div class="status-container">
+    <img id="status-img" src="primeira.png" alt="Status">
+  </div>
+  <form>
+    <h1>PEDIDO 🟣🍨🧊</h1>
+    <label for="nome">Nome do Cliente:</label>
+    <input type="text" id="nome" required placeholder="Digite seu nome">
+    <label for="endereco">Endereço de Entrega:</label>
+    <input type="text" id="endereco" placeholder="Cidade, Bairro, Rua, Número">
+    <label for="whatsapp">WhatsApp:</label>
+    <input type="text" id="whatsapp" required placeholder="(xx) 9xxxx-xxxx">
+    <label for="ponto-referencia">Ponto de Referência:</label>
+    <input type="text" id="ponto-referencia" placeholder="Ex: Em frente à padaria">
+    <label>Itens do Pedido:</label>
+    <div class="dropdown" id="productDropdown">
+      <button type="button" onclick="toggleDropdown()"><strong>Selecionar Produtos</strong></button>
+      <div class="dropdown-content">
+        <div class="dropdown-header">
+          <input type="text" id="search-produto" placeholder="Pesquisar produto">
+        </div>
+        <div id="product-list"></div>
+        <button type="button" class="continuar-btn" onclick="confirmSelection()">Continuar</button>
+      </div>
+    </div>
+    <div id="itens-container"></div>
+    <label for="taxa">Taxa de Entrega (R$):</label>
+    <input type="number" id="taxa" readonly value="2.00">
+    <label for="pagamento">Forma de Pagamento:</label>
+    <select id="pagamento" required>
+      <option>Dinheiro</option><option>Cartão de Crédito</option>
+      <option>Cartão de Débito</option><option>PIX</option>
+    </select>
+    <label for="observacoes">Observações:</label>
+    <textarea id="observacoes" rows="4" placeholder="Observações gerais"></textarea>
+    <label>Opção:</label>
+    <div id="opcao-entrega">
+      <button id="btn-entrega" type="button" onclick="selecionarOpcao('entrega')" class="selected">Entrega</button>
+      <button id="btn-retirada" type="button" onclick="selecionarOpcao('retirada')">Retirada</button>
+    </div>
+    <label for="total">Total:</label>
+    <input type="number" id="total" readonly placeholder="Total do Pedido">
+    <button type="submit">Enviar Pedido</button>
+  </form>
+
   <script>
     const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzdg4tqc96tVYNC1Vo0rC5t-k1d2-9wDByglLOFpYCsz7UBUM844yx61zqUunL_2Dq2/exec';
 
@@ -131,9 +177,9 @@
         mensagemExibida = false,
         produtos = {},
         fotos = [
-          'https://i.postimg.cc/BQgSnhft/20250502-133533-0000.png',
-          'https://i.postimg.cc/x110JK95/PE-A-AQUI-NO-APP-E-CONCORRA-20250502-140001-0000.png',
-          'https://i.postimg.cc/0yX9pbQs/PE-A-AQUI-NO-APP-E-CONCORRA-20250502-145059-0000.png'
+          'primeira.png',
+          'segunda.png',
+          'terceira.png'
         ],
         fotoIndex = 0;
     let extrasSelections = {};
@@ -383,13 +429,11 @@
             modo=opcaoEntrega,
             obsGeral=document.getElementById('observacoes').value.trim();
 
-      // Monta Dados do Cliente
       let dadosCliente = `Dados do Cliente:\nNome: ${nome}\n`;
       if(modo==='entrega'){
         dadosCliente += `Endereço: ${endereco||'---'}\nPonto de Referência: ${ponto||'---'}\n`;
       }
 
-      // Monta texto dos itens
       let itensTexto = '📦 Itens do Pedido:\n';
       const rows = Array.from(document.querySelectorAll('#itens-container .item-row'));
       rows.forEach((row, idx) => {
@@ -415,7 +459,6 @@
         if(idx<rows.length-1) itensTexto+=`\n`;
       });
 
-      // Monta mensagem final
       const mensagemTexto =
         `📋 MEU PEDIDO\n\n` +
         dadosCliente + `\n` +
@@ -440,50 +483,5 @@
         .catch(err=>console.error('Erro ao salvar no Apps Script:',err));
     }
   </script>
-</head>
-<body>
-  <div class="status-container">
-    <img id="status-img" src="https://files.catbox.moe/iyrspd.png" alt="Status">
-  </div>
-  <form>
-    <h1>PEDIDO 🟣🍨🧊</h1>
-    <label for="nome">Nome do Cliente:</label>
-    <input type="text" id="nome" required placeholder="Digite seu nome">
-    <label for="endereco">Endereço de Entrega:</label>
-    <input type="text" id="endereco" placeholder="Cidade, Bairro, Rua, Número">
-    <label for="whatsapp">WhatsApp:</label>
-    <input type="text" id="whatsapp" required placeholder="(xx) 9xxxx-xxxx">
-    <label for="ponto-referencia">Ponto de Referência:</label>
-    <input type="text" id="ponto-referencia" placeholder="Ex: Em frente à padaria">
-    <label>Itens do Pedido:</label>
-    <div class="dropdown" id="productDropdown">
-      <button type="button" onclick="toggleDropdown()"><strong>Selecionar Produtos</strong></button>
-      <div class="dropdown-content">
-        <div class="dropdown-header">
-          <input type="text" id="search-produto" placeholder="Pesquisar produto">
-        </div>
-        <div id="product-list"></div>
-        <button type="button" class="continuar-btn" onclick="confirmSelection()">Continuar</button>
-      </div>
-    </div>
-    <div id="itens-container"></div>
-    <label for="taxa">Taxa de Entrega (R$):</label>
-    <input type="number" id="taxa" readonly value="2.00">
-    <label for="pagamento">Forma de Pagamento:</label>
-    <select id="pagamento" required>
-      <option>Dinheiro</option><option>Cartão de Crédito</option>
-      <option>Cartão de Débito</option><option>PIX</option>
-    </select>
-    <label for="observacoes">Observações:</label>
-    <textarea id="observacoes" rows="4" placeholder="Observações gerais"></textarea>
-    <label>Opção:</label>
-    <div id="opcao-entrega">
-      <button id="btn-entrega" type="button" onclick="selecionarOpcao('entrega')" class="selected">Entrega</button>
-      <button id="btn-retirada" type="button" onclick="selecionarOpcao('retirada')">Retirada</button>
-    </div>
-    <label for="total">Total:</label>
-    <input type="number" id="total" readonly placeholder="Total do Pedido">
-    <button type="submit">Enviar Pedido</button>
-  </form>
 </body>
 </html>
