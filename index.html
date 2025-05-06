@@ -170,7 +170,7 @@
   </form>
 
   <script>
-    const APP_SCRIPT_URL = 'https://script.google.com/macros/s/SEU_NOVO_ID_AQUI/exec';
+    const APP_SCRIPT_URL = 'https://script.google.com/macros/s/SEU_WEBAPP_ID/exec';
 
     let opcaoEntrega = "entrega",
         entregaGratisAtivada = false,
@@ -267,8 +267,15 @@
       return true;
     }
 
-    
-
+    async function carregarProdutosDaPlanilha() {
+  const res    = await fetch(`${APP_SCRIPT_URL}?action=produtos`);
+  const lista  = await res.json();
+  produtos     = {};
+  lista.forEach(p => {
+    produtos[p.nome] = { preco: p.preco, adicionais: p.adicionais };
+  });
+      buildProductList();
+    }
     function buildProductList(){
       const list = document.getElementById("product-list");
       list.innerHTML = "";
@@ -286,14 +293,8 @@
         list.appendChild(div);
       });
       list.addEventListener('click', e => {
-  if (e.target.matches('.increase, .decrease')) {
-    const itm = e.target.closest('.product-item');
-    const inp = itm.querySelector('.qty-input');
-    const v   = parseInt(inp.value) || 0;
-    inp.value = e.target.matches('.increase') ? v + 1 : Math.max(0, v - 1);
-  }
-});           
-          .target.closest('.product-item');
+        if (e.target.matches('.increase, .decrease')) {
+          const itm = e.target.closest('.product-item');
           const inp = itm.querySelector('.qty-input');
           const v = parseInt(inp.value) || 0;
           inp.value = e.target.matches('.increase') ? v + 1 : Math.max(0, v - 1);
