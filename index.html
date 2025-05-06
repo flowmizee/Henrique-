@@ -286,25 +286,13 @@
         list.appendChild(div);
       });
       list.addEventListener('click', e => {
-        if (e.target.matches('.increase, .decrease')) {
-        async function carregarProdutosDaPlanilha() {
-  // Busca o JSON de produtos do Web App
-  const res = await fetch(`${APP_SCRIPT_URL}?action=produtos`);
-  const lista = await res.json();
-
-  // Reconstrói o objeto 'produtos' na memória
-  produtos = {};
-  lista.forEach(p => {
-    produtos[p.nome] = {
-      preco: p.preco,
-      adicionais: p.adicionais
-    };
-  });
-
-  // Preenche a lista na UI
-  buildProductList();
-}  
-          
+  if (e.target.matches('.increase, .decrease')) {
+    const itm = e.target.closest('.product-item');
+    const inp = itm.querySelector('.qty-input');
+    const v   = parseInt(inp.value) || 0;
+    inp.value = e.target.matches('.increase') ? v + 1 : Math.max(0, v - 1);
+  }
+});           
           .target.closest('.product-item');
           const inp = itm.querySelector('.qty-input');
           const v = parseInt(inp.value) || 0;
