@@ -135,7 +135,8 @@
       <button type="button" onclick="toggleDropdown()"><strong>Selecionar Produtos</strong></button>
       <div class="dropdown-content">
         <div class="dropdown-header">
-          <input type="text" id="search-produto" placeholder="Pesquisar produto">
+  <input type="text" id="search-produto" placeholder="Pesquisar produto">
+  <button type="button" class="close-dropdown" onclick="closeDropdown()">×</button>
         </div>
         <div id="product-list"></div>
         <button type="button" class="continuar-btn" onclick="confirmSelection()">Continuar</button>
