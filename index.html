@@ -43,7 +43,7 @@
       width:100%; padding:12px 20px; font-size:16px; font-weight:bold;
     }
     .dropdown-content {
-      display:none; position:absolute; top:100%;
+      display:none; position:absolute; top:120%;
       left:50%; transform:translateX(-50%);
       background-color:#2C003E; padding:15px;
       box-shadow:0 4px 8px rgba(0,0,0,0.1);
@@ -122,6 +122,10 @@
     form button[type="submit"], .dropdown>button {
       width:100%; padding:12px 20px; font-size:16px;
     }
+  /* estilos que você já tem */
+  #label-itens {
+    display: none;
+  }
   </style>
 </head>
 <body>
@@ -130,7 +134,7 @@
   </div>
   <form>
     <h1>PEDIDO 🟣🍨🧊</h1>
-    <label>Itens do Pedido:</label>
+    <label id="label-itens">Itens do Pedido:</label>
     <div class="dropdown" id="productDropdown">
       <button type="button" onclick="toggleDropdown()"><strong>Selecionar Produtos</strong></button>
       <div class="dropdown-content">
