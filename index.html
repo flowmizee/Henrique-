@@ -57,7 +57,7 @@
       background-color:#3A0A50; border:1px solid #ccc; color:#fff;
       box-sizing:border-box;
     }
-    #product-list { max-height:320px; overflow-y:auto; }
+    #product-list { max-height:315px; overflow-y:auto; }
     .product-item {
       display:flex; justify-content:space-between; align-items:center;
       margin-bottom:10px;
@@ -122,10 +122,10 @@
     form button[type="submit"], .dropdown>button {
       width:100%; padding:12px 20px; font-size:16px;
     }
-  /* estilos que você já tem */
-  #label-itens {
-    display: none;
-  }
+    /* esconde apenas a label do site */
+#label-itens {
+  display: none;
+}
   </style>
 </head>
 <body>
@@ -155,26 +155,25 @@
     </select>
     <label for="observacoes">Observações:</label>
     <textarea id="observacoes" rows="4" placeholder="Observações gerais"></textarea>
+    <label for="total">Total:</label>
+    <input type="number" id="total" readonly placeholder="Total do Pedido">
     <label>Opção:</label>
     <div id="opcao-entrega">
       <button id="btn-entrega" type="button" onclick="selecionarOpcao('entrega')" class="selected">Entrega</button>
       <button id="btn-retirada" type="button" onclick="selecionarOpcao('retirada')">Retirada</button>
     </div>
-    <label for="total">Total:</label>
-    <input type="number" id="total" readonly placeholder="Total do Pedido">
     <label for="nome">Nome do Cliente:</label>
-    <input type="text" id="nome" required placeholder="Digite seu nome">
-    <label for="endereco">Endereço de Entrega:</label>
-    <input type="text" id="endereco" placeholder="Cidade, Bairro, Rua, Número">
-    <label for="whatsapp">WhatsApp:</label>
-    <input type="text" id="whatsapp" required placeholder="DD 9xxxx-xxxx">
-    <label for="ponto-referencia">Ponto de Referência:</label>
-    <input type="text" id="ponto-referencia" placeholder="Ex: Em frente à padaria">
+ <input type="text" id="nome" required placeholder="Digite seu nome">
+ <label for="endereco">Endereço de Entrega:</label>
+ <input type="text" id="endereco" placeholder="Cidade, Bairro, Rua, Número">
+ <label for="whatsapp">WhatsApp:</label>
+ <input type="text" id="whatsapp" required placeholder="DD 9xxxx-xxxx">
+ <label for="ponto-referencia">Ponto de Referência:</label>
+ <input type="text" id="ponto-referencia" placeholder="Ex: Em frente à padaria">
     <button type="submit">Enviar Pedido</button>
   </form>
-
   <script>
-    const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzJwYLExtFX8m9QjIJZYzKLTsEjDSpi7OpRgVDAsybk55GfifB_odQ0MHp4a-Jv0tU2Yw/exec';
+    const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz2wnoEK2qT-2u_Mn-16q_VH4N3ssapoDxUjojNGk3HcD9bzXyq0bKYPyfhTVXabIAcuw/exec';
 
     let opcaoEntrega = "entrega",
         entregaGratisAtivada = false,
@@ -272,14 +271,23 @@
     }
 
     async function carregarProdutosDaPlanilha() {
-  const res    = await fetch(`${APP_SCRIPT_URL}?action=produtos`);
-  const lista  = await res.json();
-  produtos     = {};
-  lista.forEach(p => {
-    produtos[p.nome] = { preco: p.preco, adicionais: p.adicionais };
-  });
+      const url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTE8rKLWsyjrRSL1c1oUon_GxajT7HRwe_QSBCGLd2ja_qStMfDHeHYAklKsnpxo186cmPPKrh4wZFX/pub?output=csv";
+      const res = await fetch(url), csv = await res.text();
+      const lines = csv.split("\n").filter(l => l.trim());
+      lines.shift(); produtos = {};
+      lines.forEach(l => {
+        const c = l.split(",").map(x => x.trim());
+        const nome = c[0];
+        const preco = parseFloat(c[1].replace(",", ".")) || 0;
+        const adicion = [];
+        for (let i = 3; i < c.length; i += 2) {
+          if (c[i] && c[i+1]) adicion.push({ nome: c[i], preco: parseFloat(c[i+1].replace(",", ".")) });
+        }
+        produtos[nome] = { preco, adicionais: adicion };
+      });
       buildProductList();
     }
+
     function buildProductList(){
       const list = document.getElementById("product-list");
       list.innerHTML = "";
@@ -482,14 +490,14 @@
         dadosCliente + `\n` +
         itensTexto + `\n` +
         `💵 Pagamento: ${pagamento}\n` +
-        (pagamento==='PIX' ? `Chave Pix: renimarfilho000@gmail.com\n` : ``) +
+        (pagamento==='PIX' ? `Chave Pix: 10558465307\n` : ``) +
         taxaTexto +
         `🔴 Total: R$ ${total}\n` +
         `Modo: ${modo.charAt(0).toUpperCase()+modo.slice(1)}\n` +
         `📝 Observações Gerais:\n${obsGeral||'-'}`;
 
       const mensagem = encodeURIComponent(mensagemTexto);
-      window.open(`whatsapp://send?phone=5598981729088&text=${mensagem}`, '_blank');
+      window.open(`whatsapp://send?phone=5598981032344&text=${mensagem}`, '_blank');
 
       const params = new URLSearchParams({
         nome, whatsapp: document.getElementById('whatsapp').value.trim(),
