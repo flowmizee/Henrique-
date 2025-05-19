@@ -223,62 +223,104 @@
       dateFormat: "d/m/Y",
       defaultDate: [new Date().setDate(new Date().getDate()-7), new Date()],
       locale: "pt"
+    });const SHEET_ID = '1_KqTCa8u1G49hRs3Vzf-SfU_uGLSYXlK1sAJHMqR_Ic';
+const GID_PEDIDOS = '810876789';
+const GID_RESUMO = '883526576';
+
+function buildGVizURL(gid, tq) {
+  return `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?gid=${gid}&tqx=out:json&tq=${encodeURIComponent(tq)}`;
+}
+
+async function fetchResumo() {
+  const url = buildGVizURL(GID_RESUMO, 'SELECT A, B, C, D OFFSET 1 LIMIT 1');
+  const text = await (await fetch(url)).text();
+  const json = JSON.parse(text.match(/setResponse([\s\S]+)/)[1]);
+  const c = json.table.rows[0].c.map(c=>c&&c.v);
+  return { totalVendas:c[0], numeroPedidos:c[1], totalProdutos:c[2], produtoMaisVendido:c[3] };
+}
+
+async function fetchTopClientes() {
+  const url = buildGVizURL(GID_RESUMO, 'SELECT A, B OFFSET 4 LIMIT 3');
+  const text = await (await fetch(url)).text();
+  const json = JSON.parse(text.match(/setResponse([\s\S]+)/)[1]);
+  return json.table.rows.map(r=>({ nome:r.c[0]?.v, whatsapp:(r.c[1]?.v||'').replace(/\D/g,'') }));
+}
+
+async function fetchHistoricoDiario() {
+  const url = buildGVizURL(GID_PEDIDOS, 'SELECT F, SUM(B), SUM(C) WHERE F IS NOT NULL GROUP BY F ORDER BY F DESC LIMIT 7');
+  const text = await (await fetch(url)).text();
+  const json = JSON.parse(text.match(/setResponse([\s\S]+)/)[1]);
+  return json.table.rows.map(r=>({ data:r.c[0].v.split(' ')[0], pedidos:r.c[1].v, vendas:parseFloat(r.c[2].v) }));
+}
+
+async function fetchHistoricoMensal() {
+  const url = buildGVizURL(GID_PEDIDOS, 'SELECT LEFT(F,7), SUM(C) WHERE F IS NOT NULL GROUP BY LEFT(F,7) ORDER BY LEFT(F,7) DESC LIMIT 6');
+  const text = await (await fetch(url)).text();
+  const json = JSON.parse(text.match(/setResponse([\s\S]+)/)[1]);
+  return json.table.rows.map(r=>({ mes:r.c[0].v, vendas:parseFloat(r.c[1].v) }));
+}
+
+async function loadDashboardData() {
+  try {
+    const [resumo, topClientes, diario, mensal] = await Promise.all([
+      fetchResumo(), fetchTopClientes(),
+      fetchHistoricoDiario(), fetchHistoricoMensal()
+    ]);
+
+    document.getElementById('vendas-hoje').textContent = resumo.totalVendas;
+    document.getElementById('pedidos-hoje').textContent = resumo.numeroPedidos;
+    document.getElementById('mais-vendido').textContent = resumo.produtoMaisVendido;
+    document.getElementById('receita-mes').textContent = resumo.totalVendas;
+
+    const tbody = document.getElementById('top-clientes');
+    tbody.innerHTML = '';
+    topClientes.forEach(c=>{
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${c.nome}</td><td>—</td><td>—</td><td><a href="https://wa.me/${c.whatsapp}" target="_blank"><i class="fab fa-whatsapp"></i> ${c.whatsapp}</a></td>`;
+      tbody.appendChild(tr);
     });
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxJsZTOI3d8u0tN5uZ1C-2l2cXq5Bafwim_XGuLr6w2n48Fz4WD0NlIPTY1HFVkKDYLDQ/exec';
-    let dailyChart, monthlyChart;
-    document.addEventListener('DOMContentLoaded', loadDashboardData);
-    async function loadDashboardData() {
-      try {
-        const ts = new Date().getTime();
-        const res = await fetch(`${API_URL}?action=dashboard&t=${ts}`);
-        if (!res.ok) throw new Error(res.status);
-        const data = await res.json();
-        updateKPICards(data);
-        updateCharts(data);
-        populateClientsTable(data.topClientes||[]);
-      } catch(err) {
-        console.error(err);
-        alert('Erro ao carregar dados do dashboard.');
-      }
-    }
-    function updateKPICards(data) {
-      const hoje = data.historicoDiario?.slice(-1)[0]||{vendas:0,pedidos:0};
-      const ontem = data.historicoDiario?.slice(-2,-1)[0]||{vendas:0,pedidos:0};
-      document.getElementById('vendas-hoje').textContent = formatCurrency(hoje.vendas);
-      updateChangeIndicator('change-hoje',hoje.vendas,ontem.vendas);
-      document.getElementById('pedidos-hoje').textContent = hoje.pedidos;
-      updateChangeIndicator('change-pedidos',hoje.pedidos,ontem.pedidos);
-      document.getElementById('mais-vendido').textContent = data.produtoMaisVendido||'—';
-      const mesA = data.historicoMensal?.slice(-1)[0]?.vendas||0;
-      const mesP = data.historicoMensal?.slice(-2,-1)[0]?.vendas||0;
-      document.getElementById('receita-mes').textContent = formatCurrency(mesA);
-      updateChangeIndicator('change-mes',mesA,mesP);
-    }
-    function updateCharts(data) {
-      const ctxD = document.getElementById('dailySalesChart').getContext('2d');
-      if(dailyChart) dailyChart.destroy();
-      dailyChart = new Chart(ctxD,{type:'bar',data:{labels:data.historicoDiario?.map(d=>formatDate(d.data))||[],datasets:[{label:'Vendas (R$)',data:data.historicoDiario?.map(d=>d.vendas)||[],borderWidth:1}]},options:{responsive:true,scales:{y:{beginAtZero:true,ticks:{callback:v=>'R$ '+v.toLocaleString('pt-BR')}}},plugins:{tooltip:{callbacks:{label:ctx=>'Vendas: R$ '+ctx.raw.toLocaleString('pt-BR',{minimumFractionDigits:2})}}}}});
-      const ctxM = document.getElementById('monthlySalesChart').getContext('2d');
-      if(monthlyChart) monthlyChart.destroy();
-      monthlyChart = new Chart(ctxM,{type:'line',data:{labels:data.historicoMensal?.map(m=>formatMonth(m.mes))||[],datasets:[{label:'Vendas (R$)',data:data.historicoMensal?.map(m=>m.vendas)||[],tension:0.3,fill:false,borderWidth:2}]},options:{responsive:true,scales:{y:{beginAtZero:true,ticks:{callback:v=>'R$ '+v.toLocaleString('pt-BR')}}},plugins:{tooltip:{callbacks:{label:ctx=>'Vendas: R$ '+ctx.raw.toLocaleString('pt-BR',{minimumFractionDigits:2})}}}}});
-    }
-    function populateClientsTable(clients) {
-      const tb = document.getElementById('top-clientes');
-      tb.innerHTML = '';
-      if(!clients.length) {
-        tb.innerHTML = '<tr><td colspan="4" style="text-align:center">Nenhum cliente encontrado</td></tr>';
-        return;
-      }
-      clients.forEach(c=>{
-        const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${c.nome||'—'}</td><td>${formatCurrency(c.valor||0)}</td><td>${formatDate(c.ultimaData)||'—'}</td><td>${c.whatsapp?`<a href="https://wa.me/${c.whatsapp}" target="_blank"><i class="fab fa-whatsapp"></i> ${c.whatsapp}</a>`:'—'}</td>`;
-        tb.appendChild(tr);
-      });
-    }
-    function formatCurrency(v){return 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2});}
-    function formatDate(s){const d=new Date(s);return isNaN(d)?s:d.toLocaleDateString('pt-BR');}
-    function formatMonth(ms){const [y,m]=ms.split('-');const names=['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];return `${names[parseInt(m)-1]}/${y}`;}
-    function updateChangeIndicator(id,c,p){const el=document.getElementById(id);if(!p){el.innerHTML='—';return;}const diff=c-p;const pct=Math.abs(diff/p*100).toFixed(1);if(diff>0){el.innerHTML=`<i class="fas fa-arrow-up"></i> ${pct}%`;el.className='card-change positive';}else if(diff<0){el.innerHTML=`<i class="fas fa-arrow-down"></i> ${pct}%`;el.className='card-change negative';}else el.innerHTML='—';}
+
+    updateCharts({ historicoDiario: diário, historicoMensal: mensal });
+  } catch(err) {
+    console.error(err);
+    alert('Erro ao carregar dados do Google Sheets: ' + err.message);
+  }
+}
+
+function updateCharts(data) {
+  const ctxD = document.getElementById('dailySalesChart').getContext('2d');
+  if (window.dailyChart) window.dailyChart.destroy();
+  window.dailyChart = new Chart(ctxD, {
+    type: 'bar',
+    data: {
+      labels: data.historicoDiario.map(d=>d.data).reverse(),
+      datasets: [{
+        label: 'Vendas (R$)',
+        data: data.historicoDiario.map(d=>d.vendas).reverse(),
+        borderWidth: 1
+      }]
+    },
+    options: { responsive:true, scales:{ y:{ beginAtZero:true, ticks:{ callback:v=>'R$ '+v.toLocaleString('pt-BR') } } } }
+  });
+
+  const ctxM = document.getElementById('monthlySalesChart').getContext('2d');
+  if (window.monthlyChart) window.monthlyChart.destroy();
+  window.monthlyChart = new Chart(ctxM, {
+    type: 'line',
+    data: {
+      labels: data.historicoMensal.map(m=>m.mes).reverse(),
+      datasets: [{
+        label: 'Vendas (R$)',
+        data: data.historicoMensal.map(m=>m.vendas).reverse(),
+        fill:false, tension:0.3, borderWidth:2
+      }]
+    },
+    options: { responsive:true, scales:{ y:{ beginAtZero:true, ticks:{ callback:v=>'R$ '+v.toLocaleString('pt-BR') } } } }
+  });
+}
+
+document.addEventListener('DOMContentLoaded', loadDashboardData);
+
   </script>
 </body>
 </html>
